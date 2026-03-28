@@ -4,18 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#000d14">
+<meta name="mobile-web-app-capable" content="true">
+<meta name="apple-mobile-web-app-capable" content="true">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>MECH-AI · Diagnostic System</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --cyan: #00c8ff;
-    --cyan-dim: rgba(0,200,255,0.15);
-    --cyan-faint: rgba(0,200,255,0.04);
     --red: #ff3c3c;
     --orange: #ffaa00;
     --green: #00ff88;
     --bg: #000d14;
-    --panel: rgba(0,20,35,0.92);
+    --panel: rgba(0,20,35,0.95);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; background: var(--bg); color: var(--cyan); font-family: 'Share Tech Mono', monospace; overflow-x: hidden; }
@@ -23,10 +24,9 @@
   body::before {
     content: '';
     position: fixed; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,200,255,0.025) 2px, rgba(0,200,255,0.025) 4px);
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,200,255,0.022) 2px, rgba(0,200,255,0.022) 4px);
     pointer-events: none; z-index: 0;
   }
-
   .glow-orb {
     position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
     width: 500px; height: 300px;
@@ -34,150 +34,127 @@
     pointer-events: none; z-index: 0;
   }
 
-  /* BOOT SCREEN */
+  /* BOOT */
   #boot {
     position: fixed; inset: 0; background: #000;
     display: flex; align-items: center; justify-content: center;
     z-index: 999; transition: opacity 0.6s;
   }
   #boot.hidden { opacity: 0; pointer-events: none; }
-  #boot-text {
-    width: min(520px, 88vw);
-    font-size: 12px; line-height: 2.2;
-    color: var(--cyan);
-    text-shadow: 0 0 8px var(--cyan);
-    white-space: pre-wrap;
-  }
-  .cursor {
-    display: inline-block; width: 8px; height: 14px;
-    background: var(--cyan); vertical-align: middle;
-    animation: blink 1s infinite;
-  }
+  #boot-text { width: min(520px,88vw); font-size: 12px; line-height: 2.2; color: var(--cyan); text-shadow: 0 0 8px var(--cyan); white-space: pre-wrap; }
+  .cursor { display: inline-block; width: 8px; height: 14px; background: var(--cyan); vertical-align: middle; animation: blink 1s infinite; }
 
-  /* HEADER */
-  header {
+  /* TABS */
+  #tabs {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(0,10,20,0.9); backdrop-filter: blur(12px);
+    background: rgba(0,10,20,0.95); backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(0,200,255,0.15);
-    padding: 12px 16px;
-    display: flex; align-items: center; justify-content: space-between;
   }
-  .logo { display: flex; align-items: center; gap: 12px; }
-  .logo-ring {
-    width: 34px; height: 34px; border: 2px solid var(--cyan); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; position: relative;
-  }
-  .logo-dot { width: 10px; height: 10px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 10px var(--cyan); }
-  .logo-pulse {
-    position: absolute; inset: -5px; border: 1px solid rgba(0,200,255,0.3);
-    border-radius: 50%; animation: ping 2.5s ease-out infinite;
-  }
-  .logo-title { font-family: 'Orbitron', monospace; font-size: 15px; font-weight: 900; letter-spacing: 3px; text-shadow: 0 0 12px var(--cyan); }
-  .logo-sub { font-size: 8px; color: rgba(0,200,255,0.5); letter-spacing: 2px; margin-top: 1px; }
-  .hud-status { text-align: right; font-size: 10px; }
-  #clock { color: rgba(0,200,255,0.6); letter-spacing: 1px; }
-  #status-label { font-size: 9px; letter-spacing: 2px; margin-top: 2px; color: rgba(0,200,255,0.4); }
+  .tab-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-ring { width: 30px; height: 30px; border: 2px solid var(--cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
+  .logo-dot { width: 9px; height: 9px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 8px var(--cyan); }
+  .logo-pulse { position: absolute; inset: -5px; border: 1px solid rgba(0,200,255,0.3); border-radius: 50%; animation: ping 2.5s ease-out infinite; }
+  .logo-title { font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 900; letter-spacing: 3px; text-shadow: 0 0 10px var(--cyan); }
+  .logo-sub { font-size: 8px; color: rgba(0,200,255,0.45); letter-spacing: 2px; }
+  .hud-time { font-size: 10px; color: rgba(0,200,255,0.5); letter-spacing: 1px; text-align: right; }
+  #status-label { font-size: 9px; color: rgba(0,200,255,0.35); letter-spacing: 2px; }
 
-  /* CORNER MARKERS */
-  .corner { position: fixed; width: 20px; height: 20px; pointer-events: none; z-index: 1; }
-  .corner.tl { top: 12px; left: 12px; border-top: 1px solid rgba(0,200,255,0.3); border-left: 1px solid rgba(0,200,255,0.3); }
-  .corner.tr { top: 12px; right: 12px; border-top: 1px solid rgba(0,200,255,0.3); border-right: 1px solid rgba(0,200,255,0.3); }
-  .corner.bl { bottom: 12px; left: 12px; border-bottom: 1px solid rgba(0,200,255,0.3); border-left: 1px solid rgba(0,200,255,0.3); }
-  .corner.br { bottom: 12px; right: 12px; border-bottom: 1px solid rgba(0,200,255,0.3); border-right: 1px solid rgba(0,200,255,0.3); }
+  .tab-nav { display: flex; border-top: 1px solid rgba(0,200,255,0.1); }
+  .tab-btn {
+    flex: 1; padding: 9px 4px; font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+    background: transparent; border: none; color: rgba(0,200,255,0.4);
+    cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s;
+  }
+  .tab-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); background: rgba(0,200,255,0.05); }
 
-  /* MAIN */
-  main { max-width: 680px; margin: 0 auto; padding: 16px; position: relative; z-index: 1; }
+  /* PAGES */
+  .page { display: none; max-width: 680px; margin: 0 auto; padding: 14px 14px 80px; position: relative; z-index: 1; }
+  .page.active { display: block; }
 
   /* VIEWFINDER */
   #viewfinder {
     position: relative; background: #000;
     border: 1px solid rgba(0,200,255,0.2); border-radius: 4px;
-    overflow: hidden; aspect-ratio: 16/9; margin-bottom: 14px;
+    overflow: hidden; aspect-ratio: 16/9; margin-bottom: 12px;
     transition: border-color 0.4s;
   }
-  .hud-corner { position: absolute; width: 22px; height: 22px; z-index: 10; transition: border-color 0.4s; }
-  .hud-corner.tl { top: 8px; left: 8px; border-top: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
-  .hud-corner.tr { top: 8px; right: 8px; border-top: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
-  .hud-corner.bl { bottom: 8px; left: 8px; border-bottom: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
-  .hud-corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
-
-  #scanline {
-    display: none; position: absolute; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-    box-shadow: 0 0 14px var(--cyan); z-index: 20;
-    animation: scanline 1.4s linear infinite;
-  }
-
+  .hud-corner { position: absolute; width: 20px; height: 20px; z-index: 10; transition: border-color 0.4s; }
+  .hud-corner.tl { top: 7px; left: 7px; border-top: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
+  .hud-corner.tr { top: 7px; right: 7px; border-top: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
+  .hud-corner.bl { bottom: 7px; left: 7px; border-bottom: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
+  .hud-corner.br { bottom: 7px; right: 7px; border-bottom: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
+  #scanline { display: none; position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,var(--cyan),transparent); box-shadow: 0 0 14px var(--cyan); z-index: 20; animation: scanline 1.4s linear infinite; }
   #video { width: 100%; height: 100%; object-fit: cover; display: none; }
   #snapshot { width: 100%; height: 100%; object-fit: cover; display: none; transition: filter 0.5s; }
   #canvas { display: none; }
 
-  #standby {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 100%; gap: 10px; opacity: 0.35;
+  /* LIVE MODE overlay */
+  #live-overlay {
+    display: none; position: absolute; inset: 0; z-index: 15; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.6) 100%);
   }
-  #standby svg { width: 52px; height: 52px; }
+  #live-label { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font-size: 9px; letter-spacing: 3px; color: var(--green); text-shadow: 0 0 8px var(--green); animation: pulse-text 2s infinite; }
+  #live-guidance { position: absolute; bottom: 10px; left: 10px; right: 10px; font-size: 11px; color: #fff; line-height: 1.6; text-shadow: 0 1px 4px #000; }
+
+  #standby { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 10px; opacity: 0.35; }
+  #standby svg { width: 48px; height: 48px; }
   #standby .s1 { font-size: 10px; letter-spacing: 3px; }
   #standby .s2 { font-size: 9px; color: rgba(0,200,255,0.5); }
 
-  #analyzing-overlay {
-    display: none; position: absolute; inset: 0;
-    background: rgba(0,10,20,0.75); z-index: 15;
-    flex-direction: column; align-items: center; justify-content: center; gap: 12px;
-  }
-  .spinner {
-    width: 48px; height: 48px;
-    border: 2px solid rgba(0,200,255,0.15);
-    border-top: 2px solid var(--cyan);
-    border-radius: 50%; animation: spin 0.9s linear infinite;
-  }
+  #analyzing-overlay { display: none; position: absolute; inset: 0; background: rgba(0,10,20,0.78); z-index: 20; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  .spinner { width: 46px; height: 46px; border: 2px solid rgba(0,200,255,0.15); border-top: 2px solid var(--cyan); border-radius: 50%; animation: spin 0.9s linear infinite; }
   .analyzing-text { font-size: 11px; letter-spacing: 4px; text-shadow: 0 0 8px var(--cyan); }
   .analyzing-sub { font-size: 9px; color: rgba(0,200,255,0.5); letter-spacing: 2px; }
-
-  #live-tag {
-    display: none; position: absolute; bottom: 10px; left: 12px;
-    font-size: 9px; color: rgba(0,200,255,0.7); letter-spacing: 2px; z-index: 10;
-  }
+  #live-tag { display: none; position: absolute; bottom: 10px; left: 12px; font-size: 9px; color: rgba(0,200,255,0.7); letter-spacing: 2px; z-index: 10; }
 
   /* CONTROLS */
-  #controls { display: flex; gap: 10px; margin-bottom: 14px; }
-  .btn {
-    flex: 1; padding: 14px 0;
-    font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 3px;
-    cursor: pointer; border-radius: 2px; text-transform: uppercase;
-    transition: all 0.2s; border: none; outline: none;
-  }
-  .btn-primary {
-    background: transparent; border: 1px solid var(--cyan); color: var(--cyan);
-  }
+  #controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .btn { flex: 1; padding: 13px 8px; font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; cursor: pointer; border-radius: 2px; text-transform: uppercase; transition: all 0.15s; border: none; outline: none; min-width: 80px; }
+  .btn-primary { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); }
   .btn-primary:active { background: var(--cyan); color: #000; }
-  .btn-scan {
-    flex: 2; background: var(--cyan); color: #000; font-weight: 700; border: none;
-  }
+  .btn-scan { flex: 2; background: var(--cyan); color: #000; font-weight: 700; }
   .btn-scan:active { background: #009ec8; }
-  .btn-danger {
-    background: transparent; border: 1px solid rgba(255,60,60,0.4); color: var(--red);
-  }
+  .btn-danger { background: transparent; border: 1px solid rgba(255,60,60,0.4); color: var(--red); }
   .btn-danger:active { background: var(--red); color: #000; }
+  .btn-icon { flex: 0 0 48px; padding: 13px 0; font-size: 16px; background: transparent; border: 1px solid rgba(0,200,255,0.3); color: var(--cyan); }
+  .btn-icon.active { background: rgba(255,200,0,0.15); border-color: #ffcc00; color: #ffcc00; }
+  .btn-live { background: transparent; border: 1px solid rgba(0,255,136,0.4); color: var(--green); font-size: 9px; }
+  .btn-live.active { background: rgba(0,255,136,0.1); border-color: var(--green); }
 
   /* ERROR */
-  #error-box {
-    display: none; border: 1px solid rgba(255,60,60,0.3); background: #1a0000;
-    padding: 14px; border-radius: 2px; color: #ff6666;
-    font-size: 11px; letter-spacing: 1px; margin-bottom: 14px; line-height: 1.7;
-  }
+  #error-box { display: none; border: 1px solid rgba(255,60,60,0.3); background: #1a0000; padding: 12px; border-radius: 2px; color: #ff6666; font-size: 11px; letter-spacing: 1px; margin-bottom: 12px; line-height: 1.7; }
 
   /* RESULTS */
-  #results { display: none; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,200,255,0.25); }
-  #results-header {
-    background: rgba(0,200,255,0.07); border-bottom: 1px solid rgba(0,200,255,0.2);
-    padding: 10px 16px; display: flex; justify-content: space-between; align-items: center;
-  }
-  #results-title { font-family: 'Orbitron', monospace; font-size: 10px; letter-spacing: 3px; }
+  #results { display: none; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,200,255,0.25); margin-bottom: 12px; animation: fadeIn 0.4s ease; }
+  #results-header { background: rgba(0,200,255,0.07); border-bottom: 1px solid rgba(0,200,255,0.2); padding: 9px 14px; display: flex; justify-content: space-between; align-items: center; }
+  #results-title { font-family: 'Orbitron', monospace; font-size: 9px; letter-spacing: 3px; }
   #results-ts { font-size: 9px; color: rgba(0,200,255,0.5); }
-  #results-body { padding: 16px; font-size: 12px; line-height: 1.9; background: var(--panel); }
+  #results-body { padding: 14px; font-size: 12px; line-height: 1.9; background: var(--panel); }
 
-  .line-head { color: var(--cyan); font-weight: 700; margin-top: 14px; font-size: 13px; letter-spacing: 1px; }
+  /* VOICE indicator */
+  #voice-bar { display: none; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(0,255,136,0.06); border: 1px solid rgba(0,255,136,0.2); border-radius: 2px; margin-bottom: 10px; font-size: 10px; color: var(--green); letter-spacing: 2px; }
+  .voice-dots span { display: inline-block; width: 4px; height: 4px; background: var(--green); border-radius: 50%; margin: 0 2px; animation: voicedot 1.2s infinite; }
+  .voice-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .voice-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  /* CHAT */
+  #chat-section { display: none; border: 1px solid rgba(0,200,255,0.2); border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+  #chat-header { background: rgba(0,200,255,0.07); border-bottom: 1px solid rgba(0,200,255,0.15); padding: 8px 14px; font-size: 9px; letter-spacing: 3px; font-family: 'Orbitron', monospace; }
+  #chat-messages { max-height: 260px; overflow-y: auto; padding: 12px; background: var(--panel); display: flex; flex-direction: column; gap: 10px; }
+  .msg { padding: 10px 12px; border-radius: 2px; font-size: 11px; line-height: 1.8; max-width: 90%; }
+  .msg-user { background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.2); color: var(--cyan); align-self: flex-end; }
+  .msg-ai { background: rgba(0,20,35,0.9); border: 1px solid rgba(0,200,255,0.12); color: #8ab8cc; align-self: flex-start; }
+  .msg-ai.thinking { color: rgba(0,200,255,0.4); font-style: italic; }
+  #chat-input-row { display: flex; border-top: 1px solid rgba(0,200,255,0.15); }
+  #chat-input { flex: 1; background: transparent; border: none; outline: none; padding: 12px; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--cyan); }
+  #chat-input::placeholder { color: rgba(0,200,255,0.3); }
+  #chat-send { padding: 12px 16px; background: transparent; border: none; border-left: 1px solid rgba(0,200,255,0.15); color: var(--cyan); cursor: pointer; font-size: 14px; }
+  #chat-send:active { background: rgba(0,200,255,0.1); }
+
+  /* RESULT line styles */
+  .line-head { color: var(--cyan); font-weight: 700; margin-top: 12px; font-size: 12px; letter-spacing: 1px; }
   .line-bold { color: #fff; font-weight: 600; margin-top: 4px; }
   .line-step { color: #a0cfe0; padding-left: 12px; margin-top: 4px; border-left: 2px solid rgba(0,200,255,0.25); }
   .line-critical { color: var(--red); font-weight: 700; font-size: 13px; }
@@ -186,97 +163,109 @@
   .line-routine { color: var(--cyan); font-weight: 700; font-size: 13px; }
   .line-normal { color: #7ab0c8; margin-top: 2px; }
 
-  /* FOOTER */
-  footer { text-align: center; padding: 24px 0 32px; font-size: 9px; color: rgba(0,200,255,0.18); letter-spacing: 2px; position: relative; z-index: 1; }
+  /* HISTORY PAGE */
+  #history-list { display: flex; flex-direction: column; gap: 12px; }
+  .history-card { border: 1px solid rgba(0,200,255,0.18); border-radius: 4px; overflow: hidden; cursor: pointer; transition: border-color 0.2s; }
+  .history-card:active { border-color: var(--cyan); }
+  .history-card-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: rgba(0,200,255,0.05); border-bottom: 1px solid rgba(0,200,255,0.1); }
+  .history-card-title { font-size: 10px; letter-spacing: 1px; }
+  .history-card-ts { font-size: 9px; color: rgba(0,200,255,0.4); }
+  .history-card-preview { padding: 10px 12px; font-size: 11px; color: #7ab0c8; line-height: 1.6; }
+  .history-card-img { width: 100%; max-height: 120px; object-fit: cover; border-bottom: 1px solid rgba(0,200,255,0.1); filter: brightness(0.7) hue-rotate(160deg); }
+  .status-badge { font-size: 9px; padding: 2px 8px; border-radius: 2px; font-weight: 700; letter-spacing: 1px; }
+  .badge-critical { background: rgba(255,60,60,0.15); color: var(--red); border: 1px solid rgba(255,60,60,0.3); }
+  .badge-warning { background: rgba(255,170,0,0.15); color: var(--orange); border: 1px solid rgba(255,170,0,0.3); }
+  .badge-allclear { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.25); }
+  .badge-routine { background: rgba(0,200,255,0.1); color: var(--cyan); border: 1px solid rgba(0,200,255,0.25); }
+  #history-empty { text-align: center; padding: 48px 0; opacity: 0.3; font-size: 11px; letter-spacing: 2px; line-height: 2.4; }
 
-  /* ANIMATIONS */
+  /* HISTORY DETAIL */
+  #history-detail { display: none; }
+  #history-detail .back-btn { background: transparent; border: 1px solid rgba(0,200,255,0.3); color: var(--cyan); font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; padding: 8px 14px; cursor: pointer; border-radius: 2px; margin-bottom: 12px; }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 20px 0 32px; font-size: 9px; color: rgba(0,200,255,0.15); letter-spacing: 2px; position: relative; z-index: 1; }
+
+  /* Voice toggle */
+  #voice-toggle { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid rgba(0,200,255,0.2); border-radius: 2px; margin-bottom: 10px; cursor: pointer; font-size: 10px; letter-spacing: 2px; background: transparent; color: rgba(0,200,255,0.5); width: 100%; transition: all 0.2s; }
+  #voice-toggle.on { color: var(--green); border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.05); }
+  #voice-toggle .vt-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,200,255,0.3); flex-shrink: 0; transition: background 0.2s; }
+  #voice-toggle.on .vt-dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
   @keyframes ping { 0%{transform:scale(1);opacity:0.5} 100%{transform:scale(1.7);opacity:0} }
   @keyframes spin { to{transform:rotate(360deg)} }
   @keyframes scanline { 0%{top:-2px} 100%{top:100%} }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes voicedot { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(2)} }
+  @keyframes pulse-text { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
-  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: #000; }
   ::-webkit-scrollbar-thumb { background: rgba(0,200,255,0.2); }
 </style>
 </head>
 <body>
 
-<!-- Boot screen -->
-<div id="boot">
-  <div id="boot-text"></div>
+<div id="boot"><div id="boot-text"></div></div>
+<div class="glow-orb"></div>
+
+<div id="tabs">
+  <div class="tab-header">
+    <div class="logo">
+      <div class="logo-ring"><div class="logo-dot"></div><div class="logo-pulse"></div></div>
+      <div><div class="logo-title">MECH-AI</div><div class="logo-sub">DIAGNOSTIC SYSTEM</div></div>
+    </div>
+    <div class="hud-time">
+      <div id="clock">--:--:--</div>
+      <div id="status-label">○ STANDBY</div>
+    </div>
+  </div>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('scan')">◉ SCAN</button>
+    <button class="tab-btn" onclick="switchTab('live')">▶ LIVE GUIDE</button>
+    <button class="tab-btn" onclick="switchTab('history')">▦ HISTORY</button>
+  </div>
 </div>
 
-<div class="glow-orb"></div>
-<div class="corner tl"></div>
-<div class="corner tr"></div>
-<div class="corner bl"></div>
-<div class="corner br"></div>
-
-<header>
-  <div class="logo">
-    <div class="logo-ring">
-      <div class="logo-dot"></div>
-      <div class="logo-pulse"></div>
-    </div>
-    <div>
-      <div class="logo-title">MECH-AI</div>
-      <div class="logo-sub">AUTOMOTIVE DIAGNOSTIC SYSTEM</div>
-    </div>
-  </div>
-  <div class="hud-status">
-    <div id="clock">--:--:--</div>
-    <div id="status-label">○ STANDBY</div>
-  </div>
-</header>
-
-<main>
-  <!-- Viewfinder -->
+<!-- SCAN PAGE -->
+<div class="page active" id="page-scan">
   <div id="viewfinder">
-    <div class="hud-corner tl"></div>
-    <div class="hud-corner tr"></div>
-    <div class="hud-corner bl"></div>
-    <div class="hud-corner br"></div>
+    <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+    <div class="hud-corner bl"></div><div class="hud-corner br"></div>
     <div id="scanline"></div>
-
     <video id="video" autoplay playsinline muted></video>
-    <img id="snapshot" alt="Captured frame">
+    <img id="snapshot" alt="">
     <canvas id="canvas"></canvas>
-
     <div id="standby">
-      <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="26" cy="26" r="11" stroke="#00c8ff" stroke-width="1.5"/>
-        <circle cx="26" cy="26" r="4" fill="#00c8ff"/>
-        <rect x="4" y="18" width="9" height="16" rx="2" stroke="#00c8ff" stroke-width="1.5"/>
-        <line x1="13" y1="22" x2="17" y2="22" stroke="#00c8ff" stroke-width="1.5"/>
-        <line x1="13" y1="30" x2="17" y2="30" stroke="#00c8ff" stroke-width="1.5"/>
-        <rect x="39" y="18" width="9" height="16" rx="2" stroke="#00c8ff" stroke-width="1.5"/>
-        <line x1="26" y1="4" x2="26" y2="10" stroke="#00c8ff" stroke-width="1.5"/>
-        <line x1="26" y1="42" x2="26" y2="48" stroke="#00c8ff" stroke-width="1.5"/>
-      </svg>
+      <svg viewBox="0 0 52 52" fill="none"><circle cx="26" cy="26" r="11" stroke="#00c8ff" stroke-width="1.5"/><circle cx="26" cy="26" r="4" fill="#00c8ff"/><rect x="4" y="18" width="9" height="16" rx="2" stroke="#00c8ff" stroke-width="1.5"/><line x1="13" y1="22" x2="17" y2="22" stroke="#00c8ff" stroke-width="1.5"/><line x1="13" y1="30" x2="17" y2="30" stroke="#00c8ff" stroke-width="1.5"/><rect x="39" y="18" width="9" height="16" rx="2" stroke="#00c8ff" stroke-width="1.5"/></svg>
       <div class="s1">CAMERA OFFLINE</div>
       <div class="s2">ACTIVATE TO BEGIN SCAN</div>
     </div>
-
     <div id="analyzing-overlay">
       <div class="spinner"></div>
       <div class="analyzing-text">ANALYZING...</div>
       <div class="analyzing-sub">RUNNING DIAGNOSTIC ENGINE</div>
     </div>
-
-    <div id="live-tag">● LIVE FEED</div>
+    <div id="live-tag">● LIVE</div>
   </div>
 
-  <!-- Controls -->
   <div id="controls">
-    <button class="btn btn-primary" id="btn-activate" onclick="startCamera()">◉ ACTIVATE CAMERA</button>
+    <button class="btn btn-primary" onclick="startCamera()">◉ ACTIVATE CAMERA</button>
   </div>
 
-  <!-- Error -->
   <div id="error-box"></div>
 
-  <!-- Results -->
+  <button id="voice-toggle" onclick="toggleVoice()">
+    <div class="vt-dot"></div>
+    <span id="voice-toggle-label">VOICE OUTPUT: OFF</span>
+  </button>
+
+  <div id="voice-bar">
+    <div class="voice-dots"><span></span><span></span><span></span></div>
+    <span>MECH-AI SPEAKING...</span>
+  </div>
+
   <div id="results">
     <div id="results-header">
       <div id="results-title">DIAGNOSTIC REPORT</div>
@@ -284,12 +273,96 @@
     </div>
     <div id="results-body"></div>
   </div>
-</main>
 
-<footer>MECH-AI · CARS & MOTORCYCLES · DIAGNOSTIC ENGINE v2.4</footer>
+  <div id="chat-section">
+    <div id="chat-header">💬 FOLLOW-UP QUESTIONS</div>
+    <div id="chat-messages"></div>
+    <div id="chat-input-row">
+      <input id="chat-input" type="text" placeholder="Ask a follow-up question..." autocomplete="off">
+      <button id="chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE GUIDE PAGE -->
+<div class="page" id="page-live">
+  <div id="viewfinder-live" style="position:relative;background:#000;border:1px solid rgba(0,200,255,0.2);border-radius:4px;overflow:hidden;aspect-ratio:16/9;margin-bottom:12px;">
+    <div class="hud-corner tl" style="position:absolute;top:7px;left:7px;border-top:2px solid var(--green);border-left:2px solid var(--green);width:20px;height:20px;z-index:10;"></div>
+    <div class="hud-corner tr" style="position:absolute;top:7px;right:7px;border-top:2px solid var(--green);border-right:2px solid var(--green);width:20px;height:20px;z-index:10;"></div>
+    <div class="hud-corner bl" style="position:absolute;bottom:7px;left:7px;border-bottom:2px solid var(--green);border-left:2px solid var(--green);width:20px;height:20px;z-index:10;"></div>
+    <div class="hud-corner br" style="position:absolute;bottom:7px;right:7px;border-bottom:2px solid var(--green);border-right:2px solid var(--green);width:20px;height:20px;z-index:10;"></div>
+    <video id="video-live" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:none;"></video>
+    <canvas id="canvas-live" style="display:none;"></canvas>
+    <div id="live-overlay">
+      <div id="live-label">● LIVE GUIDANCE ACTIVE</div>
+      <div id="live-guidance">Point camera at the component you're working on...</div>
+    </div>
+    <div id="live-standby" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;opacity:0.35;">
+      <div style="font-size:10px;letter-spacing:3px;">LIVE GUIDE OFFLINE</div>
+      <div style="font-size:9px;color:rgba(0,200,255,0.5);">START SESSION TO BEGIN</div>
+    </div>
+  </div>
+
+  <div id="live-controls" style="display:flex;gap:8px;margin-bottom:12px;">
+    <button class="btn btn-primary" style="border-color:rgba(0,255,136,0.5);color:var(--green);" onclick="startLiveSession()">▶ START LIVE SESSION</button>
+    <button class="btn btn-icon" id="btn-torch-live" onclick="toggleTorch('live')" title="Torch">🔦</button>
+  </div>
+
+  <div style="border:1px solid rgba(0,255,136,0.15);border-radius:4px;padding:14px;background:rgba(0,255,136,0.03);margin-bottom:12px;">
+    <div style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,0.6);margin-bottom:8px;font-family:'Orbitron',monospace;">HOW LIVE GUIDE WORKS</div>
+    <div style="font-size:11px;color:#7ab8a0;line-height:2;">
+      1. Start a Live Session and point camera at your engine or part<br>
+      2. Tap <strong style="color:var(--green)">CAPTURE FRAME</strong> to send a snapshot to MECH-AI<br>
+      3. AI guidance appears overlaid on the feed<br>
+      4. Ask follow-up questions while keeping camera live<br>
+      5. Use the torch for dark engine bays
+    </div>
+  </div>
+
+  <div id="live-chat" style="display:none;border:1px solid rgba(0,255,136,0.2);border-radius:4px;overflow:hidden;margin-bottom:12px;">
+    <div style="background:rgba(0,255,136,0.06);border-bottom:1px solid rgba(0,255,136,0.15);padding:8px 14px;font-size:9px;letter-spacing:3px;color:var(--green);font-family:'Orbitron',monospace;">LIVE ASSISTANT</div>
+    <div id="live-chat-messages" style="max-height:200px;overflow-y:auto;padding:12px;background:var(--panel);display:flex;flex-direction:column;gap:8px;font-size:11px;"></div>
+    <div style="display:flex;border-top:1px solid rgba(0,255,136,0.15);">
+      <input id="live-chat-input" type="text" placeholder="Ask while camera is live..." style="flex:1;background:transparent;border:none;outline:none;padding:12px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);">
+      <button onclick="sendLiveChat()" style="padding:12px 14px;background:transparent;border:none;border-left:1px solid rgba(0,255,136,0.15);color:var(--green);cursor:pointer;font-size:14px;">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY PAGE -->
+<div class="page" id="page-history">
+  <div id="history-list-view">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;">SCAN HISTORY</div>
+      <button onclick="clearHistory()" style="background:transparent;border:1px solid rgba(255,60,60,0.25);color:rgba(255,60,60,0.6);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:5px 10px;cursor:pointer;border-radius:2px;">CLEAR ALL</button>
+    </div>
+    <div id="history-list">
+      <div id="history-empty">📋<br><br>NO SCANS YET<br>RUN A DIAGNOSTIC TO BEGIN</div>
+    </div>
+  </div>
+  <div id="history-detail">
+    <button class="back-btn" onclick="showHistoryList()">← BACK TO HISTORY</button>
+    <div id="history-detail-content"></div>
+  </div>
+</div>
+
+<footer>MECH-AI · CARS & MOTORCYCLES · v2.5 · ALL RIGHTS RESERVED</footer>
 
 <script>
-const SYSTEM_PROMPT = `You are MECH-AI, an expert automotive and motorcycle mechanic assistant with deep knowledge of cars and bikes of all makes and models. You have the visual intelligence of a seasoned master mechanic.
+// ─── STATE ───────────────────────────────────────────────
+let mediaStream = null;
+let liveStream = null;
+let torchOn = false;
+let torchOnLive = false;
+let voiceEnabled = false;
+let currentScanData = null; // { image, result, ts }
+let chatHistory = []; // [{role,content}]
+let liveChatHistory = [];
+let scanHistory = JSON.parse(localStorage.getItem('mechai_history') || '[]');
+let liveSessionActive = false;
+let liveInterval = null;
+
+const SYSTEM_PROMPT = `You are MECH-AI, an expert automotive and motorcycle mechanic assistant with deep knowledge of cars and bikes of all makes and models.
 
 When shown an image, you will:
 1. IDENTIFY what you see — parts, components, make/model if visible, condition
@@ -305,79 +378,92 @@ Format your response with these exact sections:
 [problems found, or "No visible issues detected"]
 
 🔧 ACTION PLAN
-[numbered steps for repair/maintenance]
+[numbered steps]
 
 📊 STATUS: [CRITICAL / WARNING / ROUTINE / ALL CLEAR]
 
-Keep language clear, direct, and practical — like a trusted mechanic talking to you in the garage. If no vehicle or part is visible, ask the user to point the camera at the component they need help with.`;
+Keep language clear, direct, practical — like a trusted mechanic in the garage.`;
 
-let mediaStream = null;
-let state = 'standby'; // standby | live | analyzing | result
+const LIVE_SYSTEM = `You are MECH-AI in Live Guide mode. The user is actively working on a vehicle. You see snapshots of what they're working on. Give BRIEF, ACTIONABLE guidance — 1-3 sentences max per response. Be like a mechanic looking over their shoulder: direct, clear, helpful. If asked a question without an image, answer from context.`;
 
-// Clock
-function updateClock() {
-  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
-}
-setInterval(updateClock, 1000);
-updateClock();
+// ─── CLOCK ───────────────────────────────────────────────
+setInterval(() => { document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB'); }, 1000);
+document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
 
-// Boot sequence
+// ─── BOOT ────────────────────────────────────────────────
 const bootLines = [
-  "MECH-AI v2.4.1 INITIALIZING...",
+  "MECH-AI v2.5 INITIALIZING...",
   "Loading automotive knowledge base...",
   "Calibrating vision systems...",
-  "Neural diagnostic engine: ONLINE",
-  "Camera interface: READY",
-  "SYSTEM READY. Point camera at vehicle component.",
+  "Voice synthesis engine: ONLINE",
+  "Live guidance module: ONLINE",
+  "History storage: ONLINE",
+  "SYSTEM READY.",
 ];
-
-function runBoot() {
+(function runBoot() {
   const el = document.getElementById('boot-text');
-  let i = 0, charIdx = 0, text = '';
+  let i = 0, c = 0, text = '';
   const iv = setInterval(() => {
     if (i >= bootLines.length) {
       clearInterval(iv);
       setTimeout(() => {
         document.getElementById('boot').classList.add('hidden');
         setTimeout(() => document.getElementById('boot').remove(), 700);
-      }, 500);
+      }, 400);
       return;
     }
-    if (charIdx < bootLines[i].length) {
-      text += bootLines[i][charIdx++];
-    } else {
-      text += '\n'; i++; charIdx = 0;
-    }
+    if (c < bootLines[i].length) { text += bootLines[i][c++]; }
+    else { text += '\n'; i++; c = 0; }
     el.innerHTML = text + '<span class="cursor"></span>';
-  }, 26);
-}
-runBoot();
+  }, 24);
+})();
 
+// ─── TABS ────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'history') renderHistory();
+}
+
+// ─── STATUS ──────────────────────────────────────────────
 function setStatus(label, color) {
   const el = document.getElementById('status-label');
   el.textContent = label;
-  el.style.color = color || 'rgba(0,200,255,0.4)';
+  el.style.color = color || 'rgba(0,200,255,0.35)';
 }
-
 function setHudColor(color) {
-  document.querySelectorAll('.hud-corner').forEach(c => {
-    c.style.borderColor = color;
-  });
-  document.getElementById('viewfinder').style.borderColor = color + '55';
-  document.getElementById('results').style.borderColor = color + '55';
-  document.getElementById('results-header').style.borderBottomColor = color + '44';
-  document.getElementById('results-title').style.color = color;
+  document.querySelectorAll('#viewfinder .hud-corner').forEach(c => c.style.borderColor = color);
+  document.getElementById('viewfinder').style.borderColor = color + '44';
+}
+function getStatusColor(text) {
+  if (!text) return '#00c8ff';
+  if (text.includes('CRITICAL')) return '#ff3c3c';
+  if (text.includes('WARNING')) return '#ffaa00';
+  if (text.includes('ALL CLEAR')) return '#00ff88';
+  return '#00c8ff';
+}
+function getBadgeClass(text) {
+  if (!text) return 'badge-routine';
+  if (text.includes('CRITICAL')) return 'badge-critical';
+  if (text.includes('WARNING')) return 'badge-warning';
+  if (text.includes('ALL CLEAR')) return 'badge-allclear';
+  return 'badge-routine';
+}
+function getStatusLabel(text) {
+  if (!text) return 'ROUTINE';
+  if (text.includes('CRITICAL')) return 'CRITICAL';
+  if (text.includes('WARNING')) return 'WARNING';
+  if (text.includes('ALL CLEAR')) return 'ALL CLEAR';
+  return 'ROUTINE';
 }
 
-function showError(msg) {
-  const el = document.getElementById('error-box');
-  el.textContent = '⚠ ' + msg;
-  el.style.display = 'block';
-}
-function clearError() {
-  document.getElementById('error-box').style.display = 'none';
-}
+// ─── ERROR ───────────────────────────────────────────────
+function showError(msg) { const e = document.getElementById('error-box'); e.textContent = '⚠ ' + msg; e.style.display = 'block'; }
+function clearError() { document.getElementById('error-box').style.display = 'none'; }
 
+// ─── CAMERA (SCAN) ───────────────────────────────────────
 async function startCamera() {
   clearError();
   try {
@@ -391,31 +477,50 @@ async function startCamera() {
     document.getElementById('snapshot').style.display = 'none';
     document.getElementById('live-tag').style.display = 'block';
     document.getElementById('scanline').style.display = 'block';
-
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('chat-section').style.display = 'none';
     document.getElementById('controls').innerHTML = `
       <button class="btn btn-scan" onclick="captureAndAnalyze()">⬡ SCAN & ANALYZE</button>
+      <button class="btn btn-icon" id="btn-torch" onclick="toggleTorch('scan')" title="Torch">🔦</button>
       <button class="btn btn-danger" onclick="stopCamera()">✕</button>
     `;
-    document.getElementById('results').style.display = 'none';
     setStatus('● CAMERA LIVE', '#00ff88');
-    state = 'live';
   } catch(e) {
-    showError('Camera access denied. In Chrome: tap the camera icon in the address bar and allow access, then reload.');
+    showError('Camera access denied. Tap the camera icon in Chrome\'s address bar and allow access.');
   }
 }
 
 function stopCamera() {
-  if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+  if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; torchOn = false; }
   document.getElementById('video').style.display = 'none';
   document.getElementById('live-tag').style.display = 'none';
   document.getElementById('scanline').style.display = 'none';
+}
+
+async function toggleTorch(mode) {
+  const stream = mode === 'scan' ? mediaStream : liveStream;
+  if (!stream) return;
+  const track = stream.getVideoTracks()[0];
+  if (!track) return;
+  try {
+    if (mode === 'scan') {
+      torchOn = !torchOn;
+      await track.applyConstraints({ advanced: [{ torch: torchOn }] });
+      const btn = document.getElementById('btn-torch');
+      if (btn) btn.classList.toggle('active', torchOn);
+    } else {
+      torchOnLive = !torchOnLive;
+      await track.applyConstraints({ advanced: [{ torch: torchOnLive }] });
+      const btn = document.getElementById('btn-torch-live');
+      if (btn) btn.classList.toggle('active', torchOnLive);
+    }
+  } catch(e) { showError('Torch not supported on this device/browser.'); }
 }
 
 async function captureAndAnalyze() {
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
   const snapshot = document.getElementById('snapshot');
-
   canvas.width = video.videoWidth || 640;
   canvas.height = video.videoHeight || 480;
   canvas.getContext('2d').drawImage(video, 0, 0);
@@ -425,17 +530,14 @@ async function captureAndAnalyze() {
   stopCamera();
   snapshot.src = dataUrl;
   snapshot.style.display = 'block';
-  snapshot.style.filter = 'brightness(0.55) hue-rotate(160deg)';
+  snapshot.style.filter = 'brightness(0.5) hue-rotate(160deg)';
   document.getElementById('standby').style.display = 'none';
-
-  const overlay = document.getElementById('analyzing-overlay');
-  overlay.style.display = 'flex';
+  document.getElementById('analyzing-overlay').style.display = 'flex';
   document.getElementById('scanline').style.display = 'block';
-
   document.getElementById('controls').innerHTML = '';
   setStatus('● ANALYZING', '#ffaa00');
   setHudColor('#ffaa00');
-  state = 'analyzing';
+  chatHistory = [];
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -445,41 +547,37 @@ async function captureAndAnalyze() {
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
         system: SYSTEM_PROMPT,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
-            { type: 'text', text: 'Analyze this image. Identify any vehicle parts, diagnose issues, and provide repair guidance.' }
-          ]
-        }]
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
+          { type: 'text', text: 'Analyze this image. Identify parts, diagnose issues, provide repair guidance.' }
+        ]}]
       })
     });
-
     const data = await res.json();
     const text = (data.content || []).map(b => b.text || '').join('');
+    currentScanData = { image: dataUrl, result: text, ts: new Date().toISOString() };
+    chatHistory = [
+      { role: 'user', content: [
+        { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
+        { type: 'text', text: 'Analyze this image.' }
+      ]},
+      { role: 'assistant', content: text }
+    ];
     showResult(text);
+    saveToHistory(currentScanData);
+    if (voiceEnabled) speak(text);
   } catch(e) {
-    showResult('⚠️ Analysis failed. Please check your connection and try again.');
+    showResult('⚠️ Analysis failed. Check your connection and try again.');
   }
 
-  overlay.style.display = 'none';
+  document.getElementById('analyzing-overlay').style.display = 'none';
   document.getElementById('scanline').style.display = 'none';
   snapshot.style.filter = 'none';
-  state = 'result';
-}
-
-function getStatusColor(text) {
-  if (!text) return '#00c8ff';
-  if (text.includes('CRITICAL')) return '#ff3c3c';
-  if (text.includes('WARNING')) return '#ffaa00';
-  if (text.includes('ALL CLEAR')) return '#00ff88';
-  if (text.includes('ROUTINE')) return '#00c8ff';
-  return '#00c8ff';
 }
 
 function formatResult(text) {
   return text.split('\n').map(line => {
-    if (!line.trim()) return '<div style="height:4px"></div>';
+    if (!line.trim()) return '<div style="height:3px"></div>';
     if (line.match(/^[🔍⚠️🔧📊]/u)) return `<div class="line-head">${line}</div>`;
     if (line.startsWith('**') && line.endsWith('**')) return `<div class="line-bold">${line.replace(/\*\*/g,'')}</div>`;
     if (line.match(/^\d+\./)) return `<div class="line-step">${line}</div>`;
@@ -495,30 +593,286 @@ function showResult(text) {
   const color = getStatusColor(text);
   setHudColor(color);
   setStatus('● SCAN COMPLETE', color);
-
   document.getElementById('results-ts').textContent = new Date().toLocaleString();
   document.getElementById('results-body').innerHTML = formatResult(text);
-
-  const resultsEl = document.getElementById('results');
-  resultsEl.style.display = 'block';
-  resultsEl.style.animation = 'fadeIn 0.4s ease';
-
-  document.getElementById('controls').innerHTML = `
-    <button class="btn btn-primary" onclick="resetScan()">↺ NEW SCAN</button>
-  `;
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('chat-section').style.display = 'block';
+  document.getElementById('chat-messages').innerHTML = '';
+  document.getElementById('controls').innerHTML = `<button class="btn btn-primary" onclick="resetScan()">↺ NEW SCAN</button>`;
 }
 
 function resetScan() {
   document.getElementById('results').style.display = 'none';
+  document.getElementById('chat-section').style.display = 'none';
   document.getElementById('snapshot').style.display = 'none';
   document.getElementById('standby').style.display = 'flex';
-  document.getElementById('controls').innerHTML = `
-    <button class="btn btn-primary" id="btn-activate" onclick="startCamera()">◉ ACTIVATE CAMERA</button>
-  `;
-  setStatus('○ STANDBY', 'rgba(0,200,255,0.4)');
+  document.getElementById('controls').innerHTML = `<button class="btn btn-primary" onclick="startCamera()">◉ ACTIVATE CAMERA</button>`;
+  setStatus('○ STANDBY', 'rgba(0,200,255,0.35)');
   setHudColor('#00c8ff');
   clearError();
-  state = 'standby';
+  currentScanData = null;
+  chatHistory = [];
+  stopSpeaking();
+}
+
+// ─── VOICE ───────────────────────────────────────────────
+function toggleVoice() {
+  voiceEnabled = !voiceEnabled;
+  const btn = document.getElementById('voice-toggle');
+  const label = document.getElementById('voice-toggle-label');
+  btn.classList.toggle('on', voiceEnabled);
+  label.textContent = 'VOICE OUTPUT: ' + (voiceEnabled ? 'ON' : 'OFF');
+  if (!voiceEnabled) stopSpeaking();
+}
+
+function speak(text) {
+  stopSpeaking();
+  const clean = text.replace(/[🔍⚠️🔧📊*]/gu, '').replace(/\n+/g, '. ').trim();
+  const utt = new SpeechSynthesisUtterance(clean);
+  utt.rate = 0.95; utt.pitch = 0.85; utt.volume = 1;
+  const voices = speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.name.includes('Male') || v.name.includes('Google UK English Male') || v.name.includes('Daniel'));
+  if (preferred) utt.voice = preferred;
+  document.getElementById('voice-bar').style.display = 'flex';
+  utt.onend = () => { document.getElementById('voice-bar').style.display = 'none'; };
+  speechSynthesis.speak(utt);
+}
+
+function stopSpeaking() {
+  speechSynthesis.cancel();
+  document.getElementById('voice-bar').style.display = 'none';
+}
+
+// ─── CHAT (FOLLOW-UP) ────────────────────────────────────
+function appendChatMsg(role, text) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'user' ? 'msg-user' : 'msg-ai');
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const question = input.value.trim();
+  if (!question) return;
+  input.value = '';
+  appendChatMsg('user', question);
+  chatHistory.push({ role: 'user', content: question });
+  const thinking = appendChatMsg('ai', 'thinking...');
+  thinking.classList.add('thinking');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        system: SYSTEM_PROMPT + '\n\nYou are now answering follow-up questions about the scan you just completed. Be concise and practical.',
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = (data.content || []).map(b => b.text || '').join('');
+    thinking.textContent = reply;
+    thinking.classList.remove('thinking');
+    chatHistory.push({ role: 'assistant', content: reply });
+    if (voiceEnabled) speak(reply);
+  } catch(e) {
+    thinking.textContent = 'Connection error. Try again.';
+    thinking.classList.remove('thinking');
+  }
+}
+
+document.getElementById('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+
+// ─── LIVE SESSION ────────────────────────────────────────
+async function startLiveSession() {
+  try {
+    liveStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+    });
+    const video = document.getElementById('video-live');
+    video.srcObject = liveStream;
+    video.style.display = 'block';
+    document.getElementById('live-standby').style.display = 'none';
+    document.getElementById('live-overlay').style.display = 'block';
+    document.getElementById('live-chat').style.display = 'block';
+    document.getElementById('live-controls').innerHTML = `
+      <button class="btn btn-live active" onclick="captureFrameLive()">📸 CAPTURE FRAME</button>
+      <button class="btn btn-icon" id="btn-torch-live" onclick="toggleTorch('live')">🔦</button>
+      <button class="btn btn-danger" onclick="stopLiveSession()">✕ END</button>
+    `;
+    liveSessionActive = true;
+    liveChatHistory = [];
+    setStatus('● LIVE GUIDE', '#00ff88');
+    appendLiveMsg('ai', 'Live session started. Point your camera at the component you\'re working on, then tap CAPTURE FRAME for guidance.');
+  } catch(e) {
+    alert('Camera access denied. Please allow camera in Chrome.');
+  }
+}
+
+function stopLiveSession() {
+  if (liveStream) { liveStream.getTracks().forEach(t => t.stop()); liveStream = null; torchOnLive = false; }
+  document.getElementById('video-live').style.display = 'none';
+  document.getElementById('live-overlay').style.display = 'none';
+  document.getElementById('live-standby').style.display = 'flex';
+  document.getElementById('live-controls').innerHTML = `
+    <button class="btn btn-primary" style="border-color:rgba(0,255,136,0.5);color:var(--green);" onclick="startLiveSession()">▶ START LIVE SESSION</button>
+    <button class="btn btn-icon" id="btn-torch-live" onclick="toggleTorch('live')">🔦</button>
+  `;
+  liveSessionActive = false;
+  setStatus('○ STANDBY', 'rgba(0,200,255,0.35)');
+}
+
+async function captureFrameLive() {
+  const video = document.getElementById('video-live');
+  const canvas = document.getElementById('canvas-live');
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+
+  document.getElementById('live-guidance').textContent = 'Analyzing...';
+  appendLiveMsg('user', '[Captured frame]');
+  const thinking = appendLiveMsg('ai', 'Analyzing frame...');
+
+  liveChatHistory.push({ role: 'user', content: [
+    { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
+    { type: 'text', text: 'What do you see? Give me quick guidance.' }
+  ]});
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 400,
+        system: LIVE_SYSTEM,
+        messages: liveChatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = (data.content || []).map(b => b.text || '').join('');
+    thinking.textContent = reply;
+    liveChatHistory.push({ role: 'assistant', content: reply });
+    document.getElementById('live-guidance').textContent = reply;
+    if (voiceEnabled) speak(reply);
+  } catch(e) {
+    thinking.textContent = 'Analysis failed. Try again.';
+    document.getElementById('live-guidance').textContent = 'Analysis failed.';
+  }
+}
+
+function appendLiveMsg(role, text) {
+  const msgs = document.getElementById('live-chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'user' ? 'msg-user' : 'msg-ai');
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+async function sendLiveChat() {
+  const input = document.getElementById('live-chat-input');
+  const question = input.value.trim();
+  if (!question) return;
+  input.value = '';
+  appendLiveMsg('user', question);
+  liveChatHistory.push({ role: 'user', content: question });
+  const thinking = appendLiveMsg('ai', 'thinking...');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 400,
+        system: LIVE_SYSTEM,
+        messages: liveChatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = (data.content || []).map(b => b.text || '').join('');
+    thinking.textContent = reply;
+    liveChatHistory.push({ role: 'assistant', content: reply });
+    if (voiceEnabled) speak(reply);
+  } catch(e) {
+    thinking.textContent = 'Error. Try again.';
+  }
+}
+
+document.getElementById('live-chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendLiveChat(); });
+
+// ─── HISTORY ─────────────────────────────────────────────
+function saveToHistory(scanData) {
+  scanHistory.unshift({ ...scanData, id: Date.now() });
+  if (scanHistory.length > 30) scanHistory = scanHistory.slice(0, 30);
+  localStorage.setItem('mechai_history', JSON.stringify(scanHistory));
+}
+
+function renderHistory() {
+  document.getElementById('history-list-view').style.display = 'block';
+  document.getElementById('history-detail').style.display = 'none';
+  const list = document.getElementById('history-list');
+  if (!scanHistory.length) {
+    list.innerHTML = '<div id="history-empty">📋<br><br>NO SCANS YET<br>RUN A DIAGNOSTIC TO BEGIN</div>';
+    return;
+  }
+  list.innerHTML = scanHistory.map((item, idx) => {
+    const date = new Date(item.ts).toLocaleString();
+    const preview = item.result ? item.result.substring(0, 120).replace(/[🔍⚠️🔧📊*\n]/gu, ' ').trim() + '...' : '';
+    const badgeClass = getBadgeClass(item.result);
+    const statusLabel = getStatusLabel(item.result);
+    return `
+      <div class="history-card" onclick="showHistoryDetail(${idx})">
+        ${item.image ? `<img class="history-card-img" src="${item.image}" alt="">` : ''}
+        <div class="history-card-header">
+          <div class="history-card-title">SCAN #${scanHistory.length - idx}</div>
+          <span class="status-badge ${badgeClass}">${statusLabel}</span>
+        </div>
+        <div class="history-card-preview">
+          <div style="font-size:9px;color:rgba(0,200,255,0.4);margin-bottom:4px;">${date}</div>
+          ${preview}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function showHistoryDetail(idx) {
+  const item = scanHistory[idx];
+  document.getElementById('history-list-view').style.display = 'none';
+  document.getElementById('history-detail').style.display = 'block';
+  const color = getStatusColor(item.result);
+  document.getElementById('history-detail-content').innerHTML = `
+    ${item.image ? `<img src="${item.image}" style="width:100%;border-radius:4px;margin-bottom:12px;border:1px solid ${color}33;">` : ''}
+    <div style="border:1px solid ${color}33;border-radius:4px;overflow:hidden;">
+      <div style="background:${color}11;border-bottom:1px solid ${color}22;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:${color};">DIAGNOSTIC REPORT</div>
+        <div style="font-size:9px;color:${color}66;">${new Date(item.ts).toLocaleString()}</div>
+      </div>
+      <div style="padding:14px;font-size:12px;line-height:1.9;background:var(--panel);">${formatResult(item.result)}</div>
+    </div>
+  `;
+}
+
+function showHistoryList() {
+  document.getElementById('history-list-view').style.display = 'block';
+  document.getElementById('history-detail').style.display = 'none';
+}
+
+function clearHistory() {
+  if (!confirm('Clear all scan history?')) return;
+  scanHistory = [];
+  localStorage.setItem('mechai_history', '[]');
+  renderHistory();
 }
 </script>
 </body>
