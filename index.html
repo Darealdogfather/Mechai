@@ -578,7 +578,16 @@ function resetCtrls(){document.getElementById('ctrls').innerHTML=`<button class=
 async function startCam(){
   clearErr();document.getElementById('ad').classList.add('hide');
   try{
-    ms=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}});
+    // Try rear camera first, fall back to any camera
+    try {
+      ms=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:'environment'}}});
+    } catch(e1) {
+      try {
+        ms=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+      } catch(e2) {
+        ms=await navigator.mediaDevices.getUserMedia({video:true});
+      }
+    }
     const v=document.getElementById('vid');v.srcObject=ms;v.style.display='block';
     document.getElementById('sb').style.display='none';
     document.getElementById('snap').style.display='none';
@@ -589,7 +598,7 @@ async function startCam(){
     document.getElementById('chat').style.display='none';
     document.getElementById('ctrls').innerHTML=`<button class="btn bsc" onclick="capture()">${t('scan')}</button><button class="btn bi" onclick="togTorch('scan')" id="btorch">🔦</button><button class="btn bd" onclick="stopCam()">${t('cancel')}</button>`;
     setS('● LIVE','#00ff88');
-  }catch(e){showErr('Camera denied. Allow camera in Chrome address bar.');document.getElementById('ad').classList.remove('hide');}
+  }catch(e){showErr('Camera blocked. Fix: Chrome address bar → 🔒 lock icon → Permissions → Camera → Allow → Reload page. Error: '+e.message);document.getElementById('ad').classList.remove('hide');}
 }
 function stopCam(){
   if(ms){ms.getTracks().forEach(t=>t.stop());ms=null;torch=false;}
@@ -726,7 +735,16 @@ document.getElementById('chi').addEventListener('keydown',e=>{if(e.key==='Enter'
 // ── LIVE ──
 async function startLive(){
   try{
-    ls=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}});
+    // Try rear camera first, fall back to any camera
+    try {
+      ls=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:'environment'}}});
+    } catch(e1) {
+      try {
+        ls=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+      } catch(e2) {
+        ls=await navigator.mediaDevices.getUserMedia({video:true});
+      }
+    }
     const v=document.getElementById('vidl');v.srcObject=ls;v.style.display='block';
     document.getElementById('lsb').style.display='none';
     document.getElementById('lov').style.display='block';
@@ -735,7 +753,7 @@ async function startLive(){
     liveH=[];setS('● LIVE','#00ff88');
     addMsg('lchm','ai','Session started. Point camera at component and tap CAPTURE FRAME.');
     document.getElementById('ad').classList.add('hide');
-  }catch(e){alert('Camera denied.');}
+  }catch(e){alert('Camera blocked: '+e.message+'\n\nFix: tap 🔒 in Chrome address bar → Permissions → Camera → Allow → Reload');}
 }
 function stopLive(){
   if(ls){ls.getTracks().forEach(t=>t.stop());ls=null;torchL=false;}
