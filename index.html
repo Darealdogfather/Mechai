@@ -620,7 +620,7 @@ async function capture(){
   document.getElementById('ctrls').innerHTML='';
   setS('● ANALYZING','#ffaa00');setHud('#ffaa00');chatH=[];
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:buildSP(),messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:'Analyze this image. Identify parts, diagnose, give repair guidance with tools, torque specs, checklist, difficulty and time.'}]}]})});
+    const r=await fetch('/api/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:buildSP(),messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:'Analyze this image. Identify parts, diagnose, give repair guidance with tools, torque specs, checklist, difficulty and time.'}]}]})});
     const d=await r.json();
     const full=(d.content||[]).map(b=>b.text||'').join('');
     const{main,job}=parseResp(full);
@@ -715,7 +715,7 @@ async function sendChat(){
   addMsg('chm','user',q);chatH.push({role:'user',content:q});
   const th=addMsg('chm','ai','...');th.classList.add('th');
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system:buildSP()+'\nAnswer follow-up questions concisely. Include torque values and tool sizes when relevant.',messages:chatH})});
+    const r=await fetch('/api/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system:buildSP()+'\nAnswer follow-up questions concisely. Include torque values and tool sizes when relevant.',messages:chatH})});
     const d=await r.json(),rep=(d.content||[]).map(b=>b.text||'').join('');
     th.textContent=rep;th.classList.remove('th');chatH.push({role:'assistant',content:rep});
     if(voiceOn)speak(rep);
@@ -754,7 +754,7 @@ async function capLive(){
   addMsg('lchm','user','[Frame]');const th=addMsg('lchm','ai','...');th.classList.add('th');
   liveH.push({role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:'Quick guidance?'}]});
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:buildLP(),messages:liveH})});
+    const r=await fetch('/api/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:buildLP(),messages:liveH})});
     const d=await r.json(),rep=(d.content||[]).map(b=>b.text||'').join('');
     th.textContent=rep;th.classList.remove('th');liveH.push({role:'assistant',content:rep});
     document.getElementById('lguid').textContent=rep;if(voiceOn)speak(rep);
@@ -764,7 +764,7 @@ async function sendLChat(){
   const inp=document.getElementById('lchi'),q=inp.value.trim();if(!q)return;inp.value='';
   addMsg('lchm','user',q);liveH.push({role:'user',content:q});const th=addMsg('lchm','ai','...');th.classList.add('th');
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:buildLP(),messages:liveH})});
+    const r=await fetch('/api/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:buildLP(),messages:liveH})});
     const d=await r.json(),rep=(d.content||[]).map(b=>b.text||'').join('');
     th.textContent=rep;th.classList.remove('th');liveH.push({role:'assistant',content:rep});if(voiceOn)speak(rep);
   }catch(e){th.textContent='Error.';th.classList.remove('th');}
