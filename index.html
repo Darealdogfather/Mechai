@@ -6,809 +6,983 @@
 <meta name="theme-color" content="#000d14">
 <meta name="mobile-web-app-capable" content="true">
 <meta name="apple-mobile-web-app-capable" content="true">
-<title>MECH-AI · Diagnostic System</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<title>MECH-AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
-:root{--c:#00c8ff;--r:#ff3c3c;--o:#ffaa00;--g:#00ff88;--bg:#000d14;--pan:rgba(0,20,35,0.97);}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:var(--bg);color:var(--c);font-family:'Share Tech Mono',monospace;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,0.02) 2px,rgba(0,200,255,0.02) 4px);pointer-events:none;z-index:0;}
-.glow{position:fixed;top:-150px;left:50%;transform:translateX(-50%);width:600px;height:350px;background:radial-gradient(ellipse,rgba(0,150,255,0.06) 0%,transparent 70%);pointer-events:none;z-index:0;}
+html,body{height:100%;width:100%;overflow:hidden;background:#000;font-family:'Share Tech Mono',monospace;color:#00c8ff;}
+
 /* BOOT */
-#boot{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.7s;}
+#boot{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.6s;}
 #boot.gone{opacity:0;pointer-events:none;}
-#boot-text{width:min(540px,88vw);font-size:12px;line-height:2.3;color:var(--c);text-shadow:0 0 8px var(--c);white-space:pre-wrap;}
-.cur{display:inline-block;width:8px;height:14px;background:var(--c);vertical-align:middle;animation:blink 1s infinite;}
+#btxt{width:min(520px,88vw);font-size:12px;line-height:2.3;color:#00c8ff;text-shadow:0 0 8px #00c8ff;white-space:pre-wrap;}
+.cur{display:inline-block;width:8px;height:14px;background:#00c8ff;vertical-align:middle;animation:blink 1s infinite;}
+
 /* MODALS */
-.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:8000;display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto;}
-.modal-box{background:#000f1a;border-radius:6px;max-width:540px;width:100%;margin:auto;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:8000;display:none;align-items:center;justify-content:center;padding:14px;overflow-y:auto;}
+.mbox{background:#000f1a;border-radius:6px;max-width:520px;width:100%;margin:auto;}
+
 /* DISCLAIMER */
-#disc-box{border:1px solid rgba(255,170,0,0.35);}
-#disc-hdr{background:rgba(255,170,0,0.07);border-bottom:1px solid rgba(255,170,0,0.18);padding:14px 18px;display:flex;align-items:center;gap:10px;}
-#disc-title{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--o);}
-#disc-by{font-size:9px;color:rgba(255,170,0,0.45);letter-spacing:1px;margin-top:2px;}
-#disc-body{padding:18px;overflow-y:auto;max-height:50vh;font-size:11px;line-height:1.9;color:#9ab8c8;}
-#disc-body h3{color:var(--o);font-size:9px;letter-spacing:2px;margin:14px 0 5px;font-family:'Orbitron',monospace;}
-#disc-body p{margin-bottom:7px;}
-#disc-body strong{color:#ddd;}
-#disc-foot{padding:14px 18px;border-top:1px solid rgba(255,170,0,0.14);display:flex;flex-direction:column;gap:10px;}
-#disc-check-label{display:flex;align-items:flex-start;gap:10px;font-size:11px;color:#9ab8c8;cursor:pointer;}
-#disc-cb{margin-top:2px;accent-color:var(--o);width:16px;height:16px;flex-shrink:0;}
-#disc-accept{padding:13px;background:var(--o);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:2px;cursor:pointer;font-weight:700;opacity:0.35;pointer-events:none;transition:opacity 0.2s;}
-#disc-accept.ok{opacity:1;pointer-events:all;}
-/* LANG */
-#lang-box{border:1px solid rgba(0,200,255,0.28);padding:24px;}
-#lang-box h2{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;margin-bottom:18px;text-align:center;}
-.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.lang-btn{padding:15px;background:transparent;border:1px solid rgba(0,200,255,0.22);color:var(--c);font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:1px;cursor:pointer;border-radius:3px;transition:all 0.2s;text-align:center;}
-.lang-btn:active{background:var(--c);color:#000;}
-.lang-flag{font-size:20px;display:block;margin-bottom:4px;}
+#dbox{border:1px solid rgba(255,170,0,0.35);}
+#dhdr{background:rgba(255,170,0,0.07);border-bottom:1px solid rgba(255,170,0,0.18);padding:14px 16px;}
+#dtitle{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:#ffaa00;}
+#dby{font-size:9px;color:rgba(255,170,0,0.45);margin-top:2px;}
+#dbody{padding:16px;max-height:42vh;overflow-y:auto;font-size:11px;line-height:1.9;color:#9ab8c8;}
+#dbody h3{color:#ffaa00;font-size:9px;letter-spacing:2px;margin:12px 0 5px;font-family:'Orbitron',monospace;}
+#dbody p{margin-bottom:7px;}
+#dbody strong{color:#ddd;}
+#dfoot{padding:14px 16px;border-top:1px solid rgba(255,170,0,0.14);display:flex;flex-direction:column;gap:10px;}
+#dcheck{display:flex;align-items:flex-start;gap:10px;font-size:11px;color:#9ab8c8;cursor:pointer;}
+#dcb{margin-top:2px;accent-color:#ffaa00;width:16px;height:16px;flex-shrink:0;}
+#dbtn{padding:13px;background:#ffaa00;color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:2px;cursor:pointer;font-weight:700;opacity:0.35;pointer-events:none;transition:opacity 0.2s;}
+#dbtn.ok{opacity:1;pointer-events:all;}
+
 /* VEHICLE */
-#veh-box{border:1px solid rgba(0,200,255,0.28);padding:20px;}
-#veh-box h2{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;margin-bottom:14px;}
-.fg{margin-bottom:12px;}
-.fg label{display:block;font-size:9px;letter-spacing:2px;color:rgba(0,200,255,0.55);margin-bottom:5px;}
-.fg input,.fg select{width:100%;background:#000d14;border:1px solid rgba(0,200,255,0.22);color:var(--c);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 11px;border-radius:2px;outline:none;}
+#vbox{border:1px solid rgba(0,200,255,0.28);padding:18px;}
+#vbox h2{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;margin-bottom:14px;}
+.fg{margin-bottom:11px;}
+.fg label{display:block;font-size:9px;letter-spacing:2px;color:rgba(0,200,255,0.5);margin-bottom:5px;}
+.fg input,.fg select{width:100%;background:#000d14;border:1px solid rgba(0,200,255,0.22);color:#00c8ff;font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 11px;border-radius:2px;outline:none;}
 .fg select option{background:#000f1a;}
-.fg input:focus,.fg select:focus{border-color:var(--c);}
-.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.btn-save{width:100%;padding:13px;background:var(--c);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:2px;cursor:pointer;font-weight:700;margin-top:4px;}
-/* HEADER */
-header{position:sticky;top:0;z-index:100;background:rgba(0,8,18,0.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,200,255,0.1);}
-.hdr-top{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo-ring{width:30px;height:30px;border:2px solid var(--c);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;}
-.logo-dot{width:9px;height:9px;background:var(--c);border-radius:50%;box-shadow:0 0 8px var(--c);}
-.logo-pulse{position:absolute;inset:-5px;border:1px solid rgba(0,200,255,0.28);border-radius:50%;animation:ping 2.5s ease-out infinite;}
-.logo-title{font-family:'Orbitron',monospace;font-size:14px;font-weight:900;letter-spacing:3px;text-shadow:0 0 10px var(--c);}
-.logo-sub{font-size:8px;color:rgba(0,200,255,0.38);letter-spacing:2px;}
-.hdr-r{text-align:right;}
-#clock{font-size:10px;color:rgba(0,200,255,0.5);letter-spacing:1px;}
-#slbl{font-size:9px;color:rgba(0,200,255,0.32);letter-spacing:2px;margin-top:1px;}
-#vchip{padding:7px 13px;background:rgba(0,200,255,0.03);border-bottom:1px solid rgba(0,200,255,0.07);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
-#vchip-txt{font-size:10px;letter-spacing:1px;color:rgba(0,200,255,0.65);}
-#vchip-edit{font-size:9px;color:rgba(0,200,255,0.32);letter-spacing:1px;}
-.tab-nav{display:flex;border-top:1px solid rgba(0,200,255,0.07);}
-.tab-btn{flex:1;padding:9px 2px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;background:transparent;border:none;color:rgba(0,200,255,0.35);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
-.tab-btn.active{color:var(--c);border-bottom-color:var(--c);background:rgba(0,200,255,0.04);}
-/* PAGES */
-.page{display:none;max-width:680px;margin:0 auto;padding:13px 13px 90px;position:relative;z-index:1;}
-.page.active{display:block;}
-/* VIEWFINDER */
-#vf{position:relative;background:#000;border:1px solid rgba(0,200,255,0.18);border-radius:4px;overflow:hidden;aspect-ratio:16/9;margin-bottom:11px;transition:border-color 0.4s;}
-.hc{position:absolute;width:20px;height:20px;z-index:10;transition:border-color 0.4s;}
-.hc.tl{top:7px;left:7px;border-top:2px solid var(--c);border-left:2px solid var(--c);}
-.hc.tr{top:7px;right:7px;border-top:2px solid var(--c);border-right:2px solid var(--c);}
-.hc.bl{bottom:7px;left:7px;border-bottom:2px solid var(--c);border-left:2px solid var(--c);}
-.hc.br{bottom:7px;right:7px;border-bottom:2px solid var(--c);border-right:2px solid var(--c);}
-#sl{display:none;position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--c),transparent);box-shadow:0 0 14px var(--c);z-index:20;animation:scanline 1.4s linear infinite;}
-#vid{width:100%;height:100%;object-fit:cover;display:none;}
-#snap{width:100%;height:100%;object-fit:cover;display:none;transition:filter 0.5s;}
-#cv{display:none;}
-#sb{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;opacity:0.3;}
-#sb svg{width:46px;height:46px;}
-.s1{font-size:10px;letter-spacing:3px;}
-.s2{font-size:9px;color:rgba(0,200,255,0.42);}
-#aov{display:none;position:absolute;inset:0;background:rgba(0,10,20,0.78);z-index:20;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
-.spin{width:46px;height:46px;border:2px solid rgba(0,200,255,0.14);border-top:2px solid var(--c);border-radius:50%;animation:spin 0.9s linear infinite;}
-#ltag{display:none;position:absolute;bottom:9px;left:11px;font-size:9px;color:rgba(0,200,255,0.65);letter-spacing:2px;z-index:10;}
-/* CONTROLS */
-#ctrls{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
-.btn{flex:1;padding:13px 6px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;text-transform:uppercase;transition:all 0.15s;border:none;outline:none;min-width:70px;}
-.bp{background:transparent;border:1px solid var(--c);color:var(--c);}
-.bp:active{background:var(--c);color:#000;}
-.bsc{flex:2;background:var(--c);color:#000;font-weight:700;}
-.bsc:active{background:#009ec8;}
-.bd{background:transparent;border:1px solid rgba(255,60,60,0.38);color:var(--r);}
-.bd:active{background:var(--r);color:#000;}
-.bi{flex:0 0 46px;padding:13px 0;font-size:15px;background:transparent;border:1px solid rgba(0,200,255,0.22);color:var(--c);}
-.bi.on{background:rgba(255,200,0,0.1);border-color:#ffcc00;color:#ffcc00;}
-.bg{background:transparent;border:1px solid rgba(0,255,136,0.32);color:var(--g);font-size:9px;}
-.bg.on{background:rgba(0,255,136,0.07);}
-/* VOICE */
-#vtog{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(0,200,255,0.16);border-radius:2px;margin-bottom:9px;cursor:pointer;font-size:10px;letter-spacing:2px;background:transparent;color:rgba(0,200,255,0.42);width:100%;transition:all 0.2s;}
-#vtog.on{color:var(--g);border-color:rgba(0,255,136,0.28);background:rgba(0,255,136,0.04);}
-#vtog .vd{width:8px;height:8px;border-radius:50%;background:rgba(0,200,255,0.28);transition:background 0.2s;flex-shrink:0;}
-#vtog.on .vd{background:var(--g);box-shadow:0 0 6px var(--g);}
-#vbar{display:none;align-items:center;gap:10px;padding:9px 12px;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.16);border-radius:2px;margin-bottom:9px;font-size:10px;color:var(--g);letter-spacing:2px;}
-.vdots span{display:inline-block;width:4px;height:4px;background:var(--g);border-radius:50%;margin:0 2px;animation:vdot 1.2s infinite;}
-.vdots span:nth-child(2){animation-delay:.2s;}
-.vdots span:nth-child(3){animation-delay:.4s;}
-#vlbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;background:transparent;border:1px solid rgba(0,200,255,0.18);border-radius:2px;margin-bottom:9px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(0,200,255,0.45);transition:all 0.2s;}
-#vlbtn.on{color:var(--r);border-color:rgba(255,60,60,0.35);background:rgba(255,60,60,0.04);animation:pborder 1.5s infinite;}
-#vlbtn .md{width:8px;height:8px;border-radius:50%;background:rgba(0,200,255,0.35);transition:background 0.2s;flex-shrink:0;}
-#vlbtn.on .md{background:var(--r);box-shadow:0 0 8px var(--r);}
-/* ERROR */
-#err{display:none;border:1px solid rgba(255,60,60,0.26);background:#150000;padding:11px;border-radius:2px;color:#ff6666;font-size:11px;letter-spacing:1px;margin-bottom:10px;line-height:1.7;}
-/* AD */
-#ad{background:rgba(0,8,18,0.95);border:1px solid rgba(0,200,255,0.08);border-radius:3px;padding:9px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+.fgr{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+#vsave{width:100%;padding:13px;background:#00c8ff;color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:2px;cursor:pointer;font-weight:700;margin-top:4px;}
+
+/* LANG */
+#lbox{border:1px solid rgba(0,200,255,0.28);padding:22px;max-width:360px;}
+#lbox h2{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;margin-bottom:16px;text-align:center;}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.lbtn{padding:15px;background:transparent;border:1px solid rgba(0,200,255,0.22);color:#00c8ff;font-family:'Share Tech Mono',monospace;font-size:12px;cursor:pointer;border-radius:3px;text-align:center;transition:all 0.2s;}
+.lbtn:active{background:#00c8ff;color:#000;}
+.lflag{font-size:20px;display:block;margin-bottom:4px;}
+
+/* HISTORY MODAL */
+#hbox{border:1px solid rgba(0,200,255,0.28);padding:0;max-width:560px;max-height:85vh;display:flex;flex-direction:column;}
+#hhdr{background:rgba(0,200,255,0.05);border-bottom:1px solid rgba(0,200,255,0.15);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+#htitle{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;}
+#hclose{background:transparent;border:1px solid rgba(0,200,255,0.25);color:#00c8ff;font-family:'Share Tech Mono',monospace;font-size:9px;padding:5px 10px;cursor:pointer;border-radius:2px;}
+#hlist{overflow-y:auto;flex:1;padding:12px;display:flex;flex-direction:column;gap:10px;}
+.hcard{border:1px solid rgba(0,200,255,0.14);border-radius:4px;overflow:hidden;cursor:pointer;}
+.hcard-h{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;background:rgba(0,200,255,0.04);border-bottom:1px solid rgba(0,200,255,0.07);}
+.hcard-t{font-size:10px;letter-spacing:1px;}
+.hcard-ts{font-size:9px;color:rgba(0,200,255,0.38);}
+.hcard-img{width:100%;max-height:90px;object-fit:cover;filter:brightness(0.6) hue-rotate(160deg);}
+.hcard-p{padding:9px 11px;font-size:11px;color:#7ab0c8;line-height:1.6;}
+.sbadge{font-size:9px;padding:2px 7px;border-radius:2px;font-weight:700;}
+.sbc{background:rgba(255,60,60,0.1);color:#ff3c3c;border:1px solid rgba(255,60,60,0.22);}
+.sbw{background:rgba(255,170,0,0.1);color:#ffaa00;border:1px solid rgba(255,170,0,0.22);}
+.sba{background:rgba(0,255,136,0.07);color:#00ff88;border:1px solid rgba(0,255,136,0.18);}
+.sbr{background:rgba(0,200,255,0.07);color:#00c8ff;border:1px solid rgba(0,200,255,0.18);}
+#hemp{text-align:center;padding:40px;opacity:0.3;font-size:11px;letter-spacing:2px;line-height:2.4;}
+
+/* SETTINGS MODAL */
+#sbox{border:1px solid rgba(0,200,255,0.28);padding:0;max-width:480px;}
+#shdr{background:rgba(0,200,255,0.05);border-bottom:1px solid rgba(0,200,255,0.15);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+#stitle{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;}
+#sclose{background:transparent;border:1px solid rgba(0,200,255,0.25);color:#00c8ff;font-family:'Share Tech Mono',monospace;font-size:9px;padding:5px 10px;cursor:pointer;border-radius:2px;}
+#sbody{padding:16px;display:flex;flex-direction:column;gap:11px;}
+.ssec{border:1px solid rgba(0,200,255,0.13);border-radius:3px;overflow:hidden;}
+.ssh{background:rgba(0,200,255,0.04);border-bottom:1px solid rgba(0,200,255,0.09);padding:8px 12px;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;}
+.ssb{padding:12px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#7ab0c8;}
+.ssb button{padding:6px 12px;background:transparent;border:1px solid rgba(0,200,255,0.22);color:#00c8ff;font-family:'Share Tech Mono',monospace;font-size:9px;cursor:pointer;border-radius:2px;}
+.don{width:100%;padding:12px;background:rgba(255,170,0,0.08);border:1px solid rgba(255,170,0,0.25);color:#ffaa00;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:2px;margin-top:4px;}
+
+/* MAIN CAMERA UI */
+#app{position:fixed;inset:0;display:none;}
+#video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+#canvas{display:none;}
+#stab-canvas{display:none;}
+
+/* HUD OVERLAY */
+#hud{position:absolute;inset:0;pointer-events:none;}
+
+/* Corner markers */
+.corner{position:absolute;width:28px;height:28px;}
+.corner.tl{top:12px;left:12px;border-top:2px solid #00c8ff;border-left:2px solid #00c8ff;}
+.corner.tr{top:12px;right:12px;border-top:2px solid #00c8ff;border-right:2px solid #00c8ff;}
+.corner.bl{bottom:70px;left:12px;border-bottom:2px solid #00c8ff;border-left:2px solid #00c8ff;}
+.corner.br{bottom:70px;right:12px;border-bottom:2px solid #00c8ff;border-right:2px solid #00c8ff;}
+
+/* Top HUD bar */
+#hud-top{position:absolute;top:0;left:0;right:0;padding:10px 14px;background:linear-gradient(to bottom,rgba(0,0,0,0.7),transparent);display:flex;align-items:center;justify-content:space-between;}
+#hud-logo{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;letter-spacing:3px;color:#00c8ff;text-shadow:0 0 10px #00c8ff;}
+#hud-right{text-align:right;}
+#hud-clock{font-size:10px;color:rgba(0,200,255,0.6);letter-spacing:1px;}
+#hud-status{font-size:9px;color:rgba(0,200,255,0.4);letter-spacing:2px;margin-top:1px;}
+
+/* Vehicle chip */
+#vchip{position:absolute;top:52px;left:0;right:0;display:flex;justify-content:center;}
+#vchip-inner{background:rgba(0,0,0,0.55);border:1px solid rgba(0,200,255,0.2);border-radius:20px;padding:5px 14px;font-size:10px;color:rgba(0,200,255,0.65);letter-spacing:1px;pointer-events:all;cursor:pointer;}
+
+/* CENTER SCAN INDICATOR */
+#scan-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);display:none;flex-direction:column;align-items:center;gap:10px;}
+#ring-outer{width:120px;height:120px;border:2px solid rgba(0,200,255,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;}
+#ring-progress{position:absolute;inset:-4px;border-radius:50%;border:3px solid transparent;border-top-color:#00c8ff;animation:spin 1s linear infinite;}
+#ring-inner{width:80px;height:80px;border:1px solid rgba(0,200,255,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+#ring-dot{width:12px;height:12px;background:#00c8ff;border-radius:50%;box-shadow:0 0 12px #00c8ff;}
+#ring-label{font-size:10px;letter-spacing:3px;color:#00c8ff;text-shadow:0 0 8px #00c8ff;}
+#ring-sub{font-size:9px;color:rgba(0,200,255,0.5);letter-spacing:1px;}
+
+/* STABILIZING */
+#stab-indicator{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);display:none;flex-direction:column;align-items:center;gap:8px;}
+#stab-bar-wrap{width:180px;height:4px;background:rgba(0,200,255,0.15);border-radius:2px;overflow:hidden;}
+#stab-bar{height:100%;width:0%;background:#00c8ff;border-radius:2px;transition:width 0.1s;}
+#stab-txt{font-size:10px;letter-spacing:3px;color:#00c8ff;}
+
+/* AI OVERLAY PANEL */
+#ai-panel{position:absolute;left:0;right:0;bottom:65px;background:linear-gradient(to top,rgba(0,5,15,0.96),rgba(0,5,15,0.85));border-top:1px solid rgba(0,200,255,0.2);padding:14px 14px 10px;display:none;max-height:55vh;overflow-y:auto;}
+
+/* Part identified banner */
+#part-banner{display:none;position:absolute;top:80px;left:14px;right:14px;background:rgba(0,200,255,0.12);border:1px solid rgba(0,200,255,0.35);border-radius:4px;padding:10px 14px;pointer-events:none;}
+#part-name{font-size:14px;letter-spacing:2px;color:#fff;font-family:'Orbitron',monospace;}
+#part-sub{font-size:10px;color:rgba(0,200,255,0.7);margin-top:2px;}
+
+/* QUESTION panel */
+#question-panel{display:none;flex-direction:column;gap:12px;}
+#q-text{font-size:13px;color:#fff;line-height:1.7;margin-bottom:4px;}
+#q-btns{display:flex;gap:10px;}
+.qbtn{flex:1;padding:14px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;border-radius:3px;cursor:pointer;border:none;font-weight:700;transition:all 0.15s;}
+#qbtn-yes{background:#00c8ff;color:#000;}
+#qbtn-no{background:transparent;border:1px solid rgba(0,200,255,0.3);color:#00c8ff;}
+#qbtn-yes:active{background:#009ec8;}
+#qbtn-no:active{background:rgba(0,200,255,0.1);}
+
+/* JOB PREP panel */
+#prep-panel{display:none;flex-direction:column;gap:12px;}
+#prep-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:#00c8ff;margin-bottom:4px;}
+.prep-sec{border:1px solid rgba(0,200,255,0.15);border-radius:3px;padding:10px;}
+.prep-sec-lbl{font-size:8px;letter-spacing:2px;color:rgba(0,200,255,0.5);margin-bottom:7px;}
+.prep-items{font-size:11px;color:#a0cfe0;line-height:2.1;}
+.torque-item{color:#ffcc88;}
+#prep-confirm{width:100%;padding:14px;background:#00ff88;color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;margin-top:4px;}
+#prep-confirm:active{background:#00cc66;}
+#diff-time{display:flex;gap:8px;margin-bottom:4px;}
+.dt-box{flex:1;border:1px solid rgba(0,200,255,0.15);border-radius:3px;padding:9px;text-align:center;}
+.dt-lbl{font-size:8px;letter-spacing:2px;color:rgba(0,200,255,0.45);margin-bottom:4px;}
+.dt-val{font-size:12px;color:#fff;}
+
+/* STEP panel */
+#step-panel{display:none;flex-direction:column;gap:10px;}
+#step-header{display:flex;align-items:center;justify-content:space-between;}
+#step-counter{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:rgba(0,200,255,0.5);}
+#step-progress-wrap{flex:1;height:3px;background:rgba(0,200,255,0.15);border-radius:2px;margin:0 12px;overflow:hidden;}
+#step-progress{height:100%;background:#00c8ff;border-radius:2px;transition:width 0.4s;}
+#step-text{font-size:13px;color:#fff;line-height:1.8;padding:10px 0;}
+#step-torque{display:none;background:rgba(255,170,0,0.08);border:1px solid rgba(255,170,0,0.2);border-radius:3px;padding:9px;font-size:11px;color:#ffcc88;}
+#step-btns{display:flex;gap:8px;margin-top:4px;}
+#step-prev{flex:0 0 46px;padding:13px 0;background:transparent;border:1px solid rgba(0,200,255,0.25);color:#00c8ff;font-family:'Share Tech Mono',monospace;font-size:16px;border-radius:3px;cursor:pointer;}
+#step-next{flex:1;padding:13px;background:#00c8ff;color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
+#step-next:active{background:#009ec8;}
+#step-done{width:100%;padding:14px;background:#00ff88;color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;display:none;}
+#step-voice-hint{font-size:9px;color:rgba(0,200,255,0.35);text-align:center;letter-spacing:1px;}
+
+/* COMPLETE panel */
+#complete-panel{display:none;flex-direction:column;align-items:center;gap:12px;padding:10px 0;}
+#complete-icon{font-size:36px;}
+#complete-title{font-family:'Orbitron',monospace;font-size:13px;letter-spacing:3px;color:#00ff88;text-shadow:0 0 10px #00ff88;}
+#complete-text{font-size:11px;color:#7ab0c8;text-align:center;line-height:1.8;}
+#complete-new{padding:13px 24px;background:#00c8ff;color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
+
+/* VOICE BAR */
+#voice-bar{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:none;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
+#vbar-ring{width:70px;height:70px;border:2px solid rgba(255,60,60,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:pulse-ring 1.5s infinite;}
+#vbar-dot{width:28px;height:28px;background:#ff3c3c;border-radius:50%;box-shadow:0 0 16px #ff3c3c;animation:pulse-dot 1.5s infinite;}
+#vbar-txt{font-size:10px;letter-spacing:3px;color:#ff3c3c;}
+
+/* BOTTOM CONTROLS */
+#bottom{position:absolute;bottom:0;left:0;right:0;height:65px;background:rgba(0,0,0,0.85);border-top:1px solid rgba(0,200,255,0.12);display:flex;align-items:center;justify-content:space-around;padding:0 8px;gap:6px;pointer-events:all;}
+.ctrl-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;background:transparent;border:none;cursor:pointer;color:rgba(0,200,255,0.45);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;transition:color 0.2s;min-width:52px;}
+.ctrl-btn .icon{font-size:18px;}
+.ctrl-btn.active,.ctrl-btn:active{color:#00c8ff;}
+#btn-scan-main{flex:1;max-width:120px;padding:10px 8px;background:#00c8ff;color:#000;border:none;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:2px;}
+#btn-scan-main .icon{font-size:20px;}
+#btn-scan-main.scanning{background:#ff3c3c;animation:pulse-scan 1s infinite;}
+#btn-torch-main{}.torch-on{color:#ffcc00!important;}
+
+/* AD BANNER */
+#ad{position:absolute;bottom:65px;left:0;right:0;background:rgba(0,5,12,0.92);border-top:1px solid rgba(0,200,255,0.08);padding:6px 14px;display:flex;align-items:center;gap:10px;transition:opacity 0.3s;}
 #ad.hide{display:none;}
-.ad-lbl{font-size:8px;color:rgba(0,200,255,0.25);letter-spacing:2px;flex-shrink:0;}
-.ad-c{display:flex;align-items:center;gap:10px;flex:1;justify-content:center;}
-.ad-name{font-size:11px;font-weight:700;letter-spacing:1px;color:rgba(0,200,255,0.5);}
-.ad-txt{font-size:10px;color:rgba(0,200,255,0.38);}
-.ad-btn{font-size:9px;padding:5px 10px;background:transparent;border:1px solid rgba(0,200,255,0.22);color:rgba(0,200,255,0.5);border-radius:2px;cursor:pointer;font-family:'Share Tech Mono',monospace;letter-spacing:1px;white-space:nowrap;}
-/* RESULTS */
-#res{display:none;border-radius:4px;overflow:hidden;border:1px solid rgba(0,200,255,0.2);margin-bottom:10px;animation:fi 0.4s ease;}
-#rh{background:rgba(0,200,255,0.05);border-bottom:1px solid rgba(0,200,255,0.16);padding:9px 13px;display:flex;justify-content:space-between;align-items:center;}
-#rt{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;}
-#rts{font-size:9px;color:rgba(0,200,255,0.42);}
-#rb{padding:13px;font-size:12px;line-height:1.9;background:var(--pan);}
-/* JOB CARD */
-#jc{display:none;border:1px solid rgba(0,200,255,0.16);border-radius:4px;overflow:hidden;margin-bottom:10px;}
-#jch{background:rgba(0,200,255,0.05);border-bottom:1px solid rgba(0,200,255,0.1);padding:8px 13px;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;}
-#jcb{padding:11px 13px;background:var(--pan);display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.jstat{border:1px solid rgba(0,200,255,0.1);border-radius:3px;padding:9px;background:rgba(0,200,255,0.03);}
-.jlbl{font-size:8px;letter-spacing:2px;color:rgba(0,200,255,0.45);margin-bottom:4px;}
-.jval{font-size:12px;color:#fff;}
-#jtl{grid-column:1/-1;border:1px solid rgba(0,200,255,0.1);border-radius:3px;padding:9px;background:rgba(0,200,255,0.03);}
-.jtl-lbl{font-size:8px;letter-spacing:2px;color:rgba(0,200,255,0.45);margin-bottom:5px;}
-.jtl-items{font-size:11px;color:#a0cfe0;line-height:2;}
-#jto{display:none;grid-column:1/-1;border:1px solid rgba(255,170,0,0.18);border-radius:3px;padding:9px;background:rgba(255,170,0,0.03);}
-.jto-lbl{font-size:8px;letter-spacing:2px;color:rgba(255,170,0,0.55);margin-bottom:5px;}
-.jto-items{font-size:11px;color:#ffcc88;line-height:2;}
-#jcl{display:none;grid-column:1/-1;border:1px solid rgba(0,255,136,0.16);border-radius:3px;padding:9px;background:rgba(0,255,136,0.03);}
-.jcl-lbl{font-size:8px;letter-spacing:2px;color:rgba(0,255,136,0.55);margin-bottom:7px;}
-.cli{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,255,136,0.07);cursor:pointer;font-size:11px;color:#8ab8a0;transition:color 0.2s;}
-.cli:last-child{border-bottom:none;}
-.cli.done{color:rgba(0,255,136,0.45);text-decoration:line-through;}
-.clb{width:14px;height:14px;border:1px solid rgba(0,255,136,0.38);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:10px;}
-.cli.done .clb{background:rgba(0,255,136,0.18);border-color:var(--g);color:var(--g);}
-/* CHAT */
-#chat{display:none;border:1px solid rgba(0,200,255,0.16);border-radius:4px;overflow:hidden;margin-bottom:10px;}
-#chh{background:rgba(0,200,255,0.05);border-bottom:1px solid rgba(0,200,255,0.1);padding:8px 13px;font-size:9px;letter-spacing:3px;font-family:'Orbitron',monospace;}
-#chm{max-height:230px;overflow-y:auto;padding:11px;background:var(--pan);display:flex;flex-direction:column;gap:8px;}
-.msg{padding:9px 11px;border-radius:2px;font-size:11px;line-height:1.8;max-width:92%;}
-.mu{background:rgba(0,200,255,0.06);border:1px solid rgba(0,200,255,0.16);color:var(--c);align-self:flex-end;}
-.ma{background:rgba(0,20,35,0.9);border:1px solid rgba(0,200,255,0.09);color:#88b4c8;align-self:flex-start;}
-.ma.th{color:rgba(0,200,255,0.32);font-style:italic;}
-#chir{display:flex;border-top:1px solid rgba(0,200,255,0.1);}
-#chi{flex:1;background:transparent;border:none;outline:none;padding:11px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--c);}
-#chi::placeholder{color:rgba(0,200,255,0.25);}
-#chs{padding:11px 13px;background:transparent;border:none;border-left:1px solid rgba(0,200,255,0.1);color:var(--c);cursor:pointer;font-size:14px;}
-/* LINE STYLES */
-.lh{color:var(--c);font-weight:700;margin-top:12px;font-size:12px;letter-spacing:1px;}
-.lb{color:#fff;font-weight:600;margin-top:4px;}
-.ls{color:#a0cfe0;padding-left:12px;margin-top:4px;border-left:2px solid rgba(0,200,255,0.2);}
-.lc2{color:var(--r);font-weight:700;font-size:13px;}
-.lw2{color:var(--o);font-weight:700;font-size:13px;}
-.lac{color:var(--g);font-weight:700;font-size:13px;}
-.lr2{color:var(--c);font-weight:700;font-size:13px;}
-.ln{color:#7ab0c8;margin-top:2px;}
-/* LIVE */
-#vfl{position:relative;background:#000;border:1px solid rgba(0,255,136,0.18);border-radius:4px;overflow:hidden;aspect-ratio:16/9;margin-bottom:11px;}
-#vidl{width:100%;height:100%;object-fit:cover;display:none;}
-#cvl{display:none;}
-#lov{display:none;position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,0.55) 0%,transparent 28%,transparent 68%,rgba(0,0,0,0.65) 100%);}
-#llbl{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:3px;color:var(--g);text-shadow:0 0 8px var(--g);animation:ptxt 2s infinite;}
-#lguid{position:absolute;bottom:10px;left:10px;right:10px;font-size:11px;color:#fff;line-height:1.6;text-shadow:0 1px 4px #000;}
-#lsb{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;opacity:0.3;font-size:10px;letter-spacing:3px;}
-#lsb small{font-size:9px;color:rgba(0,200,255,0.42);}
-#lctrls{display:flex;gap:8px;margin-bottom:11px;}
-#lcht{display:none;border:1px solid rgba(0,255,136,0.16);border-radius:4px;overflow:hidden;margin-bottom:11px;}
-#lchh{background:rgba(0,255,136,0.04);border-bottom:1px solid rgba(0,255,136,0.1);padding:8px 13px;font-size:9px;letter-spacing:3px;color:var(--g);font-family:'Orbitron',monospace;}
-#lchm{max-height:190px;overflow-y:auto;padding:11px;background:var(--pan);display:flex;flex-direction:column;gap:8px;font-size:11px;}
-#lchir{display:flex;border-top:1px solid rgba(0,255,136,0.1);}
-#lchi{flex:1;background:transparent;border:none;outline:none;padding:11px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--c);}
-#lchi::placeholder{color:rgba(0,200,255,0.25);}
-#lchs{padding:11px 13px;background:transparent;border:none;border-left:1px solid rgba(0,255,136,0.1);color:var(--g);cursor:pointer;font-size:14px;}
-/* HISTORY */
-#hlv{} 
-#hll{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;}
-#hlt{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;}
-#hcl{background:transparent;border:1px solid rgba(255,60,60,0.2);color:rgba(255,60,60,0.52);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:5px 10px;cursor:pointer;border-radius:2px;}
-#hlist{display:flex;flex-direction:column;gap:10px;}
-#hemp{text-align:center;padding:46px 0;opacity:0.26;font-size:11px;letter-spacing:2px;line-height:2.5;}
-#hdet{display:none;}
-.bk{background:transparent;border:1px solid rgba(0,200,255,0.22);color:var(--c);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;padding:8px 13px;cursor:pointer;border-radius:2px;margin-bottom:11px;}
-.hcard{border:1px solid rgba(0,200,255,0.14);border-radius:4px;overflow:hidden;cursor:pointer;transition:border-color 0.2s;}
-.hcard:active{border-color:var(--c);}
-.hch{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:rgba(0,200,255,0.04);border-bottom:1px solid rgba(0,200,255,0.07);}
-.hct{font-size:10px;letter-spacing:1px;}
-.hci{width:100%;max-height:100px;object-fit:cover;border-bottom:1px solid rgba(0,200,255,0.07);filter:brightness(0.62) hue-rotate(160deg);}
-.hcp{padding:9px 11px;font-size:11px;color:#7ab0c8;line-height:1.6;}
-.hcts{font-size:9px;color:rgba(0,200,255,0.35);}
-.sb{font-size:9px;padding:2px 7px;border-radius:2px;font-weight:700;letter-spacing:1px;}
-.sbc{background:rgba(255,60,60,0.1);color:var(--r);border:1px solid rgba(255,60,60,0.22);}
-.sbw{background:rgba(255,170,0,0.1);color:var(--o);border:1px solid rgba(255,170,0,0.22);}
-.sba{background:rgba(0,255,136,0.07);color:var(--g);border:1px solid rgba(0,255,136,0.18);}
-.sbr{background:rgba(0,200,255,0.07);color:var(--c);border:1px solid rgba(0,200,255,0.18);}
-/* SETTINGS */
-.stsec{border:1px solid rgba(0,200,255,0.13);border-radius:4px;overflow:hidden;margin-bottom:11px;}
-.sth{background:rgba(0,200,255,0.04);border-bottom:1px solid rgba(0,200,255,0.09);padding:9px 13px;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;}
-.stb{padding:13px;background:var(--pan);display:flex;flex-direction:column;gap:9px;}
-.str{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#7ab0c8;}
-.str button{padding:7px 13px;background:transparent;border:1px solid rgba(0,200,255,0.22);color:var(--c);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;border-radius:2px;}
-.don{width:100%;padding:13px;background:rgba(255,170,0,0.08);border:1px solid rgba(255,170,0,0.28);color:var(--o);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:2px;}
-/* FOOTER */
-footer{text-align:center;padding:16px 0 28px;font-size:9px;color:rgba(0,200,255,0.12);letter-spacing:2px;position:relative;z-index:1;line-height:2.2;}
+.ad-lbl{font-size:7px;color:rgba(0,200,255,0.22);letter-spacing:2px;}
+.ad-c{flex:1;display:flex;align-items:center;gap:8px;justify-content:center;}
+.ad-n{font-size:10px;font-weight:700;color:rgba(0,200,255,0.5);}
+.ad-t{font-size:9px;color:rgba(0,200,255,0.35);}
+.ad-b{font-size:8px;padding:4px 9px;background:transparent;border:1px solid rgba(0,200,255,0.2);color:rgba(0,200,255,0.45);border-radius:2px;cursor:pointer;font-family:'Share Tech Mono',monospace;}
+
+/* SCANNING PROGRESS overlay (top of screen) */
+#scan-overlay{position:absolute;top:0;left:0;right:0;bottom:65px;display:none;pointer-events:none;}
+#scan-progress-bar{position:absolute;top:0;left:0;height:3px;background:#00c8ff;box-shadow:0 0 8px #00c8ff;width:0%;transition:width 0.1s linear;}
+#scan-corners{position:absolute;inset:20px;}
+.sc{position:absolute;width:40px;height:40px;}
+.sc.tl{top:0;left:0;border-top:3px solid #00c8ff;border-left:3px solid #00c8ff;animation:corner-pulse 1s infinite;}
+.sc.tr{top:0;right:0;border-top:3px solid #00c8ff;border-right:3px solid #00c8ff;animation:corner-pulse 1s infinite 0.25s;}
+.sc.bl{bottom:0;left:0;border-bottom:3px solid #00c8ff;border-left:3px solid #00c8ff;animation:corner-pulse 1s infinite 0.5s;}
+.sc.br{bottom:0;right:0;border-bottom:3px solid #00c8ff;border-right:3px solid #00c8ff;animation:corner-pulse 1s infinite 0.75s;}
+#scan-msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+#scan-msg-txt{font-size:11px;letter-spacing:3px;color:#00c8ff;text-shadow:0 0 8px #00c8ff;}
+#scan-msg-sub{font-size:9px;color:rgba(0,200,255,0.5);margin-top:4px;letter-spacing:1px;}
+
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-@keyframes ping{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.7);opacity:0}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes scanline{0%{top:-2px}100%{top:100%}}
-@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-@keyframes vdot{0%,100%{transform:scaleY(1)}50%{transform:scaleY(2)}}
-@keyframes ptxt{0%,100%{opacity:1}50%{opacity:0.5}}
-@keyframes pborder{0%,100%{box-shadow:0 0 0 0 rgba(255,60,60,0.28)}50%{box-shadow:0 0 0 4px rgba(255,60,60,0.08)}}
-::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:#000;}::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.16);}
+@keyframes pulse-ring{0%,100%{box-shadow:0 0 0 0 rgba(255,60,60,0.4)}50%{box-shadow:0 0 0 10px rgba(255,60,60,0)}}
+@keyframes pulse-dot{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+@keyframes pulse-scan{0%,100%{background:#ff3c3c}50%{background:#cc0000}}
+@keyframes corner-pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes ping{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.8);opacity:0}}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:#000;}::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.18);}
 </style>
 </head>
 <body>
-<div class="glow"></div>
-<div id="boot"><div id="boot-text"></div></div>
+
+<!-- BOOT -->
+<div id="boot"><div id="btxt"></div></div>
 
 <!-- LANG MODAL -->
-<div class="modal-wrap" id="lmod">
-  <div class="modal-box" id="lang-box">
-    <h2>SELECT LANGUAGE / KIES TAAL</h2>
-    <div class="lang-grid">
-      <button class="lang-btn" onclick="setLang('en')"><span class="lang-flag">🇬🇧</span>English</button>
-      <button class="lang-btn" onclick="setLang('nl')"><span class="lang-flag">🇧🇪</span>Nederlands</button>
-      <button class="lang-btn" onclick="setLang('fr')"><span class="lang-flag">🇫🇷</span>Français</button>
-      <button class="lang-btn" onclick="setLang('de')"><span class="lang-flag">🇩🇪</span>Deutsch</button>
+<div class="modal" id="lmod">
+  <div class="mbox" id="lbox">
+    <h2>SELECT LANGUAGE</h2>
+    <div class="lgrid">
+      <button class="lbtn" onclick="setLang('en')"><span class="lflag">🇬🇧</span>English</button>
+      <button class="lbtn" onclick="setLang('nl')"><span class="lflag">🇧🇪</span>Nederlands</button>
+      <button class="lbtn" onclick="setLang('fr')"><span class="lflag">🇫🇷</span>Français</button>
+      <button class="lbtn" onclick="setLang('de')"><span class="lflag">🇩🇪</span>Deutsch</button>
     </div>
   </div>
 </div>
 
 <!-- DISCLAIMER -->
-<div class="modal-wrap" id="dmod">
-  <div class="modal-box" id="disc-box">
-    <div id="disc-hdr">
+<div class="modal" id="dmod">
+  <div class="mbox" id="dbox">
+    <div id="dhdr">
       <span style="font-size:20px;">⚠️</span>
-      <div><div id="disc-title">TERMS OF USE & LIABILITY DISCLAIMER</div><div id="disc-by">MECH-AI · By Dylan Deleu</div></div>
+      <div><div id="dtitle">TERMS OF USE & LIABILITY</div><div id="dby">MECH-AI · By Dylan Deleu</div></div>
     </div>
-    <div id="disc-body">
-      <h3 id="dh1">IMPORTANT — READ BEFORE EACH USE</h3>
-      <p id="dp1"><strong>MECH-AI</strong> is an AI-powered assistance tool for users with <strong>basic mechanical knowledge</strong>. It is not a substitute for professional advice.</p>
-      <h3 id="dh2">WARRANTY & CERTIFIED GARAGE</h3>
-      <p id="dp2">If your vehicle is <strong>under manufacturer or dealer warranty</strong>, bring it to a <strong>certified garage</strong>. DIY repairs may void your warranty. MECH-AI accepts no liability for warranty consequences.</p>
-      <h3 id="dh3">REQUIRED KNOWLEDGE</h3>
-      <p id="dp3">This app is for users with <strong>basic mechanical knowledge only</strong>. If unsure, stop and consult a certified mechanic. Never attempt repairs you cannot safely perform.</p>
-      <h3 id="dh4">LIMITATION OF LIABILITY</h3>
-      <p id="dp4"><strong>Dylan Deleu</strong> and MECH-AI accept <strong>no liability</strong> for damage, injury, wrong parts purchased, AI errors, warranty void, or violations of local laws resulting from use of this app.</p>
-      <h3 id="dh5">USER RESPONSIBILITY</h3>
-      <p id="dp5">The <strong>user is solely responsible</strong> for all actions, products purchased, and results. Always verify torque specs and procedures with official manufacturer documentation.</p>
-      <h3 id="dh6">INTELLECTUAL PROPERTY</h3>
-      <p id="dp6">This app is the <strong>intellectual property of Dylan Deleu</strong>. It may <strong>not be reproduced, copied, or redistributed</strong> without written permission.</p>
+    <div id="dbody">
+      <h3>IMPORTANT — READ BEFORE EACH JOB</h3>
+      <p><strong>MECH-AI</strong> is an AI assistance tool for users with <strong>basic mechanical knowledge</strong>. It is not a substitute for professional advice.</p>
+      <h3>WARRANTY</h3>
+      <p>If your vehicle is <strong>under warranty</strong>, bring it to a <strong>certified garage</strong>. DIY repairs may void your warranty.</p>
+      <h3>REQUIRED KNOWLEDGE</h3>
+      <p>Only for users with <strong>basic mechanical knowledge</strong>. If unsure, consult a certified mechanic.</p>
+      <h3>LIABILITY</h3>
+      <p><strong>Dylan Deleu</strong> and MECH-AI accept <strong>no liability</strong> for damage, injury, wrong parts, AI errors, or legal consequences from use of this app.</p>
+      <h3>USER RESPONSIBILITY</h3>
+      <p>The <strong>user is solely responsible</strong> for all actions. Always verify specs with official manufacturer documentation.</p>
+      <h3>INTELLECTUAL PROPERTY</h3>
+      <p>This app is the <strong>intellectual property of Dylan Deleu</strong>. It may <strong>not be reproduced or redistributed</strong> without written permission.</p>
     </div>
-    <div id="disc-foot">
-      <label id="disc-check-label"><input type="checkbox" id="disc-cb" onchange="toggleAcc()"><span id="dct">I have read and understood all terms. I accept full responsibility. I confirm I have basic mechanical knowledge and my vehicle is not under affected warranty.</span></label>
-      <button id="disc-accept" onclick="acceptDisc()">ACCEPT & CONTINUE</button>
+    <div id="dfoot">
+      <label id="dcheck"><input type="checkbox" id="dcb" onchange="toggleAcc()"><span id="dct">I have read all terms, accept full responsibility, and confirm I have basic mechanical knowledge.</span></label>
+      <button id="dbtn" onclick="acceptDisc()">ACCEPT & START</button>
     </div>
   </div>
 </div>
 
 <!-- VEHICLE MODAL -->
-<div class="modal-wrap" id="vmod">
-  <div class="modal-box" id="veh-box">
+<div class="modal" id="vmod">
+  <div class="mbox" id="vbox">
     <h2 id="vmt">MY VEHICLE</h2>
     <div class="fg"><label id="vl-mk">MAKE</label><input id="vmk" type="text" placeholder="e.g. Volkswagen, Honda, BMW"></div>
     <div class="fg"><label id="vl-mo">MODEL</label><input id="vmo" type="text" placeholder="e.g. Golf, CBR600, 3 Series"></div>
-    <div class="fg-row">
-      <div class="fg"><label id="vl-yr">YEAR</label><input id="vyr" type="number" placeholder="e.g. 2018" min="1950" max="2026"></div>
-      <div class="fg"><label id="vl-ty">TYPE</label><select id="vty"><option value="car">🚗 Car</option><option value="bike">🏍️ Motorcycle</option><option value="van">🚐 Van/Truck</option><option value="scooter">🛵 Scooter</option></select></div>
+    <div class="fgr">
+      <div class="fg"><label id="vl-yr">YEAR</label><input id="vyr" type="number" placeholder="2018" min="1950" max="2026"></div>
+      <div class="fg"><label id="vl-ty">TYPE</label><select id="vty"><option value="car">🚗 Car</option><option value="bike">🏍️ Motorcycle</option><option value="van">🚐 Van</option><option value="scooter">🛵 Scooter</option></select></div>
     </div>
-    <div class="fg-row">
-      <div class="fg"><label id="vl-en">ENGINE</label><input id="ven" type="text" placeholder="e.g. 2.0 TDI, 600cc"></div>
+    <div class="fgr">
+      <div class="fg"><label id="vl-en">ENGINE</label><input id="ven" type="text" placeholder="e.g. 2.0 TDI"></div>
       <div class="fg"><label id="vl-fu">FUEL</label><select id="vfu"><option value="petrol">⛽ Petrol</option><option value="diesel">🛢️ Diesel</option><option value="electric">⚡ Electric</option><option value="hybrid">🔋 Hybrid</option><option value="lpg">🔵 LPG</option></select></div>
     </div>
-    <div class="fg"><label id="vl-ex">EXTRA INFO</label><input id="vex" type="text" placeholder="e.g. AWD, manual, 150hp, mileage"></div>
-    <button class="btn-save" onclick="saveVeh()" id="vms">SAVE VEHICLE</button>
+    <div class="fg"><label>EXTRA INFO</label><input id="vex" type="text" placeholder="e.g. AWD, manual, 150hp"></div>
+    <button id="vsave" onclick="saveVeh()">SAVE VEHICLE</button>
   </div>
 </div>
 
-<!-- HEADER -->
-<header>
-  <div class="hdr-top">
-    <div class="logo">
-      <div class="logo-ring"><div class="logo-dot"></div><div class="logo-pulse"></div></div>
-      <div><div class="logo-title">MECH-AI</div><div class="logo-sub" id="lsub">DIAGNOSTIC SYSTEM</div></div>
-    </div>
-    <div class="hdr-r"><div id="clock">--:--:--</div><div id="slbl">○ STANDBY</div></div>
+<!-- HISTORY MODAL -->
+<div class="modal" id="hmod">
+  <div class="mbox" id="hbox">
+    <div id="hhdr"><div id="htitle">SCAN HISTORY</div><button id="hclose" onclick="closeModal('hmod')">CLOSE</button></div>
+    <div id="hlist"><div id="hemp">📋<br><br>NO JOBS YET</div></div>
   </div>
-  <div id="vchip" onclick="openVeh()">
-    <div id="vchip-txt">── NO VEHICLE · TAP TO ADD ──</div>
-    <div id="vchip-edit">✎ EDIT</div>
-  </div>
-  <div class="tab-nav">
-    <button class="tab-btn active" onclick="sw('scan',this)">◉ SCAN</button>
-    <button class="tab-btn" onclick="sw('live',this)">▶ LIVE</button>
-    <button class="tab-btn" onclick="sw('history',this)">▦ LOG</button>
-    <button class="tab-btn" onclick="sw('settings',this)">⚙ SET</button>
-  </div>
-</header>
+</div>
 
-<!-- SCAN -->
-<div class="page active" id="page-scan">
-  <div id="ad"><div class="ad-lbl">AD</div><div class="ad-c"><div class="ad-name" id="adn">AUTODOC</div><div class="ad-txt" id="adt">Quality parts for every vehicle</div></div><button class="ad-btn" id="adb">SHOP →</button></div>
-  <div id="vf">
-    <div class="hc tl"></div><div class="hc tr"></div><div class="hc bl"></div><div class="hc br"></div>
-    <div id="sl"></div>
-    <video id="vid" autoplay playsinline muted></video>
-    <img id="snap" alt="">
-    <canvas id="cv"></canvas>
-    <div id="sb">
-      <svg viewBox="0 0 52 52" fill="none"><circle cx="26" cy="26" r="11" stroke="#00c8ff" stroke-width="1.5"/><circle cx="26" cy="26" r="4" fill="#00c8ff"/><rect x="4" y="18" width="9" height="16" rx="2" stroke="#00c8ff" stroke-width="1.5"/><line x1="13" y1="22" x2="17" y2="22" stroke="#00c8ff" stroke-width="1.5"/><line x1="13" y1="30" x2="17" y2="30" stroke="#00c8ff" stroke-width="1.5"/><rect x="39" y="18" width="9" height="16" rx="2" stroke="#00c8ff" stroke-width="1.5"/></svg>
-      <div class="s1" id="sbt1">CAMERA OFFLINE</div><div class="s2" id="sbt2">ACTIVATE TO BEGIN SCAN</div>
-    </div>
-    <div id="aov"><div class="spin"></div><div style="font-size:11px;letter-spacing:4px;text-shadow:0 0 8px var(--c);" id="atxt">ANALYZING...</div><div style="font-size:9px;color:rgba(0,200,255,0.45);letter-spacing:2px;" id="asub">RUNNING DIAGNOSTIC ENGINE</div></div>
-    <div id="ltag">● LIVE</div>
-  </div>
-  <div id="ctrls"><button class="btn bp" onclick="showDisc(startCam)" id="bact">◉ ACTIVATE CAMERA</button></div>
-  <div id="err"></div>
-  <button id="vlbtn" onclick="togVL()"><div class="md"></div><span id="vlbt">🎤 VOICE COMMAND</span></button>
-  <button id="vtog" onclick="togV()"><div class="vd"></div><span id="vtl">VOICE OUTPUT: OFF</span></button>
-  <div id="vbar"><div class="vdots"><span></span><span></span><span></span></div><span id="vbt">MECH-AI SPEAKING...</span></div>
-  <div id="jc">
-    <div id="jch" style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;">JOB ANALYSIS</div>
-    <div id="jcb">
-      <div class="jstat"><div class="jlbl" id="jld">DIFFICULTY</div><div class="jval" id="jvd">—</div></div>
-      <div class="jstat"><div class="jlbl" id="jlt">EST. TIME</div><div class="jval" id="jvt">—</div></div>
-      <div id="jtl"><div class="jtl-lbl" id="jtll">TOOLS NEEDED</div><div class="jtl-items" id="jtlv">—</div></div>
-      <div id="jto"><div class="jto-lbl" id="jtol">⚡ TORQUE SPECS</div><div class="jto-items" id="jtov">—</div></div>
-      <div id="jcl"><div class="jcl-lbl" id="jcll">✓ CHECKLIST</div><div id="jclv"></div></div>
+<!-- SETTINGS MODAL -->
+<div class="modal" id="smod">
+  <div class="mbox" id="sbox">
+    <div id="shdr"><div id="stitle">SETTINGS</div><button id="sclose" onclick="closeModal('smod')">CLOSE</button></div>
+    <div id="sbody">
+      <div class="ssec"><div class="ssh">VEHICLE</div><div class="ssb"><span id="sv-cur">—</span><button onclick="closeModal('smod');openVeh()">EDIT</button></div></div>
+      <div class="ssec"><div class="ssh">LANGUAGE</div><div class="ssb"><span id="sl-cur">English</span><button onclick="closeModal('smod');openLang()">CHANGE</button></div></div>
+      <div class="ssec"><div class="ssh">VOICE</div><div class="ssb"><span id="sv-state">Off</span><button onclick="toggleVoice()" id="sv-btn">ENABLE</button></div></div>
+      <div class="ssec"><div class="ssh">ABOUT</div><div class="ssb" style="flex-direction:column;align-items:flex-start;gap:4px;"><span>MECH-AI v4.0</span><span style="color:rgba(0,200,255,0.4);font-size:10px;">By Dylan Deleu · © 2025 · All rights reserved</span><span style="color:rgba(0,200,255,0.25);font-size:9px;">Reproduction prohibited without written permission</span></div></div>
+      <button class="don" onclick="window.open('https://www.paypal.com/donate','_blank')">☕ DONATE · SUPPORT MECH-AI</button>
+      <button class="don" style="background:rgba(255,60,60,0.06);border-color:rgba(255,60,60,0.2);color:rgba(255,60,60,0.6);margin-top:0;" onclick="clearHist()">🗑 CLEAR HISTORY</button>
     </div>
   </div>
-  <div id="res"><div id="rh"><div id="rt">DIAGNOSTIC REPORT</div><div id="rts"></div></div><div id="rb"></div></div>
-  <div id="chat"><div id="chh">💬 FOLLOW-UP</div><div id="chm"></div><div id="chir"><input id="chi" type="text" placeholder="Ask a follow-up..."><button id="chs" onclick="sendChat()">➤</button></div></div>
 </div>
 
-<!-- LIVE -->
-<div class="page" id="page-live">
-  <div id="vfl">
-    <div style="position:absolute;top:7px;left:7px;width:20px;height:20px;border-top:2px solid var(--g);border-left:2px solid var(--g);z-index:10;"></div>
-    <div style="position:absolute;top:7px;right:7px;width:20px;height:20px;border-top:2px solid var(--g);border-right:2px solid var(--g);z-index:10;"></div>
-    <div style="position:absolute;bottom:7px;left:7px;width:20px;height:20px;border-bottom:2px solid var(--g);border-left:2px solid var(--g);z-index:10;"></div>
-    <div style="position:absolute;bottom:7px;right:7px;width:20px;height:20px;border-bottom:2px solid var(--g);border-right:2px solid var(--g);z-index:10;"></div>
-    <video id="vidl" autoplay playsinline muted></video>
-    <canvas id="cvl"></canvas>
-    <div id="lov"><div id="llbl">● LIVE GUIDANCE</div><div id="lguid">Point camera at the component...</div></div>
-    <div id="lsb"><span id="lsbt1">LIVE GUIDE OFFLINE</span><small id="lsbt2">START SESSION TO BEGIN</small></div>
+<!-- MAIN APP -->
+<div id="app">
+  <video id="video" autoplay playsinline muted></video>
+  <canvas id="canvas"></canvas>
+  <canvas id="stab-canvas"></canvas>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+    <div id="hud-top">
+      <div id="hud-logo">MECH-AI</div>
+      <div id="hud-right"><div id="hud-clock">--:--:--</div><div id="hud-status">○ POINT AT PART</div></div>
+    </div>
+    <div id="vchip"><div id="vchip-inner" onclick="openVeh()">── TAP TO SET VEHICLE ──</div></div>
   </div>
-  <div id="lctrls">
-    <button class="btn bg" onclick="startLive()" id="blst">▶ START SESSION</button>
-    <button class="btn bi" onclick="togTorch('live')" id="btl">🔦</button>
+
+  <!-- SCAN OVERLAY -->
+  <div id="scan-overlay">
+    <div id="scan-progress-bar"></div>
+    <div id="scan-corners">
+      <div class="sc tl"></div><div class="sc tr"></div>
+      <div class="sc bl"></div><div class="sc br"></div>
+    </div>
+    <div id="scan-msg">
+      <div id="scan-msg-txt">HOLD STEADY...</div>
+      <div id="scan-msg-sub">ANALYZING PART</div>
+    </div>
   </div>
-  <div style="border:1px solid rgba(0,255,136,0.12);border-radius:4px;padding:13px;background:rgba(0,255,136,0.02);margin-bottom:11px;font-size:11px;color:#7ab8a0;line-height:2;">
-    1. Start session → point camera at component<br>
-    2. Tap <strong style="color:var(--g)">CAPTURE FRAME</strong> for instant guidance<br>
-    3. Ask questions while camera stays live<br>
-    4. Use torch 🔦 for dark engine bays
+
+  <!-- PART IDENTIFIED BANNER -->
+  <div id="part-banner">
+    <div id="part-name">—</div>
+    <div id="part-sub">—</div>
   </div>
-  <div id="lcht">
-    <div id="lchh">🔧 LIVE ASSISTANT</div>
-    <div id="lchm"></div>
-    <div id="lchir"><input id="lchi" type="text" placeholder="Ask while live..."><button id="lchs" onclick="sendLChat()">➤</button></div>
+
+  <!-- VOICE BAR -->
+  <div id="voice-bar">
+    <div id="vbar-ring"><div id="vbar-dot"></div></div>
+    <div id="vbar-txt">LISTENING...</div>
+  </div>
+
+  <!-- AD -->
+  <div id="ad">
+    <div class="ad-lbl">AD</div>
+    <div class="ad-c"><div class="ad-n" id="adn">AUTODOC</div><div class="ad-t" id="adt">Quality parts for every vehicle</div></div>
+    <button class="ad-b" id="adb">SHOP →</button>
+  </div>
+
+  <!-- AI PANEL -->
+  <div id="ai-panel">
+    <!-- Question -->
+    <div id="question-panel">
+      <div id="q-text">—</div>
+      <div id="q-btns">
+        <button class="qbtn" id="qbtn-yes" onclick="answerYes()">✓ YES</button>
+        <button class="qbtn" id="qbtn-no" onclick="answerNo()">✕ NO</button>
+      </div>
+    </div>
+    <!-- Prep -->
+    <div id="prep-panel">
+      <div id="prep-title">JOB PREPARATION</div>
+      <div id="diff-time">
+        <div class="dt-box"><div class="dt-lbl">DIFFICULTY</div><div class="dt-val" id="prep-diff">—</div></div>
+        <div class="dt-box"><div class="dt-lbl">EST. TIME</div><div class="dt-val" id="prep-time">—</div></div>
+      </div>
+      <div class="prep-sec">
+        <div class="prep-sec-lbl">🔧 TOOLS NEEDED</div>
+        <div class="prep-items" id="prep-tools">—</div>
+      </div>
+      <div class="prep-sec" id="prep-torque-sec" style="display:none;">
+        <div class="prep-sec-lbl">⚡ TORQUE SPECS</div>
+        <div class="prep-items" id="prep-torque">—</div>
+      </div>
+      <div class="prep-sec">
+        <div class="prep-sec-lbl">📦 MATERIALS / PARTS</div>
+        <div class="prep-items" id="prep-parts">—</div>
+      </div>
+      <button id="prep-confirm" onclick="startJob()">✓ I HAVE EVERYTHING — START JOB</button>
+    </div>
+    <!-- Steps -->
+    <div id="step-panel">
+      <div id="step-header">
+        <div id="step-counter">STEP 1/1</div>
+        <div id="step-progress-wrap"><div id="step-progress"></div></div>
+      </div>
+      <div id="step-text">—</div>
+      <div id="step-torque">—</div>
+      <div id="step-btns">
+        <button id="step-prev" onclick="prevStep()">←</button>
+        <button id="step-next" onclick="nextStep()">NEXT STEP →</button>
+      </div>
+      <button id="step-done" onclick="completeJob()">✓ JOB COMPLETE</button>
+      <div id="step-voice-hint">🎤 Say "next", "back", or "repeat"</div>
+    </div>
+    <!-- Complete -->
+    <div id="complete-panel">
+      <div id="complete-icon">✅</div>
+      <div id="complete-title">JOB COMPLETE</div>
+      <div id="complete-text">Well done! The job has been saved to your history.</div>
+      <button id="complete-new" onclick="resetAll()">SCAN NEW PART</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM CONTROLS -->
+  <div id="bottom">
+    <button class="ctrl-btn" onclick="toggleTorch()" id="btn-torch-main"><span class="icon">🔦</span>TORCH</button>
+    <button id="btn-scan-main" onclick="triggerScan()"><span class="icon">⬡</span>SCAN PART</button>
+    <button class="ctrl-btn" onclick="toggleVoiceListen()" id="btn-voice-main"><span class="icon">🎤</span>VOICE</button>
+    <button class="ctrl-btn" onclick="openModal('hmod');renderHist()"><span class="icon">▦</span>LOG</button>
+    <button class="ctrl-btn" onclick="openModal('smod');updSet()"><span class="icon">⚙</span>SET</button>
   </div>
 </div>
-
-<!-- HISTORY -->
-<div class="page" id="page-history">
-  <div id="hlv">
-    <div id="hll"><div id="hlt">SCAN HISTORY</div><button id="hcl" onclick="clearHist()">CLEAR ALL</button></div>
-    <div id="hlist"><div id="hemp">📋<br><br>NO SCANS YET<br>RUN A DIAGNOSTIC</div></div>
-  </div>
-  <div id="hdet"><button class="bk" onclick="showHL()" id="hbk">← BACK</button><div id="hdc"></div></div>
-</div>
-
-<!-- SETTINGS -->
-<div class="page" id="page-settings">
-  <div class="stsec"><div class="sth" id="sth-v">VEHICLE</div><div class="stb"><div class="str"><span id="stv-cur">No vehicle set</span><button onclick="openVeh()" id="stv-e">EDIT</button></div></div></div>
-  <div class="stsec"><div class="sth" id="sth-l">LANGUAGE</div><div class="stb"><div class="str"><span id="stl-cur">English</span><button onclick="openLang()" id="stl-ch">CHANGE</button></div></div></div>
-  <div class="stsec"><div class="sth" id="sth-a">ABOUT</div><div class="stb"><div class="str"><span style="color:#9ab8c8;font-size:11px;">MECH-AI v3.0</span></div><div class="str"><span style="color:#9ab8c8;font-size:11px;">By Dylan Deleu</span></div><div class="str"><span style="color:rgba(0,200,255,0.35);font-size:10px;">© 2025 Dylan Deleu · All rights reserved</span></div></div></div>
-  <div class="stsec"><div class="sth" id="sth-s">SUPPORT</div><div class="stb"><button class="don" onclick="window.open('https://www.paypal.com/donate','_blank')" id="std">☕ DONATE · SUPPORT MECH-AI</button></div></div>
-  <div class="stsec"><div class="sth" id="sth-d">DATA</div><div class="stb"><div class="str"><span id="std-s">0 scans saved</span><button onclick="clearHist()" id="std-c">CLEAR</button></div></div></div>
-</div>
-
-<footer>MECH-AI · By Dylan Deleu · © 2025 · All Rights Reserved<br><span style="color:rgba(0,200,255,0.08);">Reproduction or redistribution prohibited without written permission</span></footer>
 
 <script>
-// ── STATE ──
-let lang=localStorage.getItem('ml')||'';
-let veh=JSON.parse(localStorage.getItem('mv')||'null');
-let hist=JSON.parse(localStorage.getItem('mh')||'[]');
-let voiceOn=false,vlistening=false,ms=null,ls=null,torch=false,torchL=false;
-let chatH=[],liveH=[],rec=null,curScan=null,adI=0,discCb=null;
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const PROXY = '/api/proxy';
+let lang = localStorage.getItem('ml') || '';
+let veh = JSON.parse(localStorage.getItem('mv') || 'null');
+let hist = JSON.parse(localStorage.getItem('mh') || '[]');
+let voiceEnabled = false;
+let voiceListening = false;
+let stream = null;
+let torchOn = false;
+let recognition = null;
+let discCb = null;
+let adI = 0;
 
-// ── TRANSLATIONS ──
-const T={
-  en:{sub:'DIAGNOSTIC SYSTEM',noVeh:'── NO VEHICLE · TAP TO ADD ──',act:'◉ ACTIVATE CAMERA',scan:'⬡ SCAN & ANALYZE',cancel:'✕',newScan:'↺ NEW SCAN',von:'VOICE OUTPUT: ON',voff:'VOICE OUTPUT: OFF',speaking:'MECH-AI SPEAKING...',analyzing:'ANALYZING...',asub:'RUNNING DIAGNOSTIC ENGINE',sb1:'CAMERA OFFLINE',sb2:'ACTIVATE TO BEGIN SCAN',report:'DIAGNOSTIC REPORT',job:'JOB ANALYSIS',diff:'DIFFICULTY',time:'EST. TIME',tools:'TOOLS NEEDED',torque:'⚡ TORQUE SPECS',cl:'✓ CHECKLIST',fu:'FOLLOW-UP',askph:'Ask a follow-up...',lguide:'LIVE ASSISTANT',liveph:'Ask while live...',startS:'▶ START SESSION',endS:'END SESSION',capF:'📸 CAPTURE FRAME',loff:'LIVE GUIDE OFFLINE',lstrt:'START SESSION TO BEGIN',history:'SCAN HISTORY',clearAll:'CLEAR ALL',noScans:'NO SCANS YET\nRUN A DIAGNOSTIC',back:'← BACK',vmT:'MY VEHICLE',vmS:'SAVE VEHICLE',vlMk:'MAKE',vlMo:'MODEL',vlYr:'YEAR',vlTy:'TYPE',vlEn:'ENGINE',vlFu:'FUEL',vlEx:'EXTRA INFO',settV:'VEHICLE',settL:'LANGUAGE',settA:'ABOUT',settS:'SUPPORT',settD:'DATA',edit:'EDIT',change:'CHANGE',donate:'☕ DONATE · SUPPORT MECH-AI',dTitle:'TERMS OF USE & LIABILITY',dAcc:'ACCEPT & CONTINUE',dCt:'I have read all terms, accept full responsibility, confirm basic mechanical knowledge.',vcmd:'🎤 VOICE COMMAND',vlis:'🔴 LISTENING...',adT:['Quality parts delivered fast','Trusted by mechanics worldwide','Find parts for your vehicle'],sc:(n)=>`${n} scan${n!==1?'s':''} saved`,lang:'English'},
-  nl:{sub:'DIAGNOSTISCH SYSTEEM',noVeh:'── GEEN VOERTUIG · TAPPEN ──',act:'◉ CAMERA ACTIVEREN',scan:'⬡ SCAN & ANALYSEER',cancel:'✕',newScan:'↺ NIEUWE SCAN',von:'STEM: AAN',voff:'STEM: UIT',speaking:'MECH-AI SPREEKT...',analyzing:'ANALYSEREN...',asub:'DIAGNOSTISCHE ENGINE ACTIEF',sb1:'CAMERA OFFLINE',sb2:'ACTIVEER OM TE BEGINNEN',report:'DIAGNOSTISCH RAPPORT',job:'TAAKANALYSE',diff:'MOEILIJKHEID',time:'GESCHATTE TIJD',tools:'GEREEDSCHAPPEN',torque:'⚡ AANDRAAIMOMENT',cl:'✓ TAAKLIJST',fu:'VERVOLGVRAGEN',askph:'Stel een vervolgvraag...',lguide:'LIVE ASSISTENT',liveph:'Vraag terwijl camera actief...',startS:'▶ START SESSIE',endS:'STOP SESSIE',capF:'📸 FRAME VASTLEGGEN',loff:'LIVE GIDS OFFLINE',lstrt:'START SESSIE OM TE BEGINNEN',history:'SCANGESCHIEDENIS',clearAll:'ALLES WISSEN',noScans:'GEEN SCANS NOG\nVOER DIAGNOSE UIT',back:'← TERUG',vmT:'MIJN VOERTUIG',vmS:'OPSLAAN',vlMk:'MERK',vlMo:'MODEL',vlYr:'JAAR',vlTy:'TYPE',vlEn:'MOTOR',vlFu:'BRANDSTOF',vlEx:'EXTRA INFO',settV:'VOERTUIG',settL:'TAAL',settA:'OVER',settS:'STEUN',settD:'GEGEVENS',edit:'BEWERK',change:'WIJZIG',donate:'☕ DONEER · STEUN MECH-AI',dTitle:'GEBRUIKSVOORWAARDEN',dAcc:'ACCEPTEREN & DOORGAAN',dCt:'Ik heb alle voorwaarden gelezen, aanvaard volledige verantwoordelijkheid, bevestig basiskennis.',vcmd:'🎤 STEMCOMMANDO',vlis:'🔴 LUISTEREN...',adT:['Kwaliteitsonderdelen snel','Vertrouwd door monteurs','Onderdelen voor uw voertuig'],sc:(n)=>`${n} scan${n!==1?'s':''} opgeslagen`,lang:'Nederlands'},
-  fr:{sub:'SYSTÈME DIAGNOSTIQUE',noVeh:'── AUCUN VÉHICULE · APPUYER ──',act:'◉ ACTIVER CAMÉRA',scan:'⬡ SCANNER & ANALYSER',cancel:'✕',newScan:'↺ NOUVEAU SCAN',von:'VOIX: ACTIVÉE',voff:'VOIX: DÉSACTIVÉE',speaking:'MECH-AI PARLE...',analyzing:'ANALYSE...',asub:'MOTEUR DE DIAGNOSTIC ACTIF',sb1:'CAMÉRA HORS LIGNE',sb2:'ACTIVER POUR COMMENCER',report:'RAPPORT DIAGNOSTIQUE',job:'ANALYSE TRAVAIL',diff:'DIFFICULTÉ',time:'TEMPS ESTIMÉ',tools:'OUTILS',torque:'⚡ COUPLES DE SERRAGE',cl:'✓ LISTE DE CONTRÔLE',fu:'QUESTIONS',askph:'Posez une question...',lguide:'ASSISTANT EN DIRECT',liveph:'Demandez pendant la session...',startS:'▶ DÉMARRER',endS:'ARRÊTER',capF:'📸 CAPTURER',loff:'GUIDE HORS LIGNE',lstrt:'DÉMARRER POUR COMMENCER',history:'HISTORIQUE',clearAll:'TOUT EFFACER',noScans:'AUCUN SCAN\nLANCEZ UN DIAGNOSTIC',back:'← RETOUR',vmT:'MON VÉHICULE',vmS:'ENREGISTRER',vlMk:'MARQUE',vlMo:'MODÈLE',vlYr:'ANNÉE',vlTy:'TYPE',vlEn:'MOTEUR',vlFu:'CARBURANT',vlEx:'INFOS SUPPLÉMENTAIRES',settV:'VÉHICULE',settL:'LANGUE',settA:'À PROPOS',settS:'SOUTENIR',settD:'DONNÉES',edit:'MODIFIER',change:'CHANGER',donate:'☕ FAIRE UN DON',dTitle:'CONDITIONS D\'UTILISATION',dAcc:'ACCEPTER & CONTINUER',dCt:'J\'ai lu toutes les conditions, accepte la responsabilité, confirme mes connaissances mécaniques.',vcmd:'🎤 COMMANDE VOCALE',vlis:'🔴 ÉCOUTE...',adT:['Pièces qualité livrées vite','Approuvé par les mécaniciens','Trouvez vos pièces ici'],sc:(n)=>`${n} scan${n>1?'s':''} enregistré${n>1?'s':''}`,lang:'Français'},
-  de:{sub:'DIAGNOSESYSTEM',noVeh:'── KEIN FAHRZEUG · ANTIPPEN ──',act:'◉ KAMERA AKTIVIEREN',scan:'⬡ SCANNEN & ANALYSIEREN',cancel:'✕',newScan:'↺ NEUER SCAN',von:'SPRACHE: AN',voff:'SPRACHE: AUS',speaking:'MECH-AI SPRICHT...',analyzing:'ANALYSIEREN...',asub:'DIAGNOSEMOTOR AKTIV',sb1:'KAMERA OFFLINE',sb2:'AKTIVIEREN ZUM STARTEN',report:'DIAGNOSEBERICHT',job:'AUFTRAGSANALYSE',diff:'SCHWIERIGKEIT',time:'GESCHÄTZTE ZEIT',tools:'WERKZEUGE',torque:'⚡ ANZUGSMOMENTE',cl:'✓ AUFGABENLISTE',fu:'FOLGEFRAGEN',askph:'Stellen Sie eine Frage...',lguide:'LIVE-ASSISTENT',liveph:'Fragen während der Sitzung...',startS:'▶ SITZUNG STARTEN',endS:'BEENDEN',capF:'📸 AUFNEHMEN',loff:'LIVE-GUIDE OFFLINE',lstrt:'SITZUNG STARTEN',history:'SCANVERLAUF',clearAll:'ALLES LÖSCHEN',noScans:'KEINE SCANS\nDIAGNOSE DURCHFÜHREN',back:'← ZURÜCK',vmT:'MEIN FAHRZEUG',vmS:'SPEICHERN',vlMk:'MARKE',vlMo:'MODELL',vlYr:'BAUJAHR',vlTy:'TYP',vlEn:'MOTOR',vlFu:'KRAFTSTOFF',vlEx:'ZUSATZINFO',settV:'FAHRZEUG',settL:'SPRACHE',settA:'ÜBER',settS:'UNTERSTÜTZEN',settD:'DATEN',edit:'BEARBEITEN',change:'ÄNDERN',donate:'☕ SPENDEN · UNTERSTÜTZEN',dTitle:'NUTZUNGSBEDINGUNGEN',dAcc:'AKZEPTIEREN & FORTFAHREN',dCt:'Ich habe alle Bedingungen gelesen, übernehme Verantwortung, bestätige Grundkenntnisse.',vcmd:'🎤 SPRACHBEFEHL',vlis:'🔴 HÖREN...',adT:['Qualitätsteile schnell geliefert','Von Mechanikern vertraut','Teile für Ihr Fahrzeug'],sc:(n)=>`${n} Scan${n!==1?'s':''} gespeichert`,lang:'Deutsch'}
+// Job state machine
+// States: idle | scanning | identified | question | prep | stepping | complete
+let appState = 'idle';
+let scanTimer = null;
+let scanProgress = 0;
+let scanInterval = null;
+let identifiedPart = null;
+let jobData = null;
+let currentStep = 0;
+let steps = [];
+
+// Motion / stability detection
+let lastFrameData = null;
+let stableFrames = 0;
+const STABLE_NEEDED = 8; // frames stable before scan triggers
+const SCAN_DURATION = 3000; // ms
+
+// ═══════════════════════════════════════════════
+// TRANSLATIONS
+// ═══════════════════════════════════════════════
+const T = {
+  en: { pointAt:'POINT AT PART', holding:'HOLD STEADY...', analyzing:'ANALYZING...', found:'PART IDENTIFIED', noVeh:'── TAP TO SET VEHICLE ──', dct:'I have read all terms, accept full responsibility, confirm basic mechanical knowledge.', yes:'✓ YES', no:'✕ NO', next:'NEXT STEP →', done:'✓ JOB COMPLETE', start:'✓ I HAVE EVERYTHING — START JOB', complete:'JOB COMPLETE', newScan:'SCAN NEW PART', vcmd:'next|back|repeat|yes|no|scan', speaking:'MECH-AI SPEAKING...', adT:['Quality parts delivered fast','Trusted by mechanics worldwide','Find parts for your vehicle'] },
+  nl: { pointAt:'WIJS NAAR ONDERDEEL', holding:'STIL HOUDEN...', analyzing:'ANALYSEREN...', found:'ONDERDEEL HERKEND', noVeh:'── TAPPEN OM VOERTUIG IN TE STELLEN ──', dct:'Ik heb alle voorwaarden gelezen, aanvaard volledige verantwoordelijkheid.', yes:'✓ JA', no:'✕ NEE', next:'VOLGENDE STAP →', done:'✓ KLAAR', start:'✓ IK HEB ALLES — START KLUS', complete:'KLUS VOLTOOID', newScan:'NIEUW ONDERDEEL SCANNEN', vcmd:'volgende|terug|herhaal|ja|nee|scan', speaking:'MECH-AI SPREEKT...', adT:['Kwaliteitsonderdelen snel','Vertrouwd door monteurs','Onderdelen voor uw voertuig'] },
+  fr: { pointAt:'POINTEZ VERS LA PIÈCE', holding:'TENEZ STABLE...', analyzing:'ANALYSE...', found:'PIÈCE IDENTIFIÉE', noVeh:'── APPUYER POUR DÉFINIR ──', dct:'J\'ai lu toutes les conditions et accepte la responsabilité.', yes:'✓ OUI', no:'✕ NON', next:'ÉTAPE SUIVANTE →', done:'✓ TERMINÉ', start:'✓ J\'AI TOUT — COMMENCER', complete:'TRAVAIL TERMINÉ', newScan:'SCANNER NOUVELLE PIÈCE', vcmd:'suivant|retour|répéter|oui|non|scanner', speaking:'MECH-AI PARLE...', adT:['Pièces qualité livrées vite','Approuvé par les mécaniciens','Trouvez vos pièces ici'] },
+  de: { pointAt:'AUF TEIL ZEIGEN', holding:'RUHIG HALTEN...', analyzing:'ANALYSIEREN...', found:'TEIL ERKANNT', noVeh:'── ANTIPPEN UM FAHRZEUG FESTZULEGEN ──', dct:'Ich habe alle Bedingungen gelesen und übernehme Verantwortung.', yes:'✓ JA', no:'✕ NEIN', next:'NÄCHSTER SCHRITT →', done:'✓ FERTIG', start:'✓ ICH HABE ALLES — STARTEN', complete:'AUFTRAG ABGESCHLOSSEN', newScan:'NEUES TEIL SCANNEN', vcmd:'weiter|zurück|wiederholen|ja|nein|scan', speaking:'MECH-AI SPRICHT...', adT:['Qualitätsteile schnell','Von Mechanikern vertraut','Teile für Ihr Fahrzeug'] }
 };
-const t=k=>(T[lang]||T.en)[k]||k;
+const t = k => (T[lang] || T.en)[k] || k;
 
-// ── BOOT ──
-const BL=['MECH-AI v3.0 INITIALIZING...','Vehicle & torque database: LOADED','Multilingual engine: ONLINE','Voice synthesis: ONLINE','Live guidance: ONLINE','Disclaimer system: ACTIVE','SYSTEM READY.'];
-(function boot(){
-  const el=document.getElementById('boot-text');
-  let i=0,c=0,txt='';
-  const iv=setInterval(()=>{
-    if(i>=BL.length){clearInterval(iv);setTimeout(()=>{document.getElementById('boot').classList.add('gone');setTimeout(initApp,700);},400);return;}
-    if(c<BL[i].length){txt+=BL[i][c++];}else{txt+='\n';i++;c=0;}
-    el.innerHTML=txt+'<span class="cur"></span>';
-  },22);
+// ═══════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════
+const BL = ['MECH-AI v4.0 INITIALIZING...', 'Vision engine: ONLINE', 'Part recognition: READY', 'Torque database: LOADED', 'Voice interface: ONLINE', 'SYSTEM READY.'];
+(function boot() {
+  const el = document.getElementById('btxt');
+  let i = 0, c = 0, txt = '';
+  const iv = setInterval(() => {
+    if (i >= BL.length) {
+      clearInterval(iv);
+      setTimeout(() => {
+        document.getElementById('boot').classList.add('gone');
+        setTimeout(initApp, 700);
+      }, 400);
+      return;
+    }
+    if (c < BL[i].length) { txt += BL[i][c++]; }
+    else { txt += '\n'; i++; c = 0; }
+    el.innerHTML = txt + '<span class="cur"></span>';
+  }, 22);
 })();
 
-function initApp(){
-  setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-GB');},1000);
-  document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-GB');
-  if(!lang){openLang();return;}
-  applyLang();
-  if(!veh){openVeh();return;}
-  updChip();rotAds();updSet();
+function initApp() {
+  setInterval(() => { document.getElementById('hud-clock').textContent = new Date().toLocaleTimeString('en-GB'); }, 1000);
+  document.getElementById('hud-clock').textContent = new Date().toLocaleTimeString('en-GB');
+  rotAds();
+  if (!lang) { openLang(); return; }
+  if (!veh) { openVeh(); return; }
+  startApp();
 }
 
-// ── LANG ──
-function openLang(){document.getElementById('lmod').style.display='flex';}
-function setLang(l){lang=l;localStorage.setItem('ml',l);document.getElementById('lmod').style.display='none';applyLang();if(!veh)openVeh();else{updChip();updSet();}}
-function applyLang(){
-  const L=T[lang]||T.en;
-  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  s('lsub',L.sub);s('sbt1',L.sb1);s('sbt2',L.sb2);s('atxt',L.analyzing);s('asub',L.asub);
-  s('rt',L.report);s('jch',L.job);s('jld',L.diff);s('jlt',L.time);s('jtll',L.tools);s('jtol',L.torque);s('jcll',L.cl);
-  s('chh','💬 '+L.fu);s('lguide-h','🔧 '+L.lguide);
-  document.getElementById('chi').placeholder=L.askph;
-  document.getElementById('lchi').placeholder=L.liveph;
-  s('hlt',L.history);s('hcl',L.clearAll);s('hbk',L.back);
-  s('vmt',L.vmT);s('vms',L.vmS);
-  s('vl-mk',L.vlMk);s('vl-mo',L.vlMo);s('vl-yr',L.vlYr);s('vl-ty',L.vlTy);s('vl-en',L.vlEn);s('vl-fu',L.vlFu);s('vl-ex',L.vlEx);
-  s('vtl',voiceOn?L.von:L.voff);s('vbt',L.speaking);s('vlbt',L.vcmd);
-  s('lsbt1',L.loff);s('lsbt2',L.lstrt);
-  s('disc-title',L.dTitle);s('disc-accept',L.dAcc);s('dct',L.dCt);
-  s('sth-v',L.settV);s('sth-l',L.settL);s('sth-a',L.settA);s('sth-s',L.settS);s('sth-d',L.settD);
-  s('stv-e',L.edit);s('stl-ch',L.change);s('std',L.donate);s('std-c',L.clearAll);
-  s('stl-cur',L.lang);
-  updChip();resetCtrls();
+// ═══════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function openLang() { openModal('lmod'); }
+function openVeh() {
+  if (veh) { document.getElementById('vmk').value = veh.make || ''; document.getElementById('vmo').value = veh.model || ''; document.getElementById('vyr').value = veh.year || ''; document.getElementById('vty').value = veh.type || 'car'; document.getElementById('ven').value = veh.engine || ''; document.getElementById('vfu').value = veh.fuel || 'petrol'; document.getElementById('vex').value = veh.extra || ''; }
+  openModal('vmod');
 }
 
-// ── VEHICLE ──
-function vLabel(){
-  if(!veh)return'';
-  const ic=veh.type==='bike'?'🏍️':veh.type==='van'?'🚐':veh.type==='scooter'?'🛵':'🚗';
-  const fu=veh.fuel==='diesel'?'D':veh.fuel==='electric'?'⚡':veh.fuel==='hybrid'?'HYB':veh.fuel==='lpg'?'LPG':'P';
-  return `${ic} ${veh.make} ${veh.model} ${veh.year} · ${veh.engine||''} · ${fu}`;
-}
-function openVeh(){
-  if(veh){document.getElementById('vmk').value=veh.make||'';document.getElementById('vmo').value=veh.model||'';document.getElementById('vyr').value=veh.year||'';document.getElementById('vty').value=veh.type||'car';document.getElementById('ven').value=veh.engine||'';document.getElementById('vfu').value=veh.fuel||'petrol';document.getElementById('vex').value=veh.extra||'';}
-  document.getElementById('vmod').style.display='flex';
-}
-function saveVeh(){
-  const mk=document.getElementById('vmk').value.trim(),mo=document.getElementById('vmo').value.trim(),yr=document.getElementById('vyr').value.trim();
-  if(!mk||!mo||!yr){alert('Please fill Make, Model and Year.');return;}
-  veh={make:mk,model:mo,year:yr,type:document.getElementById('vty').value,engine:document.getElementById('ven').value.trim(),fuel:document.getElementById('vfu').value,extra:document.getElementById('vex').value.trim()};
-  localStorage.setItem('mv',JSON.stringify(veh));
-  document.getElementById('vmod').style.display='none';
-  updChip();updSet();
-}
-function updChip(){document.getElementById('vchip-txt').textContent=veh?vLabel():(T[lang]||T.en).noVeh;}
-function updSet(){
-  const e=document.getElementById('stv-cur');if(e)e.textContent=veh?vLabel():'No vehicle set';
-  const s=document.getElementById('std-s');if(s)s.textContent=t('sc')(hist.length);
+// ═══════════════════════════════════════════════
+// LANG
+// ═══════════════════════════════════════════════
+function setLang(l) {
+  lang = l; localStorage.setItem('ml', l);
+  closeModal('lmod');
+  document.getElementById('dcb').checked = false;
+  document.getElementById('dbtn').classList.remove('ok');
+  document.getElementById('dct').textContent = t('dct');
+  document.getElementById('qbtn-yes').textContent = t('yes');
+  document.getElementById('qbtn-no').textContent = t('no');
+  document.getElementById('step-next').textContent = t('next');
+  document.getElementById('step-done').textContent = t('done');
+  document.getElementById('prep-confirm').textContent = t('start');
+  document.getElementById('complete-title').textContent = t('complete');
+  document.getElementById('complete-new').textContent = t('newScan');
+  document.getElementById('hud-status').textContent = '○ ' + t('pointAt');
+  document.getElementById('sl-cur').textContent = { en: 'English', nl: 'Nederlands', fr: 'Français', de: 'Deutsch' }[l];
+  if (!veh) { openVeh(); return; }
+  startApp();
 }
 
-// ── DISCLAIMER ──
-function showDisc(cb){discCb=cb;document.getElementById('disc-cb').checked=false;document.getElementById('disc-accept').classList.remove('ok');document.getElementById('dmod').style.display='flex';}
-function toggleAcc(){document.getElementById('disc-accept').classList.toggle('ok',document.getElementById('disc-cb').checked);}
-function acceptDisc(){document.getElementById('dmod').style.display='none';if(discCb)discCb();}
-
-// ── ADS ──
-const ADS=[{n:'AUTODOC',u:'https://www.autodoc.co.uk'},{n:'WINPARTS',u:'https://www.winparts.eu'},{n:'EURO CAR PARTS',u:'https://www.eurocarparts.com'},{n:'OSCARO',u:'https://www.oscaro.com'}];
-function rotAds(){
-  function show(){const a=ADS[adI%ADS.length],L=T[lang]||T.en;document.getElementById('adn').textContent=a.n;document.getElementById('adt').textContent=L.adT[adI%3];document.getElementById('adb').onclick=()=>window.open(a.u,'_blank');adI++;}
-  show();setInterval(show,12000);
+// ═══════════════════════════════════════════════
+// VEHICLE
+// ═══════════════════════════════════════════════
+function vLabel() {
+  if (!veh) return '';
+  const ic = veh.type === 'bike' ? '🏍️' : veh.type === 'van' ? '🚐' : veh.type === 'scooter' ? '🛵' : '🚗';
+  return `${ic} ${veh.make} ${veh.model} ${veh.year} · ${veh.engine || ''} · ${veh.fuel}`;
+}
+function saveVeh() {
+  const mk = document.getElementById('vmk').value.trim(), mo = document.getElementById('vmo').value.trim(), yr = document.getElementById('vyr').value.trim();
+  if (!mk || !mo || !yr) { alert('Fill in Make, Model and Year.'); return; }
+  veh = { make: mk, model: mo, year: yr, type: document.getElementById('vty').value, engine: document.getElementById('ven').value.trim(), fuel: document.getElementById('vfu').value, extra: document.getElementById('vex').value.trim() };
+  localStorage.setItem('mv', JSON.stringify(veh));
+  closeModal('vmod');
+  updChip(); updSet();
+  startApp();
+}
+function updChip() { document.getElementById('vchip-inner').textContent = veh ? vLabel() : t('noVeh'); }
+function updSet() {
+  document.getElementById('sv-cur').textContent = veh ? vLabel() : '—';
+  document.getElementById('sl-cur').textContent = { en: 'English', nl: 'Nederlands', fr: 'Français', de: 'Deutsch' }[lang] || 'English';
+  document.getElementById('sv-state').textContent = voiceEnabled ? 'On' : 'Off';
+  document.getElementById('sv-btn').textContent = voiceEnabled ? 'DISABLE' : 'ENABLE';
 }
 
-// ── TABS ──
-function sw(tab,btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+tab).classList.add('active');
-  if(btn)btn.classList.add('active');
-  if(tab==='history')renderHist();
-  if(tab==='settings')updSet();
+// ═══════════════════════════════════════════════
+// DISCLAIMER
+// ═══════════════════════════════════════════════
+function showDisc(cb) {
+  discCb = cb;
+  document.getElementById('dcb').checked = false;
+  document.getElementById('dbtn').classList.remove('ok');
+  openModal('dmod');
 }
+function toggleAcc() { document.getElementById('dbtn').classList.toggle('ok', document.getElementById('dcb').checked); }
+function acceptDisc() { closeModal('dmod'); if (discCb) discCb(); }
 
-// ── HUD ──
-function setS(lbl,col){const e=document.getElementById('slbl');e.textContent=lbl;e.style.color=col||'rgba(0,200,255,0.32)';}
-function setHud(col){document.querySelectorAll('#vf .hc').forEach(c=>c.style.borderColor=col);document.getElementById('vf').style.borderColor=col+'44';}
-function sCol(txt){
-  if(!txt)return'#00c8ff';
-  if(/CRITICAL|KRITISCH|CRITIQUE|KRITISCH/i.test(txt))return'#ff3c3c';
-  if(/WARNING|WAARSCHUWING|ATTENTION|WARNUNG/i.test(txt))return'#ffaa00';
-  if(/ALL CLEAR|ALLES OK|TOUT OK|ALLES GUT/i.test(txt))return'#00ff88';
-  return'#00c8ff';
+// ═══════════════════════════════════════════════
+// ADS
+// ═══════════════════════════════════════════════
+const ADS = [{ n: 'AUTODOC', u: 'https://www.autodoc.co.uk' }, { n: 'WINPARTS', u: 'https://www.winparts.eu' }, { n: 'EURO CAR PARTS', u: 'https://www.eurocarparts.com' }, { n: 'OSCARO', u: 'https://www.oscaro.com' }];
+function rotAds() {
+  function show() { const a = ADS[adI % ADS.length], L = T[lang] || T.en; document.getElementById('adn').textContent = a.n; document.getElementById('adt').textContent = L.adT[adI % 3]; document.getElementById('adb').onclick = () => window.open(a.u, '_blank'); adI++; }
+  show(); setInterval(show, 12000);
 }
-function sBadge(txt){
-  if(/CRITICAL|KRITISCH|CRITIQUE/i.test(txt))return'sbc';
-  if(/WARNING|WAARSCHUWING|WARNUNG/i.test(txt))return'sbw';
-  if(/ALL CLEAR|ALLES OK|ALLES GUT/i.test(txt))return'sba';
-  return'sbr';
-}
-function sLabel(txt){
-  if(/CRITICAL|KRITISCH|CRITIQUE/i.test(txt))return'CRITICAL';
-  if(/WARNING|WAARSCHUWING|WARNUNG/i.test(txt))return'WARNING';
-  if(/ALL CLEAR|ALLES OK/i.test(txt))return'ALL CLEAR';
-  return'ROUTINE';
-}
+function showAd() { document.getElementById('ad').classList.remove('hide'); }
+function hideAd() { document.getElementById('ad').classList.add('hide'); }
 
-// ── PROMPTS ──
-function vCtx(){if(!veh)return'No vehicle specified.';return`Vehicle: ${veh.make} ${veh.model} (${veh.year}), Type: ${veh.type}, Engine: ${veh.engine||'unknown'}, Fuel: ${veh.fuel}${veh.extra?', '+veh.extra:''}.`;}
-function buildSP(){
-  const li=lang==='nl'?'Respond ENTIRELY in Dutch.':lang==='fr'?'Respond ENTIRELY in French.':lang==='de'?'Respond ENTIRELY in German.':'Respond in English.';
-  return`You are MECH-AI, an expert automotive and motorcycle mechanic AI with encyclopedic knowledge of all vehicle makes, models, engines, torque specifications, repair procedures, tools, and maintenance schedules worldwide.
-
-${li}
-${vCtx()}
-
-When analyzing an image, provide a COMPLETE professional diagnosis in EXACTLY this format:
-
-🔍 SCAN COMPLETE
-**Identified:** [part name, condition, match with user vehicle if possible]
-
-⚠️ DIAGNOSIS
-[Specific issues, tailored to their exact vehicle/engine/fuel if known. Or "No issues detected."]
-
-🔧 ACTION PLAN
-[Numbered step-by-step repair/maintenance instructions]
-
-📊 STATUS: [CRITICAL / WARNING / ROUTINE / ALL CLEAR]
-
----JOB_JSON---
-{"difficulty":"[Easy/Medium/Hard/Expert]","time":"[e.g. 30 min / 1-2 hours]","tools":["17mm socket wrench","Torque wrench 20-200Nm","Oil drain pan"],"torque":["Wheel bolts: 120 Nm","Oil drain plug: 25 Nm"],"checklist":["Park on flat surface","Engage handbrake","Allow engine to cool 30 min","Gather all tools","Wear safety gloves"]}
----END_JOB---
-
-RULES:
-- Torque specs MUST be specific to the vehicle make/model/engine. Include torque for ALL safety-critical fasteners.
-- Tools list must include specific sizes (e.g. "17mm", "T30 Torx").
-- If no vehicle set, note specs may vary by model.
-- Never skip safety warnings.`;
-}
-function buildLP(){
-  const li=lang==='nl'?'Antwoord in het Nederlands.':lang==='fr'?'Répondez en français.':lang==='de'?'Antworten Sie auf Deutsch.':'Respond in English.';
-  return`You are MECH-AI in Live Guide mode. ${li} ${vCtx()} Give BRIEF guidance — 2-3 sentences max. Include torque values and specific tool sizes when relevant. Be like a mechanic looking over their shoulder.`;
-}
-
-// ── CAMERA ──
-function showErr(msg){const e=document.getElementById('err');e.textContent='⚠ '+msg;e.style.display='block';}
-function clearErr(){document.getElementById('err').style.display='none';}
-function resetCtrls(){document.getElementById('ctrls').innerHTML=`<button class="btn bp" onclick="showDisc(startCam)">${t('act')}</button>`;}
-
-async function startCam(){
-  clearErr();document.getElementById('ad').classList.add('hide');
-  try{
-    // Try rear camera first, fall back to any camera
-    try {
-      ms=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:'environment'}}});
-    } catch(e1) {
-      try {
-        ms=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-      } catch(e2) {
-        ms=await navigator.mediaDevices.getUserMedia({video:true});
-      }
+// ═══════════════════════════════════════════════
+// CAMERA
+// ═══════════════════════════════════════════════
+async function startApp() {
+  document.getElementById('app').style.display = 'block';
+  updChip();
+  try {
+    try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } }); }
+    catch (e1) {
+      try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); }
+      catch (e2) { stream = await navigator.mediaDevices.getUserMedia({ video: true }); }
     }
-    const v=document.getElementById('vid');v.srcObject=ms;v.style.display='block';
-    document.getElementById('sb').style.display='none';
-    document.getElementById('snap').style.display='none';
-    document.getElementById('ltag').style.display='block';
-    document.getElementById('sl').style.display='block';
-    document.getElementById('res').style.display='none';
-    document.getElementById('jc').style.display='none';
-    document.getElementById('chat').style.display='none';
-    document.getElementById('ctrls').innerHTML=`<button class="btn bsc" onclick="capture()">${t('scan')}</button><button class="btn bi" onclick="togTorch('scan')" id="btorch">🔦</button><button class="btn bd" onclick="stopCam()">${t('cancel')}</button>`;
-    setS('● LIVE','#00ff88');
-  }catch(e){showErr('Camera blocked. Fix: Chrome address bar → 🔒 lock icon → Permissions → Camera → Allow → Reload page. Error: '+e.message);document.getElementById('ad').classList.remove('hide');}
-}
-function stopCam(){
-  if(ms){ms.getTracks().forEach(t=>t.stop());ms=null;torch=false;}
-  document.getElementById('vid').style.display='none';
-  document.getElementById('ltag').style.display='none';
-  document.getElementById('sl').style.display='none';
-  resetCtrls();document.getElementById('ad').classList.remove('hide');
-}
-async function togTorch(m){
-  const stream=m==='scan'?ms:ls;if(!stream)return;
-  const track=stream.getVideoTracks()[0];if(!track)return;
-  try{
-    if(m==='scan'){torch=!torch;await track.applyConstraints({advanced:[{torch}]});const b=document.getElementById('btorch');if(b)b.classList.toggle('on',torch);}
-    else{torchL=!torchL;await track.applyConstraints({advanced:[{torch:torchL}]});const b=document.getElementById('btl');if(b)b.classList.toggle('on',torchL);}
-  }catch(e){showErr('Torch not supported.');}
+    const vid = document.getElementById('video');
+    vid.srcObject = stream;
+    await vid.play();
+    setState('idle');
+  } catch (e) {
+    alert('Camera blocked: ' + e.message + '\n\nGo to Chrome Settings → Site Settings → Camera → Allow mechai-ochre.vercel.app');
+  }
 }
 
-// ── ANALYZE ──
-async function capture(){
-  const vid=document.getElementById('vid'),cv=document.getElementById('cv'),sn=document.getElementById('snap');
-  cv.width=vid.videoWidth||640;cv.height=vid.videoHeight||480;
-  cv.getContext('2d').drawImage(vid,0,0);
-  const dataUrl=cv.toDataURL('image/jpeg',0.85),b64=dataUrl.split(',')[1];
-  stopCam();sn.src=dataUrl;sn.style.display='block';sn.style.filter='brightness(0.5) hue-rotate(160deg)';
-  document.getElementById('sb').style.display='none';
-  document.getElementById('aov').style.display='flex';
-  document.getElementById('sl').style.display='block';
-  document.getElementById('ctrls').innerHTML='';
-  setS('● ANALYZING','#ffaa00');setHud('#ffaa00');chatH=[];
-  try{
-    const r=await fetch('/api/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:buildSP(),messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:'Analyze this image. Identify parts, diagnose, give repair guidance with tools, torque specs, checklist, difficulty and time.'}]}]})});
-    const d=await r.json();
-    const full=(d.content||[]).map(b=>b.text||'').join('');
-    const{main,job}=parseResp(full);
-    curScan={image:dataUrl,result:main,job,ts:new Date().toISOString()};
-    chatH=[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:'Analyze this image.'}]},{role:'assistant',content:full}];
-    showRes(main,job);saveHist(curScan);
-    if(voiceOn)speak(main);
-  }catch(e){showRes('⚠️ Analysis failed. Check connection.',null);}
-  document.getElementById('aov').style.display='none';
-  document.getElementById('sl').style.display='none';
-  document.getElementById('snap').style.filter='none';
-}
-function parseResp(full){
-  let main=full,job=null;
-  const m=full.match(/---JOB_JSON---([\s\S]*?)---END_JOB---/);
-  if(m){main=full.replace(/---JOB_JSON---[\s\S]*?---END_JOB---/,'').trim();try{job=JSON.parse(m[1].trim());}catch(e){}}
-  return{main,job};
-}
-function showRes(txt,job){
-  const col=sCol(txt);setHud(col);setS('● SCAN COMPLETE',col);
-  document.getElementById('rts').textContent=new Date().toLocaleString();
-  document.getElementById('rb').innerHTML=fmtTxt(txt);
-  document.getElementById('res').style.display='block';
-  if(job){renderJob(job);document.getElementById('jc').style.display='block';}
-  document.getElementById('chat').style.display='block';
-  document.getElementById('chm').innerHTML='';
-  document.getElementById('ctrls').innerHTML=`<button class="btn bp" onclick="showDisc(startCam)">${t('newScan')}</button>`;
-  document.getElementById('ad').classList.remove('hide');
-}
-function renderJob(d){
-  const dc=d.difficulty==='Easy'?'#00ff88':d.difficulty==='Medium'?'#00c8ff':d.difficulty==='Hard'?'#ffaa00':'#ff3c3c';
-  document.getElementById('jvd').textContent=d.difficulty||'—';document.getElementById('jvd').style.color=dc;
-  document.getElementById('jvt').textContent=d.time||'—';
-  if(d.tools&&d.tools.length)document.getElementById('jtlv').innerHTML=d.tools.map(t=>`• ${t}`).join('<br>');
-  if(d.torque&&d.torque.length){document.getElementById('jto').style.display='block';document.getElementById('jtov').innerHTML=d.torque.map(t=>`⚡ ${t}`).join('<br>');}else document.getElementById('jto').style.display='none';
-  if(d.checklist&&d.checklist.length){document.getElementById('jcl').style.display='block';document.getElementById('jclv').innerHTML=d.checklist.map((item,i)=>`<div class="cli" id="ci${i}" onclick="togCl(${i})"><div class="clb" id="cb${i}"></div><span>${item}</span></div>`).join('');}else document.getElementById('jcl').style.display='none';
-}
-function togCl(i){const c=document.getElementById('ci'+i),b=document.getElementById('cb'+i);const d=c.classList.toggle('done');b.textContent=d?'✓':'';}
-function fmtTxt(txt){
-  return txt.split('\n').map(l=>{
-    if(!l.trim())return'<div style="height:3px"></div>';
-    if(/^[🔍⚠️🔧📊]/u.test(l))return`<div class="lh">${l}</div>`;
-    if(l.startsWith('**')&&l.endsWith('**'))return`<div class="lb">${l.replace(/\*\*/g,'')}</div>`;
-    if(/^\d+\./.test(l))return`<div class="ls">${l}</div>`;
-    if(/CRITICAL|KRITISCH|CRITIQUE/i.test(l))return`<div class="lc2">${l}</div>`;
-    if(/WARNING|WAARSCHUWING|WARNUNG/i.test(l))return`<div class="lw2">${l}</div>`;
-    if(/ALL CLEAR|ALLES OK|TOUT OK/i.test(l))return`<div class="lac">${l}</div>`;
-    if(/ROUTINE/i.test(l))return`<div class="lr2">${l}</div>`;
-    return`<div class="ln">${l}</div>`;
-  }).join('');
+async function toggleTorch() {
+  if (!stream) return;
+  const track = stream.getVideoTracks()[0];
+  if (!track) return;
+  try {
+    torchOn = !torchOn;
+    await track.applyConstraints({ advanced: [{ torch: torchOn }] });
+    document.getElementById('btn-torch-main').classList.toggle('torch-on', torchOn);
+  } catch (e) { alert('Torch not supported on this device.'); }
 }
 
-// ── VOICE ──
-function togV(){voiceOn=!voiceOn;document.getElementById('vtog').classList.toggle('on',voiceOn);document.getElementById('vtl').textContent=voiceOn?t('von'):t('voff');if(!voiceOn)stopSpeak();}
-function speak(txt){
+// ═══════════════════════════════════════════════
+// STATE MACHINE
+// ═══════════════════════════════════════════════
+function setState(s) {
+  appState = s;
+  // Hide all panels
+  document.getElementById('scan-overlay').style.display = 'none';
+  document.getElementById('part-banner').style.display = 'none';
+  document.getElementById('ai-panel').style.display = 'none';
+  document.getElementById('question-panel').style.display = 'none';
+  document.getElementById('prep-panel').style.display = 'none';
+  document.getElementById('step-panel').style.display = 'none';
+  document.getElementById('complete-panel').style.display = 'none';
+  document.getElementById('btn-scan-main').classList.remove('scanning');
+
+  if (s === 'idle') {
+    document.getElementById('hud-status').textContent = '○ ' + t('pointAt');
+    showAd();
+  } else if (s === 'scanning') {
+    document.getElementById('scan-overlay').style.display = 'block';
+    document.getElementById('hud-status').textContent = '● ' + t('holding');
+    hideAd();
+    document.getElementById('btn-scan-main').classList.add('scanning');
+  } else if (s === 'identified') {
+    document.getElementById('part-banner').style.display = 'block';
+  } else if (s === 'question') {
+    document.getElementById('part-banner').style.display = 'block';
+    document.getElementById('ai-panel').style.display = 'block';
+    document.getElementById('question-panel').style.display = 'flex';
+    hideAd();
+  } else if (s === 'prep') {
+    document.getElementById('ai-panel').style.display = 'block';
+    document.getElementById('prep-panel').style.display = 'flex';
+    hideAd();
+  } else if (s === 'stepping') {
+    document.getElementById('ai-panel').style.display = 'block';
+    document.getElementById('step-panel').style.display = 'flex';
+    hideAd();
+  } else if (s === 'complete') {
+    document.getElementById('ai-panel').style.display = 'block';
+    document.getElementById('complete-panel').style.display = 'flex';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SCAN TRIGGER
+// ═══════════════════════════════════════════════
+function triggerScan() {
+  if (appState === 'stepping' || appState === 'prep' || appState === 'question') return;
+  if (appState === 'scanning') { cancelScan(); return; }
+  showDisc(() => startScan());
+}
+
+function startScan() {
+  setState('scanning');
+  scanProgress = 0;
+  document.getElementById('scan-progress-bar').style.width = '0%';
+  document.getElementById('scan-msg-txt').textContent = t('holding');
+  document.getElementById('scan-msg-sub').textContent = 'STAY STILL FOR 3 SECONDS';
+
+  let elapsed = 0;
+  const total = SCAN_DURATION;
+  const tick = 50;
+
+  scanInterval = setInterval(() => {
+    elapsed += tick;
+    scanProgress = (elapsed / total) * 100;
+    document.getElementById('scan-progress-bar').style.width = scanProgress + '%';
+
+    if (elapsed >= total) {
+      clearInterval(scanInterval);
+      performAnalysis();
+    }
+  }, tick);
+}
+
+function cancelScan() {
+  if (scanInterval) clearInterval(scanInterval);
+  setState('idle');
+}
+
+async function performAnalysis() {
+  document.getElementById('scan-msg-txt').textContent = t('analyzing');
+  document.getElementById('scan-msg-sub').textContent = 'AI IS READING THE PART';
+
+  // Capture frame
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const b64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+
+  const vCtx = veh ? `Vehicle: ${veh.make} ${veh.model} (${veh.year}), Engine: ${veh.engine || 'unknown'}, Fuel: ${veh.fuel}${veh.extra ? ', ' + veh.extra : ''}.` : 'No vehicle specified.';
+  const langInst = lang === 'nl' ? 'Respond ENTIRELY in Dutch.' : lang === 'fr' ? 'Respond ENTIRELY in French.' : lang === 'de' ? 'Respond ENTIRELY in German.' : 'Respond in English.';
+
+  const systemPrompt = `You are MECH-AI, an expert automotive and motorcycle mechanic AI. ${langInst}
+${vCtx}
+
+The user has pointed their camera at a vehicle part. Identify it and prepare a job plan.
+
+Respond ONLY with valid JSON in exactly this format, nothing else:
+{
+  "part": "Front left wheel / brake disc",
+  "condition": "Appears worn, brake dust visible",
+  "question": "I can see your front wheel and brake disc. Would you like to perform a brake pad replacement or wheel removal?",
+  "job": "Front Brake Pad Replacement",
+  "difficulty": "Medium",
+  "time": "45-60 min",
+  "tools": ["17mm socket wrench","Torque wrench 20-200Nm","Car jack and axle stands","Brake piston wind-back tool","Wire brush"],
+  "torque": ["Wheel bolts: 120 Nm","Brake caliper bolts: 35 Nm"],
+  "parts": ["New brake pads (check part number for your vehicle)","Brake cleaner spray","Copper grease"],
+  "steps": [
+    {"instruction": "Loosen the wheel bolts slightly while the vehicle is still on the ground. Do not fully remove yet.", "torque": null},
+    {"instruction": "Jack up the vehicle and place axle stands under the chassis. Never work under a vehicle supported only by a jack.", "torque": null},
+    {"instruction": "Remove the wheel bolts completely and take off the wheel.", "torque": null},
+    {"instruction": "Locate the brake caliper. Remove the two caliper guide pin bolts using a 13mm spanner.", "torque": null},
+    {"instruction": "Slide the caliper off the disc. Hang it with a wire — do not let it hang by the brake hose.", "torque": null},
+    {"instruction": "Remove the old brake pads from the carrier bracket.", "torque": null},
+    {"instruction": "Use the wind-back tool to push the caliper piston back in fully.", "torque": null},
+    {"instruction": "Apply copper grease to the back of the new pads and the carrier contact points. Do not get grease on the pad surface or disc.", "torque": null},
+    {"instruction": "Clip the new pads into the carrier bracket.", "torque": null},
+    {"instruction": "Refit the caliper over the new pads and torque the guide pin bolts.", "torque": "Brake caliper bolts: 35 Nm"},
+    {"instruction": "Refit the wheel and hand-tighten the bolts in a star pattern.", "torque": null},
+    {"instruction": "Lower the vehicle and torque the wheel bolts in a star pattern.", "torque": "Wheel bolts: 120 Nm"},
+    {"instruction": "Pump the brake pedal 10-15 times until firm. Check brake fluid level. Test at low speed before driving normally.", "torque": null}
+  ],
+  "status": "ROUTINE"
+}
+
+Make ALL content specific to the identified part and vehicle. If you cannot identify a vehicle part in the image, set "part" to "unknown" and "question" to a message asking the user to point the camera at a specific vehicle component.`;
+
+  try {
+    const res = await fetch(PROXY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } }, { type: 'text', text: 'What vehicle part do you see? Provide the full JSON response.' }] }]
+      })
+    });
+
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    const raw = (data.content || []).map(b => b.text || '').join('');
+    const clean = raw.replace(/```json|```/g, '').trim();
+    jobData = JSON.parse(clean);
+
+    if (jobData.part === 'unknown') {
+      setState('idle');
+      showOverlayMsg('⚠ Point camera at a vehicle part', 2500);
+      return;
+    }
+
+    // Show identified part
+    identifiedPart = jobData.part;
+    document.getElementById('part-name').textContent = jobData.part.toUpperCase();
+    document.getElementById('part-sub').textContent = jobData.condition || '';
+    document.getElementById('q-text').textContent = jobData.question;
+
+    setState('question');
+    if (voiceEnabled) speak(jobData.question);
+    saveHist({ image: canvas.toDataURL('image/jpeg', 0.7), part: jobData.part, result: jobData.question, ts: new Date().toISOString(), status: jobData.status || 'ROUTINE' });
+
+  } catch (e) {
+    setState('idle');
+    showOverlayMsg('⚠ Analysis failed: ' + e.message.substring(0, 60), 3000);
+  }
+}
+
+function showOverlayMsg(msg, duration) {
+  document.getElementById('scan-overlay').style.display = 'block';
+  document.getElementById('scan-progress-bar').style.width = '100%';
+  document.getElementById('scan-progress-bar').style.background = '#ff3c3c';
+  document.getElementById('scan-msg-txt').textContent = msg;
+  document.getElementById('scan-msg-sub').textContent = '';
+  setTimeout(() => {
+    document.getElementById('scan-overlay').style.display = 'none';
+    document.getElementById('scan-progress-bar').style.background = '#00c8ff';
+  }, duration);
+}
+
+// ═══════════════════════════════════════════════
+// JOB FLOW
+// ═══════════════════════════════════════════════
+function answerYes() {
+  if (!jobData) return;
+  // Populate prep panel
+  document.getElementById('prep-diff').textContent = jobData.difficulty || '—';
+  document.getElementById('prep-time').textContent = jobData.time || '—';
+  document.getElementById('prep-tools').innerHTML = (jobData.tools || []).map(t => `• ${t}`).join('<br>');
+  document.getElementById('prep-parts').innerHTML = (jobData.parts || []).map(p => `• ${p}`).join('<br>');
+  if (jobData.torque && jobData.torque.length) {
+    document.getElementById('prep-torque-sec').style.display = 'block';
+    document.getElementById('prep-torque').innerHTML = (jobData.torque || []).map(t => `<span class="torque-item">⚡ ${t}</span>`).join('<br>');
+  } else {
+    document.getElementById('prep-torque-sec').style.display = 'none';
+  }
+  setState('prep');
+  const msg = `Great. For this job you will need: ${(jobData.tools || []).join(', ')}. Do you have everything ready?`;
+  if (voiceEnabled) speak(msg);
+}
+
+function answerNo() {
+  setState('idle');
+  if (voiceEnabled) speak('No problem. Point the camera at another part whenever you\'re ready.');
+}
+
+function startJob() {
+  steps = jobData.steps || [];
+  currentStep = 0;
+  setState('stepping');
+  renderStep();
+  if (voiceEnabled) speak('Job started. ' + (steps[0] ? steps[0].instruction : ''));
+}
+
+function renderStep() {
+  if (!steps.length) return;
+  const s = steps[currentStep];
+  const total = steps.length;
+  document.getElementById('step-counter').textContent = `STEP ${currentStep + 1}/${total}`;
+  document.getElementById('step-progress').style.width = ((currentStep + 1) / total * 100) + '%';
+  document.getElementById('step-text').textContent = s.instruction;
+
+  if (s.torque) {
+    document.getElementById('step-torque').style.display = 'block';
+    document.getElementById('step-torque').textContent = '⚡ ' + s.torque;
+  } else {
+    document.getElementById('step-torque').style.display = 'none';
+  }
+
+  const isLast = currentStep === steps.length - 1;
+  document.getElementById('step-next').style.display = isLast ? 'none' : 'block';
+  document.getElementById('step-done').style.display = isLast ? 'block' : 'none';
+  document.getElementById('step-prev').disabled = currentStep === 0;
+}
+
+function nextStep() {
+  if (currentStep < steps.length - 1) {
+    currentStep++;
+    renderStep();
+    if (voiceEnabled) speak(steps[currentStep].instruction);
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    currentStep--;
+    renderStep();
+    if (voiceEnabled) speak(steps[currentStep].instruction);
+  }
+}
+
+function completeJob() {
+  setState('complete');
+  showAd();
+  if (voiceEnabled) speak('Job complete! Well done.');
+}
+
+function resetAll() {
+  jobData = null; identifiedPart = null; currentStep = 0; steps = [];
+  setState('idle');
+}
+
+// ═══════════════════════════════════════════════
+// VOICE
+// ═══════════════════════════════════════════════
+function toggleVoice() {
+  voiceEnabled = !voiceEnabled;
+  updSet();
+  if (!voiceEnabled) stopSpeak();
+}
+
+function speak(txt) {
   stopSpeak();
-  const clean=txt.replace(/[🔍⚠️🔧📊*•]/gu,'').replace(/\n+/g,'. ').trim();
-  const u=new SpeechSynthesisUtterance(clean);
-  u.rate=0.92;u.pitch=0.82;u.volume=1;
-  u.lang=lang==='nl'?'nl-NL':lang==='fr'?'fr-FR':lang==='de'?'de-DE':'en-GB';
-  const vs=speechSynthesis.getVoices(),pv=vs.find(v=>v.lang===u.lang)||vs.find(v=>v.lang.startsWith(lang))||null;
-  if(pv)u.voice=pv;
-  document.getElementById('vbar').style.display='flex';
-  u.onend=()=>{document.getElementById('vbar').style.display='none';};
+  const clean = txt.replace(/[•⚡⚠️✓✕]/gu, '').trim();
+  const u = new SpeechSynthesisUtterance(clean);
+  u.rate = 0.92; u.pitch = 0.82; u.volume = 1;
+  u.lang = lang === 'nl' ? 'nl-NL' : lang === 'fr' ? 'fr-FR' : lang === 'de' ? 'de-DE' : 'en-GB';
+  const vs = speechSynthesis.getVoices();
+  const pv = vs.find(v => v.lang === u.lang) || vs.find(v => v.lang.startsWith(lang)) || null;
+  if (pv) u.voice = pv;
   speechSynthesis.speak(u);
 }
-function stopSpeak(){speechSynthesis.cancel();document.getElementById('vbar').style.display='none';}
-function togVL(){
-  if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){alert('Voice recognition needs Chrome.');return;}
-  vlistening?stopVL():startVL();
+
+function stopSpeak() { speechSynthesis.cancel(); }
+
+function toggleVoiceListen() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    alert('Voice recognition needs Chrome.'); return;
+  }
+  voiceListening ? stopVL() : startVL();
 }
-function startVL(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  rec=new SR();rec.continuous=true;
-  rec.lang=lang==='nl'?'nl-NL':lang==='fr'?'fr-FR':lang==='de'?'de-DE':'en-GB';
-  rec.onresult=e=>{
-    const tr=e.results[e.results.length-1][0].transcript.toLowerCase();
-    if(/scan|analyze|analyseer|scanner|analysieren|scannen/.test(tr)){ms?capture():showDisc(startCam);}
+
+function startVL() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.continuous = true;
+  recognition.lang = lang === 'nl' ? 'nl-NL' : lang === 'fr' ? 'fr-FR' : lang === 'de' ? 'de-DE' : 'en-GB';
+  recognition.onresult = e => {
+    const tr = e.results[e.results.length - 1][0].transcript.toLowerCase().trim();
+    handleVoiceCommand(tr);
   };
-  rec.onerror=()=>stopVL();rec.onend=()=>{if(vlistening)rec.start();};rec.start();
-  vlistening=true;document.getElementById('vlbtn').classList.add('on');document.getElementById('vlbt').textContent=t('vlis');
+  recognition.onerror = () => stopVL();
+  recognition.onend = () => { if (voiceListening) recognition.start(); };
+  recognition.start();
+  voiceListening = true;
+  document.getElementById('btn-voice-main').classList.add('active');
+  document.getElementById('voice-bar').style.display = 'flex';
 }
-function stopVL(){if(rec)rec.stop();vlistening=false;document.getElementById('vlbtn').classList.remove('on');document.getElementById('vlbt').textContent=t('vcmd');}
 
-// ── CHAT ──
-function addMsg(cid,role,txt){
-  const c=document.getElementById(cid),d=document.createElement('div');
-  d.className='msg '+(role==='user'?'mu':'ma');d.textContent=txt;c.appendChild(d);c.scrollTop=c.scrollHeight;return d;
+function stopVL() {
+  if (recognition) recognition.stop();
+  voiceListening = false;
+  document.getElementById('btn-voice-main').classList.remove('active');
+  document.getElementById('voice-bar').style.display = 'none';
 }
-async function sendChat(){
-  const inp=document.getElementById('chi'),q=inp.value.trim();if(!q)return;inp.value='';
-  addMsg('chm','user',q);chatH.push({role:'user',content:q});
-  const th=addMsg('chm','ai','...');th.classList.add('th');
-  try{
-    const r=await fetch('/api/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system:buildSP()+'\nAnswer follow-up questions concisely. Include torque values and tool sizes when relevant.',messages:chatH})});
-    const d=await r.json(),rep=(d.content||[]).map(b=>b.text||'').join('');
-    th.textContent=rep;th.classList.remove('th');chatH.push({role:'assistant',content:rep});
-    if(voiceOn)speak(rep);
-  }catch(e){th.textContent='Error.';th.classList.remove('th');}
-}
-document.getElementById('chi').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});
 
-// ── LIVE ──
-async function startLive(){
-  try{
-    // Try rear camera first, fall back to any camera
-    try {
-      ls=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:'environment'}}});
-    } catch(e1) {
-      try {
-        ls=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-      } catch(e2) {
-        ls=await navigator.mediaDevices.getUserMedia({video:true});
-      }
-    }
-    const v=document.getElementById('vidl');v.srcObject=ls;v.style.display='block';
-    document.getElementById('lsb').style.display='none';
-    document.getElementById('lov').style.display='block';
-    document.getElementById('lcht').style.display='block';
-    document.getElementById('lctrls').innerHTML=`<button class="btn bg on" onclick="capLive()">${t('capF')}</button><button class="btn bi" onclick="togTorch('live')" id="btl">🔦</button><button class="btn bd" onclick="stopLive()">${t('endS')}</button>`;
-    liveH=[];setS('● LIVE','#00ff88');
-    addMsg('lchm','ai','Session started. Point camera at component and tap CAPTURE FRAME.');
-    document.getElementById('ad').classList.add('hide');
-  }catch(e){alert('Camera blocked: '+e.message+'\n\nFix: tap 🔒 in Chrome address bar → Permissions → Camera → Allow → Reload');}
+function handleVoiceCommand(tr) {
+  if (/scan|analyse|analyseer|scanner|scannen/.test(tr)) { triggerScan(); return; }
+  if (/yes|ja|oui|ja/.test(tr) && appState === 'question') { answerYes(); return; }
+  if (/no|nee|non|nein/.test(tr) && appState === 'question') { answerNo(); return; }
+  if (/next|volgende|suivant|weiter/.test(tr) && appState === 'stepping') { nextStep(); return; }
+  if (/back|terug|retour|zurück/.test(tr) && appState === 'stepping') { prevStep(); return; }
+  if (/repeat|herhaal|répéter|wiederholen/.test(tr) && appState === 'stepping') {
+    if (voiceEnabled && steps[currentStep]) speak(steps[currentStep].instruction);
+    return;
+  }
+  if (/ready|klaar|prêt|bereit/.test(tr) && appState === 'prep') { startJob(); return; }
+  if (/done|finished|complete|klaar|terminé|fertig/.test(tr) && appState === 'stepping') { completeJob(); return; }
 }
-function stopLive(){
-  if(ls){ls.getTracks().forEach(t=>t.stop());ls=null;torchL=false;}
-  document.getElementById('vidl').style.display='none';
-  document.getElementById('lov').style.display='none';
-  document.getElementById('lsb').style.display='flex';
-  document.getElementById('lcht').style.display='none';
-  document.getElementById('lctrls').innerHTML=`<button class="btn bg" onclick="startLive()" id="blst">▶ ${t('startS')}</button><button class="btn bi" onclick="togTorch('live')" id="btl">🔦</button>`;
-  setS('○ STANDBY','rgba(0,200,255,0.32)');document.getElementById('ad').classList.remove('hide');
-}
-async function capLive(){
-  const v=document.getElementById('vidl'),c=document.getElementById('cvl');
-  c.width=v.videoWidth||640;c.height=v.videoHeight||480;c.getContext('2d').drawImage(v,0,0);
-  const b64=c.toDataURL('image/jpeg',0.8).split(',')[1];
-  document.getElementById('lguid').textContent='Analyzing...';
-  addMsg('lchm','user','[Frame]');const th=addMsg('lchm','ai','...');th.classList.add('th');
-  liveH.push({role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:'Quick guidance?'}]});
-  try{
-    const r=await fetch('/api/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:buildLP(),messages:liveH})});
-    const d=await r.json(),rep=(d.content||[]).map(b=>b.text||'').join('');
-    th.textContent=rep;th.classList.remove('th');liveH.push({role:'assistant',content:rep});
-    document.getElementById('lguid').textContent=rep;if(voiceOn)speak(rep);
-  }catch(e){th.textContent='Error.';th.classList.remove('th');}
-}
-async function sendLChat(){
-  const inp=document.getElementById('lchi'),q=inp.value.trim();if(!q)return;inp.value='';
-  addMsg('lchm','user',q);liveH.push({role:'user',content:q});const th=addMsg('lchm','ai','...');th.classList.add('th');
-  try{
-    const r=await fetch('/api/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:buildLP(),messages:liveH})});
-    const d=await r.json(),rep=(d.content||[]).map(b=>b.text||'').join('');
-    th.textContent=rep;th.classList.remove('th');liveH.push({role:'assistant',content:rep});if(voiceOn)speak(rep);
-  }catch(e){th.textContent='Error.';th.classList.remove('th');}
-}
-document.getElementById('lchi').addEventListener('keydown',e=>{if(e.key==='Enter')sendLChat();});
 
-// ── HISTORY ──
-function saveHist(s){hist.unshift({...s,id:Date.now()});if(hist.length>40)hist=hist.slice(0,40);localStorage.setItem('mh',JSON.stringify(hist));}
-function renderHist(){
-  document.getElementById('hlv').style.display='block';document.getElementById('hdet').style.display='none';
-  const l=document.getElementById('hlist');
-  if(!hist.length){l.innerHTML='<div id="hemp">📋<br><br>NO SCANS YET<br>RUN A DIAGNOSTIC</div>';return;}
-  l.innerHTML=hist.map((item,idx)=>{
-    const dt=new Date(item.ts).toLocaleString(),pr=(item.result||'').substring(0,110).replace(/[🔍⚠️🔧📊*\n]/gu,' ').trim()+'...';
-    const bg=sBadge(item.result||''),sl=sLabel(item.result||'');
-    return`<div class="hcard" onclick="showHD(${idx})">${item.image?`<img class="hci" src="${item.image}" alt="">`:''}<div class="hch"><div class="hct">SCAN #${hist.length-idx}</div><span class="sb ${bg}">${sl}</span></div><div class="hcp"><div class="hcts">${dt}</div>${pr}</div></div>`;
-  }).join('');
+// ═══════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════
+function saveHist(s) {
+  hist.unshift({ ...s, id: Date.now() });
+  if (hist.length > 40) hist = hist.slice(0, 40);
+  localStorage.setItem('mh', JSON.stringify(hist));
 }
-function showHD(idx){
-  const item=hist[idx];document.getElementById('hlv').style.display='none';document.getElementById('hdet').style.display='block';
-  const col=sCol(item.result||'');
-  document.getElementById('hdc').innerHTML=`${item.image?`<img src="${item.image}" style="width:100%;border-radius:4px;margin-bottom:11px;border:1px solid ${col}33;">`:''}<div style="border:1px solid ${col}33;border-radius:4px;overflow:hidden;"><div style="background:${col}11;border-bottom:1px solid ${col}22;padding:9px 13px;display:flex;justify-content:space-between;align-items:center;"><div style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:${col};">${t('report')}</div><div style="font-size:9px;color:${col}66;">${new Date(item.ts).toLocaleString()}</div></div><div style="padding:13px;font-size:12px;line-height:1.9;background:var(--pan);">${fmtTxt(item.result||'')}</div></div>`;
+
+function renderHist() {
+  const list = document.getElementById('hlist');
+  if (!hist.length) { list.innerHTML = '<div id="hemp">📋<br><br>NO JOBS YET</div>'; return; }
+  const getBadge = s => s === 'CRITICAL' ? 'sbc' : s === 'WARNING' ? 'sbw' : s === 'ALL CLEAR' ? 'sba' : 'sbr';
+  list.innerHTML = hist.map((item, idx) => `
+    <div class="hcard">
+      ${item.image ? `<img class="hcard-img" src="${item.image}" alt="">` : ''}
+      <div class="hcard-h">
+        <div class="hcard-t">${item.part || 'SCAN #' + (hist.length - idx)}</div>
+        <span class="sbadge ${getBadge(item.status || 'ROUTINE')}">${item.status || 'ROUTINE'}</span>
+      </div>
+      <div class="hcard-p"><div class="hcard-ts">${new Date(item.ts).toLocaleString()}</div>${(item.result || '').substring(0, 100)}...</div>
+    </div>`).join('');
 }
-function showHL(){document.getElementById('hlv').style.display='block';document.getElementById('hdet').style.display='none';}
-function clearHist(){if(!confirm('Clear all scan history?'))return;hist=[];localStorage.setItem('mh','[]');renderHist();updSet();}
-function openLang(){document.getElementById('lmod').style.display='flex';}
+
+function clearHist() {
+  if (!confirm('Clear all history?')) return;
+  hist = []; localStorage.setItem('mh', '[]');
+  closeModal('smod');
+}
 </script>
 </body>
 </html>
