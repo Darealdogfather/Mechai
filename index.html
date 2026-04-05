@@ -6,1166 +6,1089 @@
 <meta name="theme-color" content="#000d14">
 <meta name="mobile-web-app-capable" content="true">
 <meta name="apple-mobile-web-app-capable" content="true">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>MECH-AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--c:#00c8ff;--g:#00ff88;--r:#ff3c3c;--o:#ffaa00;--bg:#000d14;--panel:rgba(0,15,28,0.97);--border:rgba(0,200,255,0.15);}
+:root{--c:#00c8ff;--g:#00ff88;--r:#ff3c3c;--o:#ffaa00;--bg:#000d14;--panel:rgba(0,15,28,0.97);--b:rgba(0,200,255,0.15);}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);font-family:'Share Tech Mono',monospace;color:#fff;overflow:hidden;}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,0.018) 2px,rgba(0,200,255,0.018) 4px);pointer-events:none;z-index:0;}
-
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,0.015) 2px,rgba(0,200,255,0.015) 4px);pointer-events:none;z-index:0;}
 /* BOOT */
 #boot{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.6s;}
 #boot.gone{opacity:0;pointer-events:none;}
 #btxt{width:min(520px,88vw);font-size:12px;line-height:2.3;color:var(--c);text-shadow:0 0 8px var(--c);white-space:pre-wrap;}
 .cur{display:inline-block;width:8px;height:14px;background:var(--c);vertical-align:middle;animation:blink 1s infinite;}
-
 /* SCREENS */
 .screen{position:fixed;inset:0;display:none;flex-direction:column;z-index:10;overflow:hidden;}
 .screen.active{display:flex;}
-
-/* ═══ AUTH SCREEN ═══ */
+/* ── AUTH ── */
 #s-auth{background:var(--bg);align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
-.auth-wrap{width:100%;max-width:420px;margin:auto;}
-.auth-logo{text-align:center;margin-bottom:32px;}
-.auth-logo-title{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;letter-spacing:4px;color:var(--c);text-shadow:0 0 20px var(--c);}
-.auth-logo-sub{font-size:10px;color:rgba(0,200,255,0.5);letter-spacing:3px;margin-top:4px;}
-.auth-logo-ring{width:60px;height:60px;border:2px solid var(--c);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative;}
-.auth-logo-dot{width:18px;height:18px;background:var(--c);border-radius:50%;box-shadow:0 0 14px var(--c);}
-.auth-logo-pulse{position:absolute;inset:-8px;border:1px solid rgba(0,200,255,0.25);border-radius:50%;animation:ping 2.5s ease-out infinite;}
-.auth-tabs{display:flex;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:24px;}
-.auth-tab{flex:1;padding:12px;background:transparent;border:none;color:rgba(255,255,255,0.4);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;}
-.auth-tab.active{background:rgba(0,200,255,0.1);color:#fff;border-bottom:2px solid var(--c);}
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-bottom:6px;}
-.field input,.field select{width:100%;background:rgba(0,200,255,0.04);border:1px solid var(--border);color:#fff;font-family:'Share Tech Mono',monospace;font-size:13px;padding:12px 14px;border-radius:3px;outline:none;transition:border-color 0.2s;}
-.field input:focus,.field select:focus{border-color:var(--c);}
-.field select option{background:#000f1a;color:#fff;}
-.field input::placeholder{color:rgba(255,255,255,0.2);}
-.terms-check{display:flex;align-items:flex-start;gap:10px;font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:16px;cursor:pointer;line-height:1.6;}
-.terms-check input{margin-top:2px;accent-color:var(--c);width:16px;height:16px;flex-shrink:0;}
-.terms-check a{color:var(--c);text-decoration:none;}
-.btn-primary{width:100%;padding:14px;background:var(--c);color:#000;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;border:none;border-radius:3px;cursor:pointer;font-weight:700;transition:all 0.2s;}
-.btn-primary:active{background:#009ec8;}
-.btn-outline{width:100%;padding:12px;background:transparent;border:1px solid var(--border);color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border-radius:3px;cursor:pointer;transition:all 0.2s;margin-top:8px;}
-.btn-outline:active{background:rgba(0,200,255,0.08);}
-.auth-err{color:#ff6666;font-size:11px;margin-bottom:12px;padding:10px;background:rgba(255,60,60,0.08);border:1px solid rgba(255,60,60,0.2);border-radius:3px;display:none;}
-
+.aw{width:100%;max-width:400px;margin:auto;padding:20px 0;}
+.al{text-align:center;margin-bottom:28px;}
+.al-ring{width:56px;height:56px;border:2px solid var(--c);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;position:relative;}
+.al-dot{width:16px;height:16px;background:var(--c);border-radius:50%;box-shadow:0 0 12px var(--c);}
+.al-pulse{position:absolute;inset:-7px;border:1px solid rgba(0,200,255,0.22);border-radius:50%;animation:ping 2.5s ease-out infinite;}
+.al-title{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;letter-spacing:4px;color:var(--c);text-shadow:0 0 18px var(--c);}
+.al-sub{font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:3px;margin-top:4px;}
+.atabs{display:flex;border:1px solid var(--b);border-radius:4px;overflow:hidden;margin-bottom:22px;}
+.atab{flex:1;padding:12px;background:transparent;border:none;color:rgba(255,255,255,0.35);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;}
+.atab.on{background:rgba(0,200,255,0.08);color:#fff;border-bottom:2px solid var(--c);}
+.f{margin-bottom:13px;}
+.f label{display:block;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.45);margin-bottom:5px;}
+.f input,.f select,.f textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--b);color:#fff;font-family:'Share Tech Mono',monospace;font-size:12px;padding:11px 13px;border-radius:3px;outline:none;transition:border-color 0.2s;}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--c);}
+.f select option{background:#000f1a;}
+.f input::placeholder,.f textarea::placeholder{color:rgba(255,255,255,0.18);}
+.f textarea{resize:vertical;min-height:80px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.tc{display:flex;align-items:flex-start;gap:10px;font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:14px;cursor:pointer;line-height:1.6;}
+.tc input{margin-top:2px;accent-color:var(--c);width:15px;height:15px;flex-shrink:0;}
+.tc a{color:var(--c);text-decoration:none;}
+.bp{width:100%;padding:13px;background:var(--c);color:#000;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;border:none;border-radius:3px;cursor:pointer;font-weight:700;transition:all 0.2s;}
+.bp:active{background:#009ec8;}
+.bo{width:100%;padding:11px;background:transparent;border:1px solid var(--b);color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border-radius:3px;cursor:pointer;margin-top:8px;}
+.aerr{color:#ff6666;font-size:11px;margin-bottom:11px;padding:9px 12px;background:rgba(255,60,60,0.07);border:1px solid rgba(255,60,60,0.18);border-radius:3px;display:none;}
 /* TERMS MODAL */
-#terms-modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9000;display:none;align-items:center;justify-content:center;padding:16px;}
-.terms-box{background:#000f1a;border:1px solid rgba(255,170,0,0.3);border-radius:6px;max-width:520px;width:100%;max-height:85vh;display:flex;flex-direction:column;}
-.terms-hdr{background:rgba(255,170,0,0.07);border-bottom:1px solid rgba(255,170,0,0.15);padding:14px 16px;display:flex;align-items:center;gap:10px;}
-.terms-title{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--o);}
-.terms-body{padding:16px;overflow-y:auto;flex:1;font-size:11px;line-height:1.9;color:rgba(255,255,255,0.65);}
-.terms-body h3{color:var(--o);font-size:9px;letter-spacing:2px;margin:12px 0 5px;font-family:'Orbitron',monospace;}
-.terms-body p{margin-bottom:7px;}
-.terms-body strong{color:#fff;}
-.terms-foot{padding:12px 16px;border-top:1px solid rgba(255,170,0,0.12);}
-.terms-close{width:100%;padding:12px;background:var(--o);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
-
-/* ═══ MAIN APP (tabs) ═══ */
+#tmod{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9000;display:none;align-items:center;justify-content:center;padding:14px;}
+.tbox{background:#000f1a;border:1px solid rgba(255,170,0,0.28);border-radius:6px;max-width:500px;width:100%;max-height:88vh;display:flex;flex-direction:column;}
+.thdr{background:rgba(255,170,0,0.06);border-bottom:1px solid rgba(255,170,0,0.14);padding:13px 15px;display:flex;align-items:center;gap:10px;}
+.ttitle{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--o);}
+.tbody{padding:15px;overflow-y:auto;flex:1;font-size:11px;line-height:1.9;color:rgba(255,255,255,0.6);}
+.tbody h3{color:var(--o);font-size:9px;letter-spacing:2px;margin:11px 0 4px;font-family:'Orbitron',monospace;}
+.tbody p{margin-bottom:7px;}
+.tbody strong{color:#fff;}
+.tfoot{padding:12px 15px;border-top:1px solid rgba(255,170,0,0.1);}
+.tclose{width:100%;padding:12px;background:var(--o);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
+/* ── MAIN APP ── */
 #s-app{background:var(--bg);}
-#tab-content{flex:1;overflow:hidden;position:relative;}
-.tab-page{position:absolute;inset:0;overflow-y:auto;display:none;padding-bottom:70px;}
-.tab-page.active{display:block;}
-
+#tc{flex:1;overflow:hidden;position:relative;}
+.tp{position:absolute;inset:0;overflow-y:auto;display:none;padding-bottom:68px;}
+.tp.on{display:block;}
 /* BOTTOM NAV */
-#bottom-nav{height:64px;background:rgba(0,8,18,0.97);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:0 4px;flex-shrink:0;z-index:50;}
-.nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;background:transparent;border:none;cursor:pointer;color:rgba(255,255,255,0.3);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;transition:color 0.2s;min-width:56px;}
-.nav-btn .ni{font-size:20px;}
-.nav-btn.active{color:var(--c);}
-
-/* ═══ SCAN TAB ═══ */
+#bnav{height:62px;background:rgba(0,8,18,0.97);border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-around;padding:0 2px;flex-shrink:0;z-index:50;}
+.nb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 8px;background:transparent;border:none;cursor:pointer;color:rgba(255,255,255,0.28);font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;transition:color 0.2s;min-width:50px;}
+.nb .ni{font-size:19px;}
+.nb.on{color:var(--c);}
+/* ── SCAN ── */
 #tab-scan{padding:0;background:#000;}
-#cam-wrap{position:relative;width:100%;height:100vh;}
-#cam-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-#cam-canvas{display:none;}
-
-/* HUD */
+#cw{position:relative;width:100%;height:calc(100vh - 62px);}
+#cvid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+#ccv{display:none;}
 #hud{position:absolute;inset:0;pointer-events:none;}
 .hc{position:absolute;width:22px;height:22px;}
 .hc.tl{top:10px;left:10px;border-top:2px solid var(--c);border-left:2px solid var(--c);}
 .hc.tr{top:10px;right:10px;border-top:2px solid var(--c);border-right:2px solid var(--c);}
-.hc.bl{bottom:130px;left:10px;border-bottom:2px solid var(--c);border-left:2px solid var(--c);}
-.hc.br{bottom:130px;right:10px;border-bottom:2px solid var(--c);border-right:2px solid var(--c);}
-#hud-top{position:absolute;top:0;left:0;right:0;padding:10px 14px;background:linear-gradient(to bottom,rgba(0,0,0,0.75),transparent);display:flex;align-items:center;justify-content:space-between;}
-#hud-logo{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;letter-spacing:3px;color:var(--c);text-shadow:0 0 10px var(--c);}
-#hud-r{text-align:right;}
-#hud-clock{font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:1px;}
-#hud-st{font-size:9px;color:rgba(0,200,255,0.45);letter-spacing:2px;margin-top:1px;}
-#active-car-chip{position:absolute;top:52px;left:0;right:0;display:flex;justify-content:center;pointer-events:all;}
-#acc-inner{background:rgba(0,0,0,0.6);border:1px solid rgba(0,200,255,0.25);border-radius:20px;padding:5px 14px;font-size:10px;color:rgba(255,255,255,0.7);letter-spacing:1px;cursor:pointer;}
-
-/* SCAN PROGRESS */
-#scan-ov{position:absolute;inset:0;bottom:120px;display:none;pointer-events:none;}
-#scan-bar{position:absolute;top:0;left:0;height:3px;background:var(--c);box-shadow:0 0 8px var(--c);width:0%;transition:width 0.05s linear;}
-#scan-corners{position:absolute;inset:16px;}
-.sc{position:absolute;width:36px;height:36px;}
+.hc.bl{bottom:128px;left:10px;border-bottom:2px solid var(--c);border-left:2px solid var(--c);}
+.hc.br{bottom:128px;right:10px;border-bottom:2px solid var(--c);border-right:2px solid var(--c);}
+#htop{position:absolute;top:0;left:0;right:0;padding:10px 13px;background:linear-gradient(to bottom,rgba(0,0,0,0.75),transparent);display:flex;align-items:center;justify-content:space-between;}
+#hlogo{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;letter-spacing:3px;color:var(--c);text-shadow:0 0 10px var(--c);}
+#hclock{font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:1px;}
+#hst{font-size:9px;color:rgba(0,200,255,0.4);letter-spacing:2px;margin-top:1px;text-align:right;}
+#acchip{position:absolute;top:50px;left:0;right:0;display:flex;justify-content:center;pointer-events:all;}
+#acci{background:rgba(0,0,0,0.6);border:1px solid rgba(0,200,255,0.22);border-radius:20px;padding:5px 13px;font-size:10px;color:rgba(255,255,255,0.65);letter-spacing:1px;cursor:pointer;}
+/* SCAN OVERLAY */
+#sov{position:absolute;inset:0;bottom:122px;display:none;pointer-events:none;}
+#sbar{position:absolute;top:0;left:0;height:3px;background:var(--c);box-shadow:0 0 8px var(--c);width:0%;transition:width 0.05s linear;}
+#scorners{position:absolute;inset:14px;}
+.sc{position:absolute;width:34px;height:34px;}
 .sc.tl{top:0;left:0;border-top:3px solid var(--c);border-left:3px solid var(--c);animation:cp 1s infinite;}
-.sc.tr{top:0;right:0;border-top:3px solid var(--c);border-right:3px solid var(--c);animation:cp 1s infinite 0.25s;}
-.sc.bl{bottom:0;left:0;border-bottom:3px solid var(--c);border-left:3px solid var(--c);animation:cp 1s infinite 0.5s;}
-.sc.br{bottom:0;right:0;border-bottom:3px solid var(--c);border-right:3px solid var(--c);animation:cp 1s infinite 0.75s;}
-#scan-txt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
-#scan-main-txt{font-size:12px;letter-spacing:3px;color:var(--c);text-shadow:0 0 8px var(--c);}
-#scan-sub-txt{font-size:9px;color:rgba(255,255,255,0.4);margin-top:4px;letter-spacing:1px;}
-
+.sc.tr{top:0;right:0;border-top:3px solid var(--c);border-right:3px solid var(--c);animation:cp 1s infinite .25s;}
+.sc.bl{bottom:0;left:0;border-bottom:3px solid var(--c);border-left:3px solid var(--c);animation:cp 1s infinite .5s;}
+.sc.br{bottom:0;right:0;border-bottom:3px solid var(--c);border-right:3px solid var(--c);animation:cp 1s infinite .75s;}
+#smtxt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+#smain{font-size:12px;letter-spacing:3px;color:var(--c);text-shadow:0 0 8px var(--c);}
+#ssub{font-size:9px;color:rgba(255,255,255,0.38);margin-top:4px;letter-spacing:1px;}
 /* PART BANNER */
-#part-banner{position:absolute;top:82px;left:12px;right:12px;background:rgba(0,0,0,0.7);border:1px solid rgba(0,200,255,0.4);border-radius:4px;padding:10px 14px;display:none;pointer-events:none;}
-#part-name{font-size:14px;letter-spacing:2px;color:#fff;font-family:'Orbitron',monospace;}
-#part-cond{font-size:10px;color:rgba(0,200,255,0.7);margin-top:2px;}
-
+#pbanner{position:absolute;top:80px;left:11px;right:11px;background:rgba(0,0,0,0.72);border:1px solid rgba(0,200,255,0.38);border-radius:4px;padding:10px 13px;display:none;pointer-events:none;}
+#pname{font-size:14px;letter-spacing:2px;color:#fff;font-family:'Orbitron',monospace;}
+#pcond{font-size:10px;color:rgba(0,200,255,0.65);margin-top:2px;}
 /* VOICE BAR */
 #vbar{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:none;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
-#vbar-ring{width:70px;height:70px;border:2px solid rgba(255,60,60,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:pr 1.5s infinite;}
-#vbar-dot{width:28px;height:28px;background:var(--r);border-radius:50%;box-shadow:0 0 16px var(--r);animation:pd 1.5s infinite;}
-#vbar-txt{font-size:10px;letter-spacing:3px;color:var(--r);}
-
+#vring{width:68px;height:68px;border:2px solid rgba(255,60,60,0.38);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:pr 1.5s infinite;}
+#vdot{width:26px;height:26px;background:var(--r);border-radius:50%;box-shadow:0 0 14px var(--r);animation:pd 1.5s infinite;}
 /* AI PANEL */
-#ai-panel{position:absolute;left:0;right:0;bottom:120px;background:linear-gradient(to top,rgba(0,5,15,0.97),rgba(0,5,15,0.9));border-top:1px solid var(--border);padding:14px;display:none;max-height:56vh;overflow-y:auto;}
-.ap-hide{display:none!important;}
-
+#aip{position:absolute;left:0;right:0;bottom:122px;background:linear-gradient(to top,rgba(0,5,15,0.97),rgba(0,5,15,0.9));border-top:1px solid var(--b);padding:13px;display:none;max-height:55vh;overflow-y:auto;}
 /* Question */
-#qp{display:none;flex-direction:column;gap:12px;}
-#q-txt{font-size:13px;color:#fff;line-height:1.7;}
-#q-btns{display:flex;gap:10px;}
-.qb{flex:1;padding:14px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;border-radius:3px;cursor:pointer;border:none;font-weight:700;}
-#qb-y{background:var(--g);color:#000;}
-#qb-n{background:transparent;border:1px solid var(--border);color:#fff;}
-
+#qp{display:none;flex-direction:column;gap:11px;}
+#qtxt{font-size:13px;color:#fff;line-height:1.7;}
+#qbtns{display:flex;gap:9px;}
+.qb{flex:1;padding:13px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;border-radius:3px;cursor:pointer;border:none;font-weight:700;}
+#qby{background:var(--g);color:#000;}
+#qbn{background:transparent;border:1px solid var(--b);color:#fff;}
 /* Prep */
-#pp{display:none;flex-direction:column;gap:10px;}
-#pp-title{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:var(--c);}
-.pp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.pp-stat{border:1px solid var(--border);border-radius:3px;padding:9px;text-align:center;}
-.pp-lbl{font-size:8px;letter-spacing:2px;color:rgba(255,255,255,0.4);margin-bottom:4px;}
-.pp-val{font-size:12px;color:#fff;}
-.pp-sec{border:1px solid var(--border);border-radius:3px;padding:10px;}
-.pp-sec-lbl{font-size:8px;letter-spacing:2px;color:rgba(255,255,255,0.4);margin-bottom:6px;}
-.pp-items{font-size:11px;color:rgba(255,255,255,0.8);line-height:2.1;}
+#prp{display:none;flex-direction:column;gap:10px;}
+#prptitle{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:var(--c);}
+.prprow{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.prpstat{border:1px solid var(--b);border-radius:3px;padding:9px;text-align:center;}
+.prplbl{font-size:8px;letter-spacing:2px;color:rgba(255,255,255,0.38);margin-bottom:4px;}
+.prpval{font-size:12px;color:#fff;}
+.prpsec{border:1px solid var(--b);border-radius:3px;padding:10px;}
+.prpslbl{font-size:8px;letter-spacing:2px;color:rgba(255,255,255,0.38);margin-bottom:6px;}
+.prpitems{font-size:11px;color:rgba(255,255,255,0.8);line-height:2.1;}
 .torq{color:#ffcc88;}
-#pp-start{width:100%;padding:14px;background:var(--g);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
-
+#prpstart{width:100%;padding:13px;background:var(--g);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
 /* Steps */
-#sp{display:none;flex-direction:column;gap:10px;}
-#sp-hdr{display:flex;align-items:center;gap:10px;}
-#sp-cnt{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.4);white-space:nowrap;}
-#sp-pw{flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;}
-#sp-p{height:100%;background:var(--c);border-radius:2px;transition:width 0.4s;}
-#sp-txt{font-size:13px;color:#fff;line-height:1.8;padding:6px 0;}
-#sp-torq{display:none;background:rgba(255,170,0,0.08);border:1px solid rgba(255,170,0,0.2);border-radius:3px;padding:9px;font-size:11px;color:#ffcc88;}
-#sp-btns{display:flex;gap:8px;}
-#sp-prev{flex:0 0 46px;padding:12px 0;background:transparent;border:1px solid var(--border);color:#fff;font-family:'Share Tech Mono',monospace;font-size:16px;border-radius:3px;cursor:pointer;}
-#sp-next{flex:1;padding:12px;background:var(--c);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
-#sp-done{width:100%;padding:13px;background:var(--g);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;display:none;}
-#sp-vh{font-size:9px;color:rgba(255,255,255,0.25);text-align:center;letter-spacing:1px;}
-
+#stp{display:none;flex-direction:column;gap:10px;}
+#stphdr{display:flex;align-items:center;gap:10px;}
+#stpcnt{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.38);white-space:nowrap;}
+#stppw{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+#stpp{height:100%;background:var(--c);border-radius:2px;transition:width 0.4s;}
+#stptxt{font-size:13px;color:#fff;line-height:1.8;padding:6px 0;}
+#stptorq{display:none;background:rgba(255,170,0,0.07);border:1px solid rgba(255,170,0,0.18);border-radius:3px;padding:9px;font-size:11px;color:#ffcc88;}
+#stpbtns{display:flex;gap:8px;}
+#stpprev{flex:0 0 44px;padding:12px 0;background:transparent;border:1px solid var(--b);color:#fff;font-family:'Share Tech Mono',monospace;font-size:16px;border-radius:3px;cursor:pointer;}
+#stpnext{flex:1;padding:12px;background:var(--c);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
+#stpdone{width:100%;padding:12px;background:var(--g);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;display:none;}
+#stpvh{font-size:9px;color:rgba(255,255,255,0.22);text-align:center;letter-spacing:1px;}
 /* Complete */
-#cp2{display:none;flex-direction:column;align-items:center;gap:12px;padding:10px 0;}
-#cp2-icon{font-size:36px;}
-#cp2-title{font-family:'Orbitron',monospace;font-size:13px;letter-spacing:3px;color:var(--g);text-shadow:0 0 10px var(--g);}
-#cp2-txt{font-size:11px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.8;}
-#cp2-save{padding:12px 24px;background:var(--c);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
-#cp2-new{padding:12px 24px;background:transparent;border:1px solid var(--border);color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border-radius:3px;cursor:pointer;margin-top:4px;}
-
-/* SCAN BOTTOM CONTROLS */
-#scan-ctrls{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:12px;gap:10px;}
-#ad-bar{display:flex;align-items:center;gap:10px;padding:6px 16px;background:rgba(0,0,0,0.6);border:1px solid var(--border);border-radius:20px;width:calc(100% - 24px);}
-#ad-bar.hide{display:none;}
-.adl{font-size:7px;color:rgba(255,255,255,0.25);letter-spacing:2px;}
+#comp{display:none;flex-direction:column;align-items:center;gap:11px;padding:10px 0;}
+#compbtns{display:flex;gap:9px;width:100%;}
+/* SCAN BOTTOM CTRLS */
+#sctrls{position:absolute;bottom:0;left:0;right:0;height:122px;background:linear-gradient(to top,rgba(0,0,0,0.92),transparent);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:10px;gap:9px;}
+#adbar{display:flex;align-items:center;gap:9px;padding:6px 14px;background:rgba(0,0,0,0.55);border:1px solid var(--b);border-radius:20px;width:calc(100% - 22px);}
+#adbar.hide{display:none;}
+.adl{font-size:7px;color:rgba(255,255,255,0.22);letter-spacing:2px;}
 .adc{flex:1;display:flex;align-items:center;gap:8px;justify-content:center;}
-.adn{font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);}
-.adt{font-size:9px;color:rgba(255,255,255,0.3);}
-.adb{font-size:8px;padding:4px 9px;background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.4);border-radius:2px;cursor:pointer;font-family:'Share Tech Mono',monospace;}
-#scan-btns{display:flex;align-items:center;gap:12px;}
-.sc-btn{display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;color:rgba(255,255,255,0.4);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;padding:6px 10px;}
-.sc-btn .si{font-size:18px;}
-.sc-btn.on{color:var(--o);}
-#btn-scan{width:72px;height:72px;background:var(--c);border:none;border-radius:50%;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:#000;font-weight:700;transition:all 0.2s;flex-shrink:0;}
-#btn-scan.scanning{background:var(--r);animation:ps 1s infinite;}
-#btn-scan .bsi{font-size:22px;display:block;}
-
-/* ═══ GARAGE TAB ═══ */
+.adn{font-size:10px;font-weight:700;color:rgba(255,255,255,0.48);}
+.adt{font-size:9px;color:rgba(255,255,255,0.28);}
+.adb{font-size:8px;padding:4px 8px;background:transparent;border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.38);border-radius:2px;cursor:pointer;font-family:'Share Tech Mono',monospace;}
+#scanbtns{display:flex;align-items:center;gap:14px;}
+.scb{display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:none;cursor:pointer;color:rgba(255,255,255,0.38);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;padding:6px 10px;transition:color 0.2s;}
+.scb .si{font-size:18px;}
+.scb.on{color:var(--o);}
+#btnscan{width:70px;height:70px;background:var(--c);border:none;border-radius:50%;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:9px;color:#000;font-weight:700;transition:all 0.2s;flex-shrink:0;}
+#btnscan.sc{background:var(--r);animation:ps 1s infinite;}
+#btnscan .bsi{font-size:22px;display:block;}
+/* ── GARAGE ── */
 #tab-garage{background:var(--bg);}
-.page-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);}
-.page-hdr h1{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:var(--c);}
-.icon-btn{background:transparent;border:1px solid var(--border);color:#fff;font-size:18px;width:38px;height:38px;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.car-list{padding:12px;display:flex;flex-direction:column;gap:10px;}
-.car-card{border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;transition:border-color 0.2s;position:relative;}
-.car-card.active-car{border-color:var(--g);box-shadow:0 0 12px rgba(0,255,136,0.15);}
-.car-card-img{width:100%;height:120px;object-fit:cover;background:rgba(0,200,255,0.05);display:flex;align-items:center;justify-content:center;font-size:40px;}
-.car-card-img img{width:100%;height:100%;object-fit:cover;}
-.car-card-body{padding:12px;}
-.car-card-title{font-size:13px;color:#fff;letter-spacing:1px;margin-bottom:4px;}
-.car-card-sub{font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:1px;}
-.car-card-badge{position:absolute;top:10px;right:10px;background:var(--g);color:#000;font-size:8px;letter-spacing:1px;padding:3px 8px;border-radius:10px;font-weight:700;}
-.car-card-actions{display:flex;gap:6px;padding:0 12px 12px;}
-.car-action{flex:1;padding:8px;background:transparent;border:1px solid var(--border);color:rgba(255,255,255,0.6);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;border-radius:3px;cursor:pointer;text-align:center;}
-.car-action.set{border-color:rgba(0,255,136,0.3);color:var(--g);}
-.car-action.del{border-color:rgba(255,60,60,0.25);color:rgba(255,60,60,0.6);}
-.empty-state{text-align:center;padding:48px 20px;opacity:0.35;font-size:11px;color:rgba(255,255,255,0.6);line-height:2.4;letter-spacing:1px;}
-
-/* CAR FORM MODAL */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:500;display:none;align-items:flex-end;justify-content:center;}
-.modal.open{display:flex;}
-.modal-sheet{background:#000f1a;border:1px solid var(--border);border-radius:12px 12px 0 0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
-.modal-hdr{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.modal-hdr h2{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--c);}
-.modal-close{background:transparent;border:none;color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;padding:4px 8px;}
-.modal-body{padding:16px;display:flex;flex-direction:column;gap:12px;}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.modal-foot{padding:12px 16px;border-top:1px solid var(--border);}
-
-/* ═══ LOG TAB ═══ */
+.phdr{display:flex;align-items:center;justify-content:space-between;padding:15px 14px 11px;border-bottom:1px solid var(--b);}
+.phdr h1{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:var(--c);}
+.icnbtn{background:transparent;border:1px solid var(--b);color:#fff;font-size:18px;width:38px;height:38px;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.carlist{padding:11px;display:flex;flex-direction:column;gap:10px;}
+.ccard{border:1px solid var(--b);border-radius:6px;overflow:hidden;position:relative;transition:border-color 0.2s;}
+.ccard.acar{border-color:var(--g);box-shadow:0 0 10px rgba(0,255,136,0.12);}
+.ccimg{width:100%;height:110px;background:rgba(0,200,255,0.04);display:flex;align-items:center;justify-content:center;font-size:38px;overflow:hidden;}
+.ccimg img{width:100%;height:100%;object-fit:cover;}
+.ccbody{padding:11px 12px;}
+.cctitle{font-size:13px;color:#fff;letter-spacing:1px;margin-bottom:3px;}
+.ccsub{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;}
+.ccbadge{position:absolute;top:9px;right:9px;background:var(--g);color:#000;font-size:7px;letter-spacing:1px;padding:2px 7px;border-radius:10px;font-weight:700;}
+.ccacts{display:flex;gap:5px;padding:0 11px 11px;}
+.cca{flex:1;padding:7px 4px;background:transparent;border:1px solid var(--b);color:rgba(255,255,255,0.55);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;border-radius:3px;cursor:pointer;text-align:center;transition:all 0.15s;}
+.cca.set{border-color:rgba(0,255,136,0.28);color:var(--g);}
+.cca.del{border-color:rgba(255,60,60,0.22);color:rgba(255,60,60,0.6);}
+.empty{text-align:center;padding:44px 16px;opacity:0.3;font-size:11px;color:rgba(255,255,255,0.6);line-height:2.4;letter-spacing:1px;}
+/* ── LOG ── */
 #tab-log{background:var(--bg);}
-.log-filters{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);overflow-x:auto;}
-.log-filter{padding:6px 14px;background:transparent;border:1px solid var(--border);color:rgba(255,255,255,0.4);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
-.log-filter.active{background:rgba(0,200,255,0.1);border-color:var(--c);color:#fff;}
-.log-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px 14px;border-bottom:1px solid var(--border);}
-.log-stat{border:1px solid var(--border);border-radius:4px;padding:10px;text-align:center;}
-.log-stat-val{font-size:16px;color:#fff;margin-bottom:2px;}
-.log-stat-lbl{font-size:8px;color:rgba(255,255,255,0.4);letter-spacing:1px;}
-.log-list{padding:12px;display:flex;flex-direction:column;gap:8px;}
-.log-entry{border:1px solid var(--border);border-radius:4px;overflow:hidden;}
-.log-entry-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(0,200,255,0.04);border-bottom:1px solid var(--border);}
-.log-entry-type{font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:10px;}
-.log-type-repair{background:rgba(255,60,60,0.1);color:var(--r);border:1px solid rgba(255,60,60,0.2);}
-.log-type-maint{background:rgba(0,200,255,0.08);color:var(--c);border:1px solid rgba(0,200,255,0.2);}
-.log-entry-date{font-size:9px;color:rgba(255,255,255,0.35);}
-.log-entry-body{padding:10px 12px;}
-.log-entry-part{font-size:12px;color:#fff;margin-bottom:4px;}
-.log-entry-desc{font-size:10px;color:rgba(255,255,255,0.5);line-height:1.6;}
-.log-entry-km{font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px;}
-
-/* ═══ COMMUNITY TAB ═══ */
+.filters{display:flex;gap:6px;padding:9px 12px;border-bottom:1px solid var(--b);overflow-x:auto;}
+.filt{padding:5px 13px;background:transparent;border:1px solid var(--b);color:rgba(255,255,255,0.38);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.filt.on{background:rgba(0,200,255,0.08);border-color:var(--c);color:#fff;}
+.lstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;padding:11px 12px;border-bottom:1px solid var(--b);}
+.lstat{border:1px solid var(--b);border-radius:4px;padding:9px;text-align:center;}
+.lsv{font-size:16px;color:#fff;margin-bottom:2px;}
+.lsl{font-size:8px;color:rgba(255,255,255,0.35);letter-spacing:1px;}
+.llist{padding:11px;display:flex;flex-direction:column;gap:8px;}
+.lentry{border:1px solid var(--b);border-radius:4px;overflow:hidden;}
+.lehdr{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:rgba(0,200,255,0.03);border-bottom:1px solid var(--b);}
+.letyp{font-size:8px;letter-spacing:1px;padding:2px 7px;border-radius:10px;}
+.lrep{background:rgba(255,60,60,0.08);color:var(--r);border:1px solid rgba(255,60,60,0.18);}
+.lmai{background:rgba(0,200,255,0.06);color:var(--c);border:1px solid rgba(0,200,255,0.18);}
+.ledt{font-size:9px;color:rgba(255,255,255,0.3);}
+.lebody{padding:9px 11px;}
+.lepart{font-size:12px;color:#fff;margin-bottom:3px;}
+.ledesc{font-size:10px;color:rgba(255,255,255,0.45);line-height:1.6;}
+.lekm{font-size:9px;color:rgba(255,255,255,0.28);margin-top:3px;}
+/* ── COMMUNITY ── */
 #tab-community{background:var(--bg);}
-.comm-filters{display:flex;gap:6px;padding:10px 14px;overflow-x:auto;border-bottom:1px solid var(--border);}
-.comm-filter{padding:6px 14px;background:transparent;border:1px solid var(--border);color:rgba(255,255,255,0.4);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
-.comm-filter.active{background:rgba(0,200,255,0.1);border-color:var(--c);color:#fff;}
-.post-list{padding:12px;display:flex;flex-direction:column;gap:10px;}
-.post-card{border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;transition:border-color 0.2s;}
-.post-card:active{border-color:var(--c);}
-.post-card-img{width:100%;height:140px;object-fit:cover;background:rgba(0,200,255,0.04);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.15);font-size:32px;}
-.post-card-img img{width:100%;height:100%;object-fit:cover;}
-.post-card-body{padding:12px;}
-.post-card-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.post-type-badge{font-size:8px;letter-spacing:1px;padding:2px 8px;border-radius:10px;}
-.ptb-repair{background:rgba(255,60,60,0.1);color:var(--r);border:1px solid rgba(255,60,60,0.18);}
-.ptb-maintenance{background:rgba(0,200,255,0.08);color:var(--c);border:1px solid rgba(0,200,255,0.18);}
-.ptb-question{background:rgba(255,170,0,0.08);color:var(--o);border:1px solid rgba(255,170,0,0.18);}
-.ptb-tip{background:rgba(0,255,136,0.07);color:var(--g);border:1px solid rgba(0,255,136,0.18);}
-.post-car{font-size:9px;color:rgba(255,255,255,0.35);}
-.post-title{font-size:13px;color:#fff;margin-bottom:6px;line-height:1.5;}
-.post-preview{font-size:11px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:10px;}
-.post-footer{display:flex;align-items:center;gap:14px;border-top:1px solid var(--border);padding-top:10px;}
-.post-action{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,0.35);cursor:pointer;background:transparent;border:none;padding:4px 8px;border-radius:3px;transition:all 0.2s;}
-.post-action.liked{color:var(--r);}
-.post-action.saved{color:var(--o);}
-.post-author{margin-left:auto;font-size:9px;color:rgba(255,255,255,0.25);}
-.fab{position:fixed;bottom:80px;right:16px;width:52px;height:52px;background:var(--c);border:none;border-radius:50%;cursor:pointer;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,200,255,0.3);z-index:100;}
-
+.cfilt{display:flex;gap:6px;padding:9px 12px;overflow-x:auto;border-bottom:1px solid var(--b);}
+.plist{padding:11px;display:flex;flex-direction:column;gap:10px;}
+.pcard{border:1px solid var(--b);border-radius:6px;overflow:hidden;cursor:pointer;transition:border-color 0.15s;}
+.pcard:active{border-color:var(--c);}
+.pcimg{width:100%;height:130px;object-fit:cover;background:rgba(0,200,255,0.03);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.12);font-size:30px;}
+.pcimg img{width:100%;height:100%;object-fit:cover;}
+.pcbody{padding:11px;}
+.pcmeta{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap;}
+.ptb{font-size:8px;letter-spacing:1px;padding:2px 7px;border-radius:10px;}
+.ptr{background:rgba(255,60,60,0.08);color:var(--r);border:1px solid rgba(255,60,60,0.16);}
+.ptm{background:rgba(0,200,255,0.06);color:var(--c);border:1px solid rgba(0,200,255,0.16);}
+.ptq{background:rgba(255,170,0,0.07);color:var(--o);border:1px solid rgba(255,170,0,0.16);}
+.ptt{background:rgba(0,255,136,0.06);color:var(--g);border:1px solid rgba(0,255,136,0.16);}
+.pth{background:rgba(255,100,100,0.08);color:#ff8888;border:1px solid rgba(255,100,100,0.18);}
+.pcar{font-size:9px;color:rgba(255,255,255,0.3);}
+.ptitle{font-size:13px;color:#fff;margin-bottom:5px;line-height:1.5;}
+.pprev{font-size:11px;color:rgba(255,255,255,0.48);line-height:1.6;margin-bottom:9px;}
+.pfoot{display:flex;align-items:center;gap:12px;border-top:1px solid var(--b);padding-top:9px;}
+.pact{display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(255,255,255,0.32);cursor:pointer;background:transparent;border:none;padding:3px 7px;border-radius:3px;transition:all 0.2s;font-family:'Share Tech Mono',monospace;}
+.pact.liked{color:var(--r);}
+.pact.saved{color:var(--o);}
+.pauthor{margin-left:auto;font-size:9px;color:rgba(255,255,255,0.22);}
+.fab{position:fixed;bottom:76px;right:14px;width:50px;height:50px;background:var(--c);border:none;border-radius:50%;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,200,255,0.28);z-index:100;}
 /* POST DETAIL */
-#post-detail{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column;}
-#pd-hdr{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
-#pd-back{background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px;}
-#pd-title{font-size:13px;color:#fff;flex:1;}
-#pd-body{flex:1;overflow-y:auto;padding:14px;}
-#pd-img{width:100%;max-height:220px;object-fit:cover;border-radius:4px;margin-bottom:12px;display:none;}
-#pd-meta{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
-#pd-content{font-size:12px;color:rgba(255,255,255,0.75);line-height:1.9;margin-bottom:16px;}
-#pd-comments{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
-.comment{border:1px solid var(--border);border-radius:4px;padding:10px 12px;}
-.comment.highlighted{border-color:rgba(0,255,136,0.4);background:rgba(0,255,136,0.04);}
-.comment-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-.comment-user{font-size:10px;color:var(--c);}
-.comment-hl{font-size:8px;color:var(--g);letter-spacing:1px;}
-.comment-body{font-size:11px;color:rgba(255,255,255,0.65);line-height:1.7;}
-.comment-hl-btn{background:transparent;border:1px solid rgba(0,255,136,0.25);color:rgba(0,255,136,0.6);font-family:'Share Tech Mono',monospace;font-size:8px;padding:3px 8px;border-radius:2px;cursor:pointer;}
-#pd-comment-form{border-top:1px solid var(--border);padding:12px 14px;display:flex;gap:8px;}
-#pd-comment-inp{flex:1;background:rgba(0,200,255,0.04);border:1px solid var(--border);color:#fff;font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 12px;border-radius:3px;outline:none;}
-#pd-comment-send{padding:10px 14px;background:var(--c);color:#000;font-family:'Share Tech Mono',monospace;font-size:12px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
-
-/* ═══ PROFILE TAB ═══ */
+#pdmod{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column;}
+#pdhdr{padding:11px 13px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:11px;}
+#pdback{background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;padding:3px;}
+#pdtitle{font-size:13px;color:#fff;flex:1;line-height:1.4;}
+#pdbody{flex:1;overflow-y:auto;padding:13px;}
+#pdimg{width:100%;max-height:210px;object-fit:cover;border-radius:4px;margin-bottom:11px;display:none;}
+#pdmeta{display:flex;gap:8px;margin-bottom:9px;flex-wrap:wrap;}
+#pdcontent{font-size:12px;color:rgba(255,255,255,0.7);line-height:1.9;margin-bottom:14px;}
+.cmt-sec-title{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.35);margin-bottom:9px;}
+#pdcomments{display:flex;flex-direction:column;gap:7px;margin-bottom:11px;}
+.cmt{border:1px solid var(--b);border-radius:4px;padding:10px 11px;}
+.cmt.hl{border-color:rgba(0,255,136,0.38);background:rgba(0,255,136,0.03);}
+.cmthdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;flex-wrap:wrap;gap:4px;}
+.cmtuser{font-size:10px;color:var(--c);}
+.cmthl{font-size:8px;color:var(--g);letter-spacing:1px;}
+.cmtbody{font-size:11px;color:rgba(255,255,255,0.62);line-height:1.7;}
+.cmtacts{display:flex;gap:6px;margin-top:6px;}
+.cmtact{background:transparent;border:1px solid var(--b);color:rgba(255,255,255,0.35);font-family:'Share Tech Mono',monospace;font-size:8px;padding:3px 8px;border-radius:2px;cursor:pointer;}
+.cmtact.hlbtn{border-color:rgba(0,255,136,0.22);color:rgba(0,255,136,0.55);}
+.cmtreplies{margin-top:7px;padding-left:12px;border-left:2px solid var(--b);display:flex;flex-direction:column;gap:6px;}
+.reply{font-size:11px;padding:7px 10px;border-radius:3px;background:rgba(0,200,255,0.03);}
+.reply-user{font-size:9px;color:var(--c);margin-bottom:3px;}
+.reply-body{color:rgba(255,255,255,0.58);line-height:1.6;}
+.reply-inp-row{display:flex;gap:6px;margin-top:6px;}
+.reply-inp{flex:1;background:rgba(0,200,255,0.03);border:1px solid var(--b);color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 10px;border-radius:3px;outline:none;}
+.reply-send{padding:7px 11px;background:var(--c);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
+#pdcf{border-top:1px solid var(--b);padding:11px 13px;display:flex;gap:8px;}
+#pdcinp{flex:1;background:rgba(0,200,255,0.03);border:1px solid var(--b);color:#fff;font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 11px;border-radius:3px;outline:none;}
+#pdcsend{padding:10px 13px;background:var(--c);color:#000;font-family:'Share Tech Mono',monospace;font-size:12px;border:none;border-radius:3px;cursor:pointer;font-weight:700;}
+/* ── HELP TAB ── */
+#tab-help{background:var(--bg);}
+.help-banner{background:linear-gradient(135deg,rgba(0,200,255,0.08),rgba(0,255,136,0.04));border-bottom:1px solid var(--b);padding:16px 14px;}
+.help-banner h2{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--c);margin-bottom:6px;}
+.help-banner p{font-size:11px;color:rgba(255,255,255,0.5);line-height:1.7;}
+.hreq-list{padding:11px;display:flex;flex-direction:column;gap:10px;}
+.hreq{border:1px solid var(--b);border-radius:6px;overflow:hidden;}
+.hreq-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(0,200,255,0.03);border-bottom:1px solid var(--b);}
+.hreq-city{font-size:10px;color:var(--c);letter-spacing:1px;}
+.hreq-dist{font-size:9px;color:rgba(255,255,255,0.28);}
+.hreq-body{padding:10px 12px;}
+.hreq-title{font-size:12px;color:#fff;margin-bottom:4px;}
+.hreq-sub{font-size:10px;color:rgba(255,255,255,0.45);line-height:1.6;}
+.hreq-foot{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-top:1px solid var(--b);}
+.hreq-user{font-size:9px;color:rgba(255,255,255,0.3);}
+.hreq-btn{padding:6px 13px;background:transparent;border:1px solid rgba(0,255,136,0.28);color:var(--g);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;border-radius:3px;cursor:pointer;}
+.help-score{display:flex;align-items:center;gap:8px;padding:11px 13px;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.15);border-radius:4px;margin:11px;}
+.hs-icon{font-size:24px;}
+.hs-txt{font-size:11px;color:rgba(255,255,255,0.6);line-height:1.6;}
+.hs-score{font-size:20px;color:var(--g);font-family:'Orbitron',monospace;margin-left:auto;}
+/* ── PROFILE ── */
 #tab-profile{background:var(--bg);}
-.profile-hero{background:linear-gradient(135deg,rgba(0,200,255,0.08),rgba(0,0,0,0));padding:24px 16px;border-bottom:1px solid var(--border);text-align:center;}
-.profile-avatar{width:70px;height:70px;background:rgba(0,200,255,0.1);border:2px solid var(--c);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;}
-.profile-name{font-family:'Orbitron',monospace;font-size:16px;letter-spacing:2px;color:#fff;margin-bottom:4px;}
-.profile-country{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-bottom:12px;}
-.profile-stats{display:flex;gap:16px;justify-content:center;}
-.pstat{text-align:center;}
-.pstat-val{font-size:18px;color:#fff;}
-.pstat-lbl{font-size:8px;color:rgba(255,255,255,0.35);letter-spacing:1px;}
-.profile-menu{padding:12px;}
-.pmenu-item{display:flex;align-items:center;justify-content:space-between;padding:14px 12px;border:1px solid var(--border);border-radius:4px;margin-bottom:8px;cursor:pointer;transition:background 0.2s;}
-.pmenu-item:active{background:rgba(0,200,255,0.05);}
-.pmenu-left{display:flex;align-items:center;gap:12px;font-size:12px;color:#fff;}
-.pmenu-icon{font-size:18px;width:24px;text-align:center;}
-.pmenu-arrow{color:rgba(255,255,255,0.25);font-size:16px;}
-.pmenu-item.danger .pmenu-left{color:rgba(255,60,60,0.7);}
-
-/* SETTINGS SHEET */
-.settings-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:12px;color:#fff;}
-.settings-row:last-child{border:none;}
-.toggle{width:44px;height:24px;background:rgba(255,255,255,0.1);border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;}
-.toggle.on{background:var(--c);}
-.toggle-knob{position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;}
-.toggle.on .toggle-knob{transform:translateX(20px);}
-
-/* NOTIFICATIONS */
-#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,200,255,0.15);border:1px solid rgba(0,200,255,0.3);color:#fff;font-size:11px;letter-spacing:1px;padding:10px 20px;border-radius:20px;z-index:1000;display:none;white-space:nowrap;}
-#toast.show{display:block;animation:toastIn 0.3s ease;}
-#toast.err{background:rgba(255,60,60,0.15);border-color:rgba(255,60,60,0.3);}
-
+.prof-hero{background:linear-gradient(135deg,rgba(0,200,255,0.07),rgba(0,0,0,0));padding:20px 14px 16px;border-bottom:1px solid var(--b);}
+.prof-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;}
+.prof-av{width:72px;height:72px;background:rgba(0,200,255,0.08);border:2px solid var(--c);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;flex-shrink:0;cursor:pointer;position:relative;}
+.prof-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.prof-av-edit{position:absolute;bottom:0;right:0;background:var(--c);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.prof-info{flex:1;}
+.prof-name{font-family:'Orbitron',monospace;font-size:15px;letter-spacing:2px;color:#fff;margin-bottom:3px;}
+.prof-country{font-size:10px;color:rgba(255,255,255,0.38);letter-spacing:1px;margin-bottom:4px;}
+.prof-level{font-size:9px;padding:2px 9px;border-radius:10px;display:inline-block;margin-bottom:6px;}
+.level-amateur{background:rgba(0,200,255,0.08);color:var(--c);border:1px solid rgba(0,200,255,0.2);}
+.level-novice{background:rgba(0,255,136,0.07);color:var(--g);border:1px solid rgba(0,255,136,0.18);}
+.level-expert{background:rgba(255,170,0,0.08);color:var(--o);border:1px solid rgba(255,170,0,0.18);}
+.prof-bio{font-size:11px;color:rgba(255,255,255,0.48);line-height:1.7;}
+.prof-stats{display:flex;gap:0;border-top:1px solid var(--b);border-bottom:1px solid var(--b);}
+.pstat{flex:1;padding:11px 8px;text-align:center;border-right:1px solid var(--b);}
+.pstat:last-child{border-right:none;}
+.psv{font-size:16px;color:#fff;}
+.psl{font-size:7px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-top:2px;}
+.prof-score{display:flex;align-items:center;gap:10px;padding:11px 13px;background:rgba(0,255,136,0.04);border-bottom:1px solid var(--b);}
+.ps-lbl{font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:1px;}
+.ps-val{font-size:18px;color:var(--g);font-family:'Orbitron',monospace;}
+.ps-rank{font-size:9px;color:rgba(0,255,136,0.55);margin-left:auto;}
+.prof-socials{display:flex;gap:8px;padding:11px 13px;border-bottom:1px solid var(--b);flex-wrap:wrap;}
+.social-link{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,0.45);background:rgba(0,200,255,0.04);border:1px solid var(--b);padding:5px 10px;border-radius:3px;cursor:pointer;text-decoration:none;}
+.social-link:active{background:rgba(0,200,255,0.08);}
+.pmenu{padding:11px;}
+.pmi{display:flex;align-items:center;justify-content:space-between;padding:13px 11px;border:1px solid var(--b);border-radius:4px;margin-bottom:7px;cursor:pointer;transition:background 0.15s;}
+.pmi:active{background:rgba(0,200,255,0.04);}
+.pmil{display:flex;align-items:center;gap:11px;font-size:12px;color:#fff;}
+.pmii{font-size:17px;width:24px;text-align:center;}
+.pmia{color:rgba(255,255,255,0.22);font-size:15px;}
+.pmi.danger .pmil{color:rgba(255,60,60,0.65);}
+/* MODALS BOTTOM SHEET */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;display:none;align-items:flex-end;justify-content:center;}
+.modal.open{display:flex;}
+.msheet{background:#000f1a;border:1px solid var(--b);border-radius:12px 12px 0 0;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;}
+.mhdr{padding:15px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;}
+.mhdr h2{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--c);}
+.mclose{background:transparent;border:none;color:rgba(255,255,255,0.35);font-size:20px;cursor:pointer;padding:3px 8px;}
+.mbody{padding:15px;display:flex;flex-direction:column;gap:11px;}
+.mfoot{padding:11px 15px;border-top:1px solid var(--b);}
+/* TOAST */
+#toast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);background:rgba(0,200,255,0.13);border:1px solid rgba(0,200,255,0.28);color:#fff;font-size:11px;letter-spacing:1px;padding:9px 18px;border-radius:20px;z-index:1000;display:none;white-space:nowrap;}
+#toast.show{display:block;animation:tIn 0.3s ease;}
+#toast.err{background:rgba(255,60,60,0.13);border-color:rgba(255,60,60,0.28);}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 @keyframes ping{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.8);opacity:0}}
-@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes cp{0%,100%{opacity:1}50%{opacity:0.35}}
-@keyframes pr{0%,100%{box-shadow:0 0 0 0 rgba(255,60,60,0.35)}50%{box-shadow:0 0 0 10px rgba(255,60,60,0)}}
+@keyframes pr{0%,100%{box-shadow:0 0 0 0 rgba(255,60,60,0.32)}50%{box-shadow:0 0 0 9px rgba(255,60,60,0)}}
 @keyframes pd{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 @keyframes ps{0%,100%{background:var(--r)}50%{background:#cc0000}}
-@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:#000;}::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.15);}
+@keyframes tIn{from{opacity:0;transform:translateX(-50%) translateY(7px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:#000;}::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.14);}
 </style>
 </head>
 <body>
-
-<!-- BOOT -->
 <div id="boot"><div id="btxt"></div></div>
-
-<!-- TOAST -->
 <div id="toast"></div>
 
 <!-- TERMS MODAL -->
-<div id="terms-modal">
-  <div class="terms-box">
-    <div class="terms-hdr"><span style="font-size:20px;">⚠️</span><div><div class="terms-title">TERMS OF USE & LIABILITY</div><div style="font-size:9px;color:rgba(255,170,0,0.45);margin-top:2px;">MECH-AI · By Dylan Deleu</div></div></div>
-    <div class="terms-body">
-      <h3>IMPORTANT</h3>
-      <p><strong>MECH-AI</strong> is an AI assistance tool for users with <strong>basic mechanical knowledge</strong>. It is not a substitute for professional mechanical advice.</p>
-      <h3>WARRANTY</h3>
-      <p>If your vehicle is <strong>under manufacturer or dealer warranty</strong>, bring it to a <strong>certified garage</strong>. DIY repairs may void your warranty.</p>
-      <h3>REQUIRED KNOWLEDGE</h3>
-      <p>This app is for users with <strong>basic mechanical knowledge only</strong>. If unsure about any procedure, stop and consult a certified mechanic.</p>
-      <h3>LIABILITY</h3>
-      <p><strong>Dylan Deleu</strong> and MECH-AI accept <strong>no liability</strong> for damage, injury, wrong parts purchased, AI errors, or legal consequences from use of this app. The user is solely responsible for all actions taken.</p>
-      <h3>INTELLECTUAL PROPERTY</h3>
-      <p>This app is the <strong>intellectual property of Dylan Deleu</strong>. It may not be reproduced or redistributed without written permission.</p>
-      <h3>SAFETY</h3>
-      <p>Always follow proper safety procedures. Never work under a vehicle supported only by a jack. Always wear appropriate safety gear. If anything looks dangerous, stop immediately and seek professional help.</p>
+<div id="tmod">
+  <div class="tbox">
+    <div class="thdr"><span style="font-size:18px;">⚠️</span><div><div class="ttitle">TERMS OF USE & LIABILITY</div><div style="font-size:9px;color:rgba(255,170,0,0.42);margin-top:2px;">MECH-AI</div></div></div>
+    <div class="tbody">
+      <h3>IMPORTANT</h3><p><strong>MECH-AI</strong> is an AI assistance tool for users with <strong>basic mechanical knowledge</strong>. Not a substitute for professional advice.</p>
+      <h3>WARRANTY</h3><p>If your vehicle is <strong>under warranty</strong>, bring it to a <strong>certified garage</strong>. DIY repairs may void your warranty.</p>
+      <h3>REQUIRED KNOWLEDGE</h3><p>For users with <strong>basic mechanical knowledge only</strong>. If unsure, consult a certified mechanic.</p>
+      <h3>LIABILITY</h3><p>MECH-AI accepts <strong>no liability</strong> for damage, injury, wrong parts, AI errors, or legal consequences. The user is solely responsible.</p>
+      <h3>INTELLECTUAL PROPERTY</h3><p>This app and its concept may <strong>not be reproduced or redistributed</strong> without written permission.</p>
+      <h3>SAFETY</h3><p>Always follow proper safety procedures. Never work under a vehicle supported only by a jack. If anything looks dangerous, stop and seek professional help.</p>
     </div>
-    <div class="terms-foot"><button class="terms-close" onclick="closeTerModal()">I UNDERSTAND — CLOSE</button></div>
+    <div class="tfoot"><button class="tclose" onclick="closeTmod()">I UNDERSTAND — CLOSE</button></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════ -->
-<!-- AUTH SCREEN -->
-<!-- ══════════════════════════════════ -->
+<!-- ══ AUTH SCREEN ══ -->
 <div class="screen active" id="s-auth">
-  <div class="auth-wrap">
-    <div class="auth-logo">
-      <div class="auth-logo-ring"><div class="auth-logo-dot"></div><div class="auth-logo-pulse"></div></div>
-      <div class="auth-logo-title">MECH-AI</div>
-      <div class="auth-logo-sub">AUTOMOTIVE DIAGNOSTIC SYSTEM</div>
+  <div class="aw">
+    <div class="al">
+      <div class="al-ring"><div class="al-dot"></div><div class="al-pulse"></div></div>
+      <div class="al-title">MECH-AI</div>
+      <div class="al-sub">AUTOMOTIVE DIAGNOSTIC SYSTEM</div>
     </div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" onclick="showAuthTab('login')">LOGIN</button>
-      <button class="auth-tab" onclick="showAuthTab('signup')">SIGN UP</button>
+    <div class="atabs">
+      <button class="atab on" onclick="authTab('login',this)">LOGIN</button>
+      <button class="atab" onclick="authTab('signup',this)">SIGN UP</button>
     </div>
-    <div id="auth-err" class="auth-err"></div>
-
-    <!-- LOGIN -->
-    <div id="login-form">
-      <div class="field"><label>EMAIL</label><input id="li-email" type="email" placeholder="your@email.com" autocomplete="email"></div>
-      <div class="field"><label>PASSWORD</label><input id="li-pass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="btn-primary" onclick="doLogin()">LOGIN →</button>
+    <div class="aerr" id="aerr"></div>
+    <div id="liform">
+      <div class="f"><label>EMAIL</label><input id="liemail" type="email" placeholder="your@email.com"></div>
+      <div class="f"><label>PASSWORD</label><input id="lipass" type="password" placeholder="••••••••"></div>
+      <button class="bp" onclick="doLogin()">LOGIN →</button>
     </div>
-
-    <!-- SIGNUP -->
-    <div id="signup-form" style="display:none;">
-      <div class="field"><label>DISPLAY NAME (letters & numbers only)</label><input id="su-name" type="text" placeholder="e.g. MechDave92" autocomplete="username" maxlength="20"></div>
-      <div class="field"><label>EMAIL</label><input id="su-email" type="email" placeholder="your@email.com" autocomplete="email"></div>
-      <div class="field"><label>PASSWORD (min 8 characters)</label><input id="su-pass" type="password" placeholder="••••••••" autocomplete="new-password"></div>
-      <div class="field">
-        <label>COUNTRY</label>
-        <select id="su-country">
-          <option value="">Select your country...</option>
-          <option value="BE">🇧🇪 Belgium</option><option value="NL">🇳🇱 Netherlands</option><option value="FR">🇫🇷 France</option><option value="DE">🇩🇪 Germany</option><option value="GB">🇬🇧 United Kingdom</option><option value="US">🇺🇸 United States</option><option value="ES">🇪🇸 Spain</option><option value="IT">🇮🇹 Italy</option><option value="PT">🇵🇹 Portugal</option><option value="PL">🇵🇱 Poland</option><option value="AU">🇦🇺 Australia</option><option value="CA">🇨🇦 Canada</option><option value="ZA">🇿🇦 South Africa</option><option value="other">🌍 Other</option>
-        </select>
-      </div>
-      <label class="terms-check"><input type="checkbox" id="su-terms"><span>I accept the <a href="#" onclick="openTermsModal()">Terms of Use & Liability</a> by Dylan Deleu. I confirm I have basic mechanical knowledge.</span></label>
-      <button class="btn-primary" onclick="doSignup()">CREATE ACCOUNT →</button>
+    <div id="suform" style="display:none;">
+      <div class="f"><label>DISPLAY NAME (letters & numbers only)</label><input id="suname" type="text" placeholder="e.g. MechDave92" maxlength="20"></div>
+      <div class="f"><label>EMAIL</label><input id="suemail" type="email" placeholder="your@email.com"></div>
+      <div class="f"><label>PASSWORD (min 8 chars)</label><input id="supass" type="password" placeholder="••••••••"></div>
+      <div class="f"><label>SKILL LEVEL</label><select id="suskill"><option value="amateur">🔰 Amateur — Learning the basics</option><option value="novice">🔧 Novice — Can do simple jobs</option><option value="expert">⚙️ Expert — Experienced mechanic</option></select></div>
+      <div class="f"><label>COUNTRY</label><select id="sucountry"><option value="">Select country...</option><option value="BE">🇧🇪 Belgium</option><option value="NL">🇳🇱 Netherlands</option><option value="FR">🇫🇷 France</option><option value="DE">🇩🇪 Germany</option><option value="GB">🇬🇧 United Kingdom</option><option value="US">🇺🇸 United States</option><option value="ES">🇪🇸 Spain</option><option value="IT">🇮🇹 Italy</option><option value="PT">🇵🇹 Portugal</option><option value="PL">🇵🇱 Poland</option><option value="AU">🇦🇺 Australia</option><option value="CA">🇨🇦 Canada</option><option value="ZA">🇿🇦 South Africa</option><option value="other">🌍 Other</option></select></div>
+      <label class="tc"><input type="checkbox" id="suterms"><span>I accept the <a href="#" onclick="openTmod()">Terms of Use & Liability</a>. I confirm I have basic mechanical knowledge.</span></label>
+      <button class="bp" onclick="doSignup()">CREATE ACCOUNT →</button>
     </div>
-    <div style="text-align:center;margin-top:16px;font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:1px;">MECH-AI · By Dylan Deleu · © 2025</div>
+    <div style="text-align:center;margin-top:14px;font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:1px;">MECH-AI © 2025</div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════ -->
-<!-- MAIN APP -->
-<!-- ══════════════════════════════════ -->
+<!-- ══ MAIN APP ══ -->
 <div class="screen" id="s-app">
-  <div id="tab-content">
-
+  <div id="tc">
     <!-- SCAN TAB -->
-    <div class="tab-page active" id="tab-scan" style="padding:0;">
-      <div id="cam-wrap" style="height:calc(100vh - 64px);">
-        <video id="cam-video" autoplay playsinline muted></video>
-        <canvas id="cam-canvas"></canvas>
+    <div class="tp on" id="tab-scan" style="padding:0;">
+      <div id="cw">
+        <video id="cvid" autoplay playsinline muted></video>
+        <canvas id="ccv"></canvas>
         <div id="hud">
           <div class="hc tl"></div><div class="hc tr"></div><div class="hc bl"></div><div class="hc br"></div>
-          <div id="hud-top">
-            <div id="hud-logo">MECH-AI</div>
-            <div id="hud-r"><div id="hud-clock">--:--:--</div><div id="hud-st">○ POINT AT PART</div></div>
-          </div>
-          <div id="active-car-chip"><div id="acc-inner" onclick="goTab('garage')">── SET ACTIVE VEHICLE ──</div></div>
+          <div id="htop"><div id="hlogo">MECH-AI</div><div><div id="hclock">--:--:--</div><div id="hst">○ POINT AT PART</div></div></div>
+          <div id="acchip"><div id="acci" onclick="goTab('garage')">── SET ACTIVE VEHICLE ──</div></div>
         </div>
-        <div id="scan-ov">
-          <div id="scan-bar"></div>
-          <div id="scan-corners"><div class="sc tl"></div><div class="sc tr"></div><div class="sc bl"></div><div class="sc br"></div></div>
-          <div id="scan-txt"><div id="scan-main-txt">HOLD STEADY...</div><div id="scan-sub-txt">ANALYZING PART</div></div>
+        <div id="sov"><div id="sbar"></div><div id="scorners"><div class="sc tl"></div><div class="sc tr"></div><div class="sc bl"></div><div class="sc br"></div></div><div id="smtxt"><div id="smain">HOLD STEADY...</div><div id="ssub">ANALYZING PART</div></div></div>
+        <div id="pbanner"><div id="pname">—</div><div id="pcond">—</div></div>
+        <div id="vbar"><div id="vring"><div id="vdot"></div></div><div style="font-size:10px;letter-spacing:3px;color:var(--r);">LISTENING...</div></div>
+        <div id="aip">
+          <div id="qp"><div id="qtxt">—</div><div id="qbtns"><button class="qb" id="qby" onclick="ansYes()">✓ YES</button><button class="qb" id="qbn" onclick="ansNo()">✕ NO</button></div></div>
+          <div id="prp"><div id="prptitle">JOB PREPARATION</div><div class="prprow"><div class="prpstat"><div class="prplbl">DIFFICULTY</div><div class="prpval" id="prpdiff">—</div></div><div class="prpstat"><div class="prplbl">EST. TIME</div><div class="prpval" id="prptime">—</div></div></div><div class="prpsec"><div class="prpslbl">🔧 TOOLS NEEDED</div><div class="prpitems" id="prptools">—</div></div><div class="prpsec" id="prptorqsec"><div class="prpslbl">⚡ TORQUE SPECS</div><div class="prpitems" id="prptorq">—</div></div><div class="prpsec"><div class="prpslbl">📦 PARTS & MATERIALS</div><div class="prpitems" id="prpparts">—</div></div><button id="prpstart" onclick="startJob()">✓ I HAVE EVERYTHING — START JOB</button></div>
+          <div id="stp"><div id="stphdr"><div id="stpcnt">STEP 1/1</div><div id="stppw"><div id="stpp"></div></div></div><div id="stptxt">—</div><div id="stptorq">—</div><div id="stpbtns"><button id="stpprev" onclick="prevStep()">←</button><button id="stpnext" onclick="nextStep()">NEXT →</button></div><button id="stpdone" onclick="completeJob()">✓ JOB COMPLETE</button><div id="stpvh">🎤 Say: "next" · "back" · "repeat"</div></div>
+          <div id="comp"><div style="font-size:34px;">✅</div><div style="font-family:'Orbitron',monospace;font-size:13px;letter-spacing:3px;color:var(--g);text-shadow:0 0 10px var(--g);">JOB COMPLETE</div><div style="font-size:11px;color:rgba(255,255,255,0.5);text-align:center;line-height:1.8;">Great work! Save this to your car log?</div><div id="compbtns"><button style="flex:1;padding:12px;background:var(--c);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;border:none;border-radius:3px;cursor:pointer;font-weight:700;" onclick="saveToLog()">SAVE TO LOG</button><button style="flex:1;padding:12px;background:transparent;border:1px solid var(--b);color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;border-radius:3px;cursor:pointer;" onclick="resetScan()">NEW SCAN</button></div></div>
         </div>
-        <div id="part-banner"><div id="part-name">—</div><div id="part-cond">—</div></div>
-        <div id="vbar"><div id="vbar-ring"><div id="vbar-dot"></div></div><div id="vbar-txt">LISTENING...</div></div>
-        <div id="ai-panel">
-          <div id="qp"><div id="q-txt">—</div><div id="q-btns"><button class="qb" id="qb-y" onclick="ansYes()">✓ YES</button><button class="qb" id="qb-n" onclick="ansNo()">✕ NO</button></div></div>
-          <div id="pp"><div id="pp-title">JOB PREPARATION</div><div class="pp-row"><div class="pp-stat"><div class="pp-lbl">DIFFICULTY</div><div class="pp-val" id="pp-diff">—</div></div><div class="pp-stat"><div class="pp-lbl">EST. TIME</div><div class="pp-val" id="pp-time">—</div></div></div><div class="pp-sec"><div class="pp-sec-lbl">🔧 TOOLS NEEDED</div><div class="pp-items" id="pp-tools">—</div></div><div class="pp-sec" id="pp-torq-sec"><div class="pp-sec-lbl">⚡ TORQUE SPECS</div><div class="pp-items" id="pp-torq">—</div></div><div class="pp-sec"><div class="pp-sec-lbl">📦 PARTS & MATERIALS</div><div class="pp-items" id="pp-parts">—</div></div><button id="pp-start" onclick="startJob()">✓ I HAVE EVERYTHING — START JOB</button></div>
-          <div id="sp"><div id="sp-hdr"><div id="sp-cnt">STEP 1/1</div><div id="sp-pw"><div id="sp-p"></div></div></div><div id="sp-txt">—</div><div id="sp-torq">—</div><div id="sp-btns"><button id="sp-prev" onclick="prevStep()">←</button><button id="sp-next" onclick="nextStep()">NEXT →</button></div><button id="sp-done" onclick="completeJob()">✓ JOB COMPLETE</button><div id="sp-vh">🎤 Say: "next" · "back" · "repeat"</div></div>
-          <div id="cp2"><div id="cp2-icon">✅</div><div id="cp2-title">JOB COMPLETE</div><div id="cp2-txt">Great work! Save this to your car log?</div><div style="display:flex;gap:10px;width:100%;"><button id="cp2-save" onclick="saveToLog()">SAVE TO LOG</button><button id="cp2-new" onclick="resetScan()">NEW SCAN</button></div></div>
-        </div>
-        <div id="scan-ctrls">
-          <div id="ad-bar"><div class="adl">AD</div><div class="adc"><div class="adn" id="adn">AUTODOC</div><div class="adt" id="adt">Quality parts for every vehicle</div></div><button class="adb" id="adb">SHOP →</button></div>
-          <div id="scan-btns">
-            <button class="sc-btn" onclick="toggleTorch()" id="btn-torch"><span class="si">🔦</span>TORCH</button>
-            <button id="btn-scan" onclick="triggerScan()"><span class="bsi">⬡</span>SCAN</button>
-            <button class="sc-btn" onclick="toggleVoiceListen()" id="btn-voice"><span class="si">🎤</span>VOICE</button>
-          </div>
+        <div id="sctrls">
+          <div id="adbar"><div class="adl">AD</div><div class="adc"><div class="adn" id="adn">AUTODOC</div><div class="adt" id="adt">Quality parts for every vehicle</div></div><button class="adb" id="adb">SHOP →</button></div>
+          <div id="scanbtns"><button class="scb" onclick="toggleTorch()" id="btntorch"><span class="si">🔦</span>TORCH</button><button id="btnscan" onclick="triggerScan()"><span class="bsi">⬡</span>SCAN</button><button class="scb" onclick="toggleVL()" id="btnvoice"><span class="si">🎤</span>VOICE</button></div>
         </div>
       </div>
     </div>
 
     <!-- GARAGE TAB -->
-    <div class="tab-page" id="tab-garage">
-      <div class="page-hdr"><h1>MY GARAGE</h1><button class="icon-btn" onclick="openCarModal()">＋</button></div>
-      <div class="car-list" id="car-list"><div class="empty-state">🚗<br><br>NO VEHICLES YET<br>TAP + TO ADD YOUR FIRST CAR</div></div>
+    <div class="tp" id="tab-garage">
+      <div class="phdr"><h1>MY GARAGE</h1><button class="icnbtn" onclick="openCarModal()">＋</button></div>
+      <div class="carlist" id="carlist"><div class="empty">🚗<br><br>NO VEHICLES YET<br>TAP + TO ADD YOUR FIRST CAR</div></div>
     </div>
 
     <!-- LOG TAB -->
-    <div class="tab-page" id="tab-log">
-      <div class="page-hdr"><h1>CAR LOG</h1><button class="icon-btn" onclick="openLogModal()">＋</button></div>
-      <div id="log-car-selector" style="padding:10px 14px;border-bottom:1px solid var(--border);font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;">SELECT A VEHICLE FROM GARAGE TO VIEW LOG</div>
-      <div class="log-filters" id="log-filters" style="display:none;">
-        <button class="log-filter active" onclick="filterLog('all',this)">ALL</button>
-        <button class="log-filter" onclick="filterLog('repair',this)">REPAIRS</button>
-        <button class="log-filter" onclick="filterLog('maintenance',this)">MAINTENANCE</button>
-      </div>
-      <div class="log-stats" id="log-stats" style="display:none;">
-        <div class="log-stat"><div class="log-stat-val" id="ls-total">0</div><div class="log-stat-lbl">TOTAL JOBS</div></div>
-        <div class="log-stat"><div class="log-stat-val" id="ls-repairs">0</div><div class="log-stat-lbl">REPAIRS</div></div>
-        <div class="log-stat"><div class="log-stat-val" id="ls-maint">0</div><div class="log-stat-lbl">MAINTENANCE</div></div>
-      </div>
-      <div class="log-list" id="log-list"><div class="empty-state">📋<br><br>NO LOG ENTRIES YET<br>COMPLETE A SCAN OR ADD MANUALLY</div></div>
+    <div class="tp" id="tab-log">
+      <div class="phdr"><h1>CAR LOG</h1><button class="icnbtn" onclick="openLogModal()">＋</button></div>
+      <div id="logcarsel" style="padding:9px 13px;border-bottom:1px solid var(--b);font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:1px;">SELECT A VEHICLE FROM GARAGE</div>
+      <div class="filters" id="logfilts" style="display:none;"><button class="filt on" onclick="filterLog('all',this)">ALL</button><button class="filt" onclick="filterLog('repair',this)">REPAIRS</button><button class="filt" onclick="filterLog('maintenance',this)">MAINTENANCE</button></div>
+      <div class="lstats" id="lstats" style="display:none;"><div class="lstat"><div class="lsv" id="lstot">0</div><div class="lsl">TOTAL</div></div><div class="lstat"><div class="lsv" id="lsrep">0</div><div class="lsl">REPAIRS</div></div><div class="lstat"><div class="lsv" id="lsmai">0</div><div class="lsl">MAINTENANCE</div></div></div>
+      <div class="llist" id="llist"><div class="empty">📋<br><br>NO ENTRIES YET</div></div>
     </div>
 
     <!-- COMMUNITY TAB -->
-    <div class="tab-page" id="tab-community">
-      <div class="page-hdr"><h1>COMMUNITY</h1></div>
-      <div class="comm-filters">
-        <button class="comm-filter active" onclick="filterComm('all',this)">ALL</button>
-        <button class="comm-filter" onclick="filterComm('repair',this)">REPAIRS</button>
-        <button class="comm-filter" onclick="filterComm('maintenance',this)">MAINTENANCE</button>
-        <button class="comm-filter" onclick="filterComm('question',this)">QUESTIONS</button>
-        <button class="comm-filter" onclick="filterComm('tip',this)">TIPS</button>
-        <button class="comm-filter" onclick="filterComm('saved',this)">🔖 SAVED</button>
-      </div>
-      <div class="post-list" id="post-list"><div class="empty-state">💬<br><br>NO POSTS YET<br>BE THE FIRST TO SHARE A REPAIR!</div></div>
+    <div class="tp" id="tab-community">
+      <div class="phdr"><h1>COMMUNITY</h1></div>
+      <div class="cfilt filters"><button class="filt on" onclick="filtComm('all',this)">ALL</button><button class="filt" onclick="filtComm('repair',this)">REPAIRS</button><button class="filt" onclick="filtComm('maintenance',this)">MAINTENANCE</button><button class="filt" onclick="filtComm('question',this)">QUESTIONS</button><button class="filt" onclick="filtComm('tip',this)">TIPS</button><button class="filt" onclick="filtComm('saved',this)">🔖 SAVED</button></div>
+      <div class="plist" id="plist"><div class="empty">💬<br><br>NO POSTS YET<br>BE THE FIRST!</div></div>
       <button class="fab" onclick="openPostModal()">＋</button>
     </div>
 
-    <!-- PROFILE TAB -->
-    <div class="tab-page" id="tab-profile">
-      <div class="profile-hero">
-        <div class="profile-avatar">👤</div>
-        <div class="profile-name" id="prof-name">—</div>
-        <div class="profile-country" id="prof-country">—</div>
-        <div class="profile-stats">
-          <div class="pstat"><div class="pstat-val" id="prof-scans">0</div><div class="pstat-lbl">SCANS</div></div>
-          <div class="pstat"><div class="pstat-val" id="prof-posts">0</div><div class="pstat-lbl">POSTS</div></div>
-          <div class="pstat"><div class="pstat-val" id="prof-cars">0</div><div class="pstat-lbl">CARS</div></div>
-        </div>
+    <!-- HELP TAB -->
+    <div class="tp" id="tab-help">
+      <div class="phdr"><h1>MEET & HELP</h1><button class="icnbtn" onclick="openHelpModal()">＋</button></div>
+      <div class="help-banner">
+        <h2>REQUEST HELP NEARBY</h2>
+        <p>Connect with other MECH-AI users in your area. Post a help request and meet in real life to tackle repairs together.</p>
       </div>
-      <div class="profile-menu">
-        <div class="pmenu-item" onclick="goTab('garage')"><div class="pmenu-left"><span class="pmenu-icon">🚗</span>My Garage</div><span class="pmenu-arrow">›</span></div>
-        <div class="pmenu-item" onclick="goTab('log')"><div class="pmenu-left"><span class="pmenu-icon">📋</span>Car Log</div><span class="pmenu-arrow">›</span></div>
-        <div class="pmenu-item" onclick="openSettings()"><div class="pmenu-left"><span class="pmenu-icon">⚙️</span>Settings</div><span class="pmenu-arrow">›</span></div>
-        <div class="pmenu-item" onclick="openTermsModal()"><div class="pmenu-left"><span class="pmenu-icon">📄</span>Terms & Liability</div><span class="pmenu-arrow">›</span></div>
-        <div class="pmenu-item danger" onclick="doLogout()"><div class="pmenu-left"><span class="pmenu-icon">🚪</span>Logout</div><span class="pmenu-arrow">›</span></div>
+      <div id="helpscore" class="help-score" style="display:none;"><div class="hs-icon">🏆</div><div class="hs-txt"><strong>Your Community Score</strong><br>Active members earn points for helping others</div><div class="hs-score" id="hsscore">0</div></div>
+      <div class="hreq-list" id="hreqlist"><div class="empty">🤝<br><br>NO HELP REQUESTS YET<br>TAP + TO POST ONE</div></div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div class="tp" id="tab-profile">
+      <div class="prof-hero">
+        <div class="prof-top">
+          <div class="prof-av" onclick="changeAvatar()" id="profav"><span id="profavtxt">👤</span><div class="prof-av-edit">✏</div></div>
+          <div class="prof-info">
+            <div class="prof-name" id="profname">—</div>
+            <div class="prof-country" id="profcountry">—</div>
+            <div class="prof-level level-amateur" id="proflevel">AMATEUR</div>
+            <div class="prof-bio" id="profbio"></div>
+          </div>
+        </div>
+        <div class="prof-socials" id="profsocials"></div>
+      </div>
+      <div class="prof-stats">
+        <div class="pstat"><div class="psv" id="profscans">0</div><div class="psl">SCANS</div></div>
+        <div class="pstat"><div class="psv" id="profposts">0</div><div class="psl">POSTS</div></div>
+        <div class="pstat"><div class="psv" id="profcars">0</div><div class="psl">CARS</div></div>
+        <div class="pstat"><div class="psv" id="profhelps">0</div><div class="psl">HELPS</div></div>
+      </div>
+      <div class="prof-score"><span class="ps-lbl">COMMUNITY SCORE</span><span class="ps-val" id="profscore">0</span><span class="ps-rank" id="profrank"></span></div>
+      <div class="pmenu">
+        <div class="pmi" onclick="openEditProfile()"><div class="pmil"><span class="pmii">✏️</span>Edit Profile</div><span class="pmia">›</span></div>
+        <div class="pmi" onclick="goTab('garage')"><div class="pmil"><span class="pmii">🚗</span>My Garage</div><span class="pmia">›</span></div>
+        <div class="pmi" onclick="goTab('log')"><div class="pmil"><span class="pmii">📋</span>Car Log</div><span class="pmia">›</span></div>
+        <div class="pmi" onclick="openSettings()"><div class="pmil"><span class="pmii">⚙️</span>Settings</div><span class="pmia">›</span></div>
+        <div class="pmi" onclick="openTmod()"><div class="pmil"><span class="pmii">📄</span>Terms & Liability</div><span class="pmia">›</span></div>
+        <div class="pmi danger" onclick="doLogout()"><div class="pmil"><span class="pmii">🚪</span>Logout</div><span class="pmia">›</span></div>
       </div>
     </div>
   </div>
 
   <!-- BOTTOM NAV -->
-  <div id="bottom-nav">
-    <button class="nav-btn active" onclick="goTab('scan')" id="nav-scan"><span class="ni">⬡</span>SCAN</button>
-    <button class="nav-btn" onclick="goTab('garage')" id="nav-garage"><span class="ni">🚗</span>GARAGE</button>
-    <button class="nav-btn" onclick="goTab('log')" id="nav-log"><span class="ni">📋</span>LOG</button>
-    <button class="nav-btn" onclick="goTab('community')" id="nav-community"><span class="ni">💬</span>COMMUNITY</button>
-    <button class="nav-btn" onclick="goTab('profile')" id="nav-profile"><span class="ni">👤</span>PROFILE</button>
+  <div id="bnav">
+    <button class="nb on" onclick="goTab('scan')" id="nav-scan"><span class="ni">⬡</span>SCAN</button>
+    <button class="nb" onclick="goTab('garage')" id="nav-garage"><span class="ni">🚗</span>GARAGE</button>
+    <button class="nb" onclick="goTab('log')" id="nav-log"><span class="ni">📋</span>LOG</button>
+    <button class="nb" onclick="goTab('community')" id="nav-community"><span class="ni">💬</span>COMMUNITY</button>
+    <button class="nb" onclick="goTab('help')" id="nav-help"><span class="ni">🤝</span>HELP</button>
+    <button class="nb" onclick="goTab('profile')" id="nav-profile"><span class="ni">👤</span>PROFILE</button>
   </div>
 </div>
 
-<!-- CAR MODAL -->
-<div class="modal" id="car-modal">
-  <div class="modal-sheet">
-    <div class="modal-hdr"><h2 id="car-modal-title">ADD VEHICLE</h2><button class="modal-close" onclick="closeModal('car-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="field"><label>MAKE</label><input id="cm-make" type="text" placeholder="e.g. Volkswagen, Honda"></div>
-      <div class="field"><label>MODEL</label><input id="cm-model" type="text" placeholder="e.g. Golf, CBR600"></div>
-      <div class="field-row">
-        <div class="field"><label>YEAR</label><input id="cm-year" type="number" placeholder="2018" min="1950" max="2026"></div>
-        <div class="field"><label>TYPE</label><select id="cm-type"><option value="car">🚗 Car</option><option value="bike">🏍️ Motorcycle</option><option value="van">🚐 Van</option><option value="scooter">🛵 Scooter</option></select></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>ENGINE</label><input id="cm-engine" type="text" placeholder="e.g. 2.0 TDI"></div>
-        <div class="field"><label>FUEL</label><select id="cm-fuel"><option value="petrol">⛽ Petrol</option><option value="diesel">🛢️ Diesel</option><option value="electric">⚡ Electric</option><option value="hybrid">🔋 Hybrid</option><option value="lpg">🔵 LPG</option></select></div>
-      </div>
-      <div class="field"><label>CURRENT KM</label><input id="cm-km" type="number" placeholder="e.g. 85000"></div>
-      <div class="field"><label>EXTRA INFO</label><input id="cm-extra" type="text" placeholder="e.g. AWD, manual, 150hp"></div>
-    </div>
-    <div class="modal-foot"><button class="btn-primary" onclick="saveCar()">SAVE VEHICLE</button></div>
-  </div>
-</div>
+<!-- MODALS -->
+<!-- Car Modal -->
+<div class="modal" id="carmod"><div class="msheet"><div class="mhdr"><h2 id="carmtitle">ADD VEHICLE</h2><button class="mclose" onclick="closeModal('carmod')">✕</button></div><div class="mbody"><div class="f"><label>MAKE</label><input id="cmmake" type="text" placeholder="e.g. Volkswagen"></div><div class="f"><label>MODEL</label><input id="cmmodel" type="text" placeholder="e.g. Golf"></div><div class="frow"><div class="f"><label>YEAR</label><input id="cmyear" type="number" placeholder="2018"></div><div class="f"><label>TYPE</label><select id="cmtype"><option value="car">🚗 Car</option><option value="bike">🏍️ Motorcycle</option><option value="van">🚐 Van</option><option value="scooter">🛵 Scooter</option></select></div></div><div class="frow"><div class="f"><label>ENGINE</label><input id="cmengine" type="text" placeholder="e.g. 2.0 TDI"></div><div class="f"><label>FUEL</label><select id="cmfuel"><option value="petrol">⛽ Petrol</option><option value="diesel">🛢️ Diesel</option><option value="electric">⚡ Electric</option><option value="hybrid">🔋 Hybrid</option><option value="lpg">🔵 LPG</option></select></div></div><div class="f"><label>CURRENT KM</label><input id="cmkm" type="number" placeholder="e.g. 85000"></div><div class="f"><label>EXTRA INFO</label><input id="cmextra" type="text" placeholder="e.g. AWD, manual"></div></div><div class="mfoot"><button class="bp" onclick="saveCar()">SAVE VEHICLE</button></div></div></div>
 
-<!-- LOG ENTRY MODAL -->
-<div class="modal" id="log-modal">
-  <div class="modal-sheet">
-    <div class="modal-hdr"><h2>ADD LOG ENTRY</h2><button class="modal-close" onclick="closeModal('log-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="field"><label>TYPE</label><select id="lm-type"><option value="maintenance">Maintenance</option><option value="repair">Repair</option></select></div>
-      <div class="field"><label>PART / COMPONENT</label><input id="lm-part" type="text" placeholder="e.g. Brake pads, Oil filter"></div>
-      <div class="field"><label>DESCRIPTION</label><input id="lm-desc" type="text" placeholder="What did you do?"></div>
-      <div class="field"><label>KM AT TIME OF SERVICE</label><input id="lm-km" type="number" placeholder="e.g. 85000"></div>
-      <div class="field"><label>PARTS USED</label><input id="lm-parts" type="text" placeholder="e.g. Bosch BP1234, 4L 5W-30 oil"></div>
-    </div>
-    <div class="modal-foot"><button class="btn-primary" onclick="saveLogEntry()">SAVE ENTRY</button></div>
-  </div>
-</div>
+<!-- Log Modal -->
+<div class="modal" id="logmod"><div class="msheet"><div class="mhdr"><h2>ADD LOG ENTRY</h2><button class="mclose" onclick="closeModal('logmod')">✕</button></div><div class="mbody"><div class="f"><label>TYPE</label><select id="lmtype"><option value="maintenance">Maintenance</option><option value="repair">Repair</option></select></div><div class="f"><label>PART / COMPONENT</label><input id="lmpart" type="text" placeholder="e.g. Brake pads"></div><div class="f"><label>DESCRIPTION</label><input id="lmdesc" type="text" placeholder="What did you do?"></div><div class="f"><label>KM AT TIME OF SERVICE</label><input id="lmkm" type="number" placeholder="e.g. 85000"></div><div class="f"><label>PARTS USED</label><input id="lmparts" type="text" placeholder="e.g. Bosch BP1234"></div></div><div class="mfoot"><button class="bp" onclick="saveLogEntry()">SAVE ENTRY</button></div></div></div>
 
-<!-- POST MODAL -->
-<div class="modal" id="post-modal">
-  <div class="modal-sheet">
-    <div class="modal-hdr"><h2>CREATE POST</h2><button class="modal-close" onclick="closeModal('post-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="field"><label>TYPE</label><select id="pm-type"><option value="repair">Repair</option><option value="maintenance">Maintenance</option><option value="question">Question</option><option value="tip">Tip</option></select></div>
-      <div class="field"><label>VEHICLE (from your garage)</label><select id="pm-car"><option value="">Select a vehicle...</option></select></div>
-      <div class="field"><label>PART / COMPONENT</label><input id="pm-part" type="text" placeholder="e.g. Brake pads"></div>
-      <div class="field"><label>TITLE</label><input id="pm-title" type="text" placeholder="e.g. How I replaced my own brake pads"></div>
-      <div class="field"><label>DESCRIPTION</label><textarea id="pm-body" style="width:100%;background:rgba(0,200,255,0.04);border:1px solid var(--border);color:#fff;font-family:'Share Tech Mono',monospace;font-size:12px;padding:12px;border-radius:3px;outline:none;resize:vertical;min-height:100px;" placeholder="Share your experience, tips, or question..."></textarea></div>
-    </div>
-    <div class="modal-foot"><button class="btn-primary" onclick="savePost()">PUBLISH POST</button></div>
-  </div>
-</div>
+<!-- Post Modal -->
+<div class="modal" id="postmod"><div class="msheet"><div class="mhdr"><h2 id="postmtitle">CREATE POST</h2><button class="mclose" onclick="closeModal('postmod')">✕</button></div><div class="mbody"><div class="f"><label>TYPE</label><select id="pmtype"><option value="repair">Repair</option><option value="maintenance">Maintenance</option><option value="question">Question</option><option value="tip">Tip</option></select></div><div class="f"><label>VEHICLE (from garage)</label><select id="pmcar"><option value="">Select vehicle...</option></select></div><div class="f"><label>PART / COMPONENT</label><input id="pmpart" type="text" placeholder="e.g. Brake pads"></div><div class="f"><label>TITLE</label><input id="pmtitle" type="text" placeholder="e.g. How I replaced my brake pads"></div><div class="f"><label>DESCRIPTION</label><textarea id="pmbody" placeholder="Share your experience, tips or question..."></textarea></div><div class="f"><label>PHOTO (optional)</label><input id="pmphoto" type="file" accept="image/*" style="color:rgba(255,255,255,0.5);font-size:11px;"></div></div><div class="mfoot"><button class="bp" onclick="savePost()">PUBLISH POST</button></div></div></div>
 
-<!-- SETTINGS MODAL -->
-<div class="modal" id="settings-modal">
-  <div class="modal-sheet">
-    <div class="modal-hdr"><h2>SETTINGS</h2><button class="modal-close" onclick="closeModal('settings-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="settings-row"><span>Voice Output</span><div class="toggle" id="voice-toggle" onclick="toggleVoiceSetting()"><div class="toggle-knob"></div></div></div>
-      <div class="settings-row"><span>Language</span><span style="color:rgba(255,255,255,0.4);font-size:11px;">English</span></div>
-      <div class="settings-row"><span>Version</span><span style="color:rgba(255,255,255,0.4);font-size:11px;">v5.0</span></div>
-      <div class="settings-row"><span>By</span><span style="color:rgba(255,255,255,0.4);font-size:11px;">Dylan Deleu</span></div>
-      <button class="btn-outline" onclick="window.open('https://www.paypal.com/donate','_blank')">☕ DONATE · SUPPORT MECH-AI</button>
-    </div>
-  </div>
-</div>
+<!-- Help Request Modal -->
+<div class="modal" id="helpmod"><div class="msheet"><div class="mhdr"><h2>REQUEST HELP</h2><button class="mclose" onclick="closeModal('helpmod')">✕</button></div><div class="mbody"><div class="f"><label>WHAT DO YOU NEED HELP WITH?</label><input id="hmtitle" type="text" placeholder="e.g. Replace front brake pads"></div><div class="f"><label>DESCRIPTION</label><textarea id="hmbody" placeholder="Describe your issue, what you have tried, what tools you have..."></textarea></div><div class="f"><label>YOUR CITY / AREA</label><input id="hmcity" type="text" placeholder="e.g. Brussels, Ghent, Antwerp"></div><div class="f"><label>VEHICLE</label><select id="hmcar"><option value="">Select vehicle...</option></select></div><div class="f"><label>URGENCY</label><select id="hmurg"><option value="low">No rush</option><option value="medium">This week</option><option value="high">Urgent</option></select></div></div><div class="mfoot"><button class="bp" onclick="saveHelpReq()">POST REQUEST</button></div></div></div>
 
-<!-- POST DETAIL -->
-<div id="post-detail">
-  <div id="pd-hdr"><button id="pd-back" onclick="closePostDetail()">←</button><div id="pd-title">—</div></div>
-  <div id="pd-body">
-    <img id="pd-img" src="" alt="">
-    <div id="pd-meta"></div>
-    <div id="pd-content"></div>
-    <div style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.4);margin-bottom:10px;">COMMENTS</div>
-    <div id="pd-comments"></div>
-  </div>
-  <div id="pd-comment-form">
-    <input id="pd-comment-inp" type="text" placeholder="Add a comment...">
-    <button id="pd-comment-send" onclick="sendComment()">SEND</button>
-  </div>
-</div>
+<!-- Edit Profile Modal -->
+<div class="modal" id="editprofmod"><div class="msheet"><div class="mhdr"><h2>EDIT PROFILE</h2><button class="mclose" onclick="closeModal('editprofmod')">✕</button></div><div class="mbody"><div class="f"><label>DISPLAY NAME</label><input id="epname" type="text" placeholder="Your display name" maxlength="20"></div><div class="f"><label>BIO</label><textarea id="epbio" placeholder="Tell the community about yourself..." style="min-height:70px;"></textarea></div><div class="f"><label>SKILL LEVEL</label><select id="epskill"><option value="amateur">🔰 Amateur</option><option value="novice">🔧 Novice</option><option value="expert">⚙️ Expert</option></select></div><div class="f"><label>INSTAGRAM USERNAME</label><input id="epig" type="text" placeholder="@username"></div><div class="f"><label>FACEBOOK</label><input id="epfb" type="text" placeholder="facebook.com/yourpage"></div><div class="f"><label>X / TWITTER</label><input id="epx" type="text" placeholder="@username"></div><div class="f"><label>YOUTUBE CHANNEL</label><input id="epyt" type="text" placeholder="youtube.com/yourchannel"></div></div><div class="mfoot"><button class="bp" onclick="saveProfile()">SAVE PROFILE</button></div></div></div>
+
+<!-- Settings Modal -->
+<div class="modal" id="settmod"><div class="msheet"><div class="mhdr"><h2>SETTINGS</h2><button class="mclose" onclick="closeModal('settmod')">✕</button></div><div class="mbody"><div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--b);font-size:12px;color:#fff;">Voice Output<div class="toggle" id="vogtog" onclick="toggleVoiceSett()"><div class="tknob"></div></div></div><div style="padding:11px 0;border-bottom:1px solid var(--b);font-size:12px;color:#fff;display:flex;justify-content:space-between;">Language<span style="color:rgba(255,255,255,0.35);font-size:11px;">English</span></div><div style="padding:11px 0;font-size:11px;color:rgba(255,255,255,0.3);">MECH-AI © 2025 · All rights reserved</div><button class="bp" style="margin-top:8px;" onclick="window.open('https://www.paypal.com/donate','_blank')">☕ DONATE · SUPPORT MECH-AI</button></div></div></div>
+
+<!-- Post Detail -->
+<div id="pdmod"><div id="pdhdr"><button id="pdback" onclick="closePD()">←</button><div id="pdtitle">—</div></div><div id="pdbody"><img id="pdimg" src="" alt=""><div id="pdmeta"></div><div id="pdcontent"></div><div class="cmt-sec-title">COMMENTS</div><div id="pdcomments"></div></div><div id="pdcf"><input id="pdcinp" type="text" placeholder="Add a comment..."><button id="pdcsend" onclick="sendCmt()">SEND</button></div></div>
+
+<style>
+.toggle{width:42px;height:23px;background:rgba(255,255,255,0.08);border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;}
+.toggle.on{background:var(--c);}
+.tknob{position:absolute;top:2px;left:2px;width:19px;height:19px;background:#fff;border-radius:50%;transition:transform 0.2s;}
+.toggle.on .tknob{transform:translateX(19px);}
+</style>
 
 <script>
-// ═══════════════════════════════════════════════
-// SUPABASE INIT
-// ═══════════════════════════════════════════════
-const SUPA_URL = 'https://wsyrbtoiqatesthzlhxs.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzeXJidG9pcWF0ZXN0aHpsaHhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNzU2NzQsImV4cCI6MjA5MDk1MTY3NH0.VOyyUsEy5pfKtwasczNTDVkn8KC6Gj9N7apVcndSvAo';
-const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
-const PROXY = '/api/proxy';
+const SUPA_URL='https://wsyrbtoiqatesthzlhxs.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzeXJidG9pcWF0ZXN0aHpsaHhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNzU2NzQsImV4cCI6MjA5MDk1MTY3NH0.VOyyUsEy5pfKtwasczNTDVkn8KC6Gj9N7apVcndSvAo';
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+const PROXY='/api/proxy';
 
-// ═══════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════
-let user = null, profile = null, garage = [], activeCar = null;
-let camStream = null, torchOn = false, voiceOn = false, vListening = false;
-let rec = null, appState = 'idle', scanInterval = null, jobData = null;
-let steps = [], currentStep = 0, adI = 0;
-let currentPost = null, commFilter = 'all', logFilter = 'all', logCarId = null;
-let editCarId = null;
+let user=null,profile=null,garage=[],activeCar=null;
+let camStream=null,torchOn=false,voiceOn=false,vListening=false,rec=null;
+let appState='idle',scanInt=null,jobData=null,steps=[],curStep=0,adI=0;
+let curPost=null,commFilt='all',logFilt='all',logCarId=null,editCarId=null;
 
-// ═══════════════════════════════════════════════
 // BOOT
-// ═══════════════════════════════════════════════
-const BL = ['MECH-AI v5.0 INITIALIZING...','Authentication: ONLINE','Supabase: CONNECTED','Vision engine: READY','Community: ONLINE','SYSTEM READY.'];
-(function boot() {
-  const el = document.getElementById('btxt');
-  let i = 0, c = 0, txt = '';
-  const iv = setInterval(() => {
-    if (i >= BL.length) {
-      clearInterval(iv);
-      setTimeout(() => { document.getElementById('boot').classList.add('gone'); setTimeout(initApp, 700); }, 400);
-      return;
-    }
-    if (c < BL[i].length) { txt += BL[i][c++]; } else { txt += '\n'; i++; c = 0; }
-    el.innerHTML = txt + '<span class="cur"></span>';
-  }, 22);
+const BL=['MECH-AI v6.0 INITIALIZING...','Supabase auth: CONNECTED','Community engine: ONLINE','Vision AI: READY','SYSTEM READY.'];
+(function boot(){
+  const el=document.getElementById('btxt');let i=0,c=0,txt='';
+  const iv=setInterval(()=>{
+    if(i>=BL.length){clearInterval(iv);setTimeout(()=>{document.getElementById('boot').classList.add('gone');setTimeout(initApp,700);},400);return;}
+    if(c<BL[i].length){txt+=BL[i][c++];}else{txt+='\n';i++;c=0;}
+    el.innerHTML=txt+'<span class="cur"></span>';
+  },22);
 })();
 
-async function initApp() {
-  setInterval(() => { document.getElementById('hud-clock').textContent = new Date().toLocaleTimeString('en-GB'); }, 1000);
+async function initApp(){
+  setInterval(()=>{document.getElementById('hclock').textContent=new Date().toLocaleTimeString('en-GB');},1000);
   rotAds();
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) { user = session.user; await loadProfile(); showApp(); }
-  else { showScreen('s-auth'); }
+  const{data:{session}}=await sb.auth.getSession();
+  if(session){user=session.user;await loadProfile();showApp();}
+  else showScreen('s-auth');
 }
 
-// ═══════════════════════════════════════════════
 // SCREENS
-// ═══════════════════════════════════════════════
-function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-function showApp() { showScreen('s-app'); startCamera(); loadGarage(); loadProfile(); }
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+async function showApp(){showScreen('s-app');startCam();await loadGarage();await loadProfile();}
 
-// ═══════════════════════════════════════════════
 // AUTH
-// ═══════════════════════════════════════════════
-function showAuthTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
-  document.getElementById('auth-err').style.display = 'none';
+function authTab(tab,btn){document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');document.getElementById('liform').style.display=tab==='login'?'block':'none';document.getElementById('suform').style.display=tab==='signup'?'block':'none';document.getElementById('aerr').style.display='none';}
+function showAerr(m){const e=document.getElementById('aerr');e.textContent=m;e.style.display='block';}
+
+async function doLogin(){
+  const email=document.getElementById('liemail').value.trim(),pass=document.getElementById('lipass').value;
+  if(!email||!pass){showAerr('Please fill in all fields.');return;}
+  const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){showAerr(error.message);return;}
+  user=data.user;await loadProfile();showApp();
 }
 
-function showAuthErr(msg) { const e = document.getElementById('auth-err'); e.textContent = msg; e.style.display = 'block'; }
-
-async function doLogin() {
-  const email = document.getElementById('li-email').value.trim();
-  const pass = document.getElementById('li-pass').value;
-  if (!email || !pass) { showAuthErr('Please fill in all fields.'); return; }
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  if (error) { showAuthErr(error.message); return; }
-  user = data.user; await loadProfile(); showApp();
+async function doSignup(){
+  const name=document.getElementById('suname').value.trim(),email=document.getElementById('suemail').value.trim(),pass=document.getElementById('supass').value,country=document.getElementById('sucountry').value,skill=document.getElementById('suskill').value,terms=document.getElementById('suterms').checked;
+  if(!name||!email||!pass||!country){showAerr('Please fill in all fields.');return;}
+  if(!/^[a-zA-Z0-9]+$/.test(name)){showAerr('Display name: letters and numbers only.');return;}
+  if(pass.length<8){showAerr('Password must be at least 8 characters.');return;}
+  if(!terms){showAerr('Please accept the Terms of Use.');return;}
+  const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{username:name,country,skill_level:skill}}});
+  if(error){showAerr(error.message);return;}
+  user=data.user;await loadProfile();showApp();
 }
 
-async function doSignup() {
-  const name = document.getElementById('su-name').value.trim();
-  const email = document.getElementById('su-email').value.trim();
-  const pass = document.getElementById('su-pass').value;
-  const country = document.getElementById('su-country').value;
-  const terms = document.getElementById('su-terms').checked;
-  if (!name || !email || !pass || !country) { showAuthErr('Please fill in all fields.'); return; }
-  if (!/^[a-zA-Z0-9]+$/.test(name)) { showAuthErr('Display name: letters and numbers only.'); return; }
-  if (pass.length < 8) { showAuthErr('Password must be at least 8 characters.'); return; }
-  if (!terms) { showAuthErr('Please accept the Terms of Use.'); return; }
-  const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { username: name, country } } });
-  if (error) { showAuthErr(error.message); return; }
-  user = data.user; await loadProfile(); showApp();
-}
+async function doLogout(){await sb.auth.signOut();user=null;profile=null;garage=[];activeCar=null;if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}showScreen('s-auth');}
 
-async function doLogout() {
-  await sb.auth.signOut();
-  user = null; profile = null; garage = []; activeCar = null;
-  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
-  showScreen('s-auth');
-}
-
-// ═══════════════════════════════════════════════
 // PROFILE
-// ═══════════════════════════════════════════════
-async function loadProfile() {
-  if (!user) return;
-  const { data } = await sb.from('profiles').select('*').eq('id', user.id).single();
-  profile = data;
-  if (profile) {
-    document.getElementById('prof-name').textContent = profile.username || '—';
-    document.getElementById('prof-country').textContent = profile.country || '—';
-    document.getElementById('prof-scans').textContent = profile.scans_count || 0;
-    document.getElementById('prof-posts').textContent = profile.posts_count || 0;
-  }
+async function loadProfile(){
+  if(!user)return;
+  const{data}=await sb.from('profiles').select('*').eq('id',user.id).single();
+  profile=data;
+  if(!profile)return;
+  document.getElementById('profname').textContent=profile.username||'—';
+  document.getElementById('profcountry').textContent=profile.country||'—';
+  document.getElementById('profbio').textContent=profile.bio||'';
+  const lvl=profile.skill_level||'amateur';
+  const lvlEl=document.getElementById('proflevel');
+  lvlEl.textContent=lvl.toUpperCase();
+  lvlEl.className='prof-level level-'+lvl;
+  document.getElementById('profscans').textContent=profile.scans_count||0;
+  document.getElementById('profposts').textContent=profile.posts_count||0;
+  document.getElementById('profcars').textContent=garage.length;
+  document.getElementById('profhelps').textContent=profile.helps_count||0;
+  const score=((profile.scans_count||0)*2)+((profile.posts_count||0)*5)+((profile.helps_count||0)*10)+((profile.likes_given||0));
+  document.getElementById('profscore').textContent=score;
+  document.getElementById('hsscore').textContent=score;
+  document.getElementById('helpscore').style.display='flex';
+  // Rank
+  const ranks=['Newcomer','Apprentice','Grease Monkey','Wrench Wizard','Master Tech','Legendary Mechanic'];
+  const rankIdx=Math.min(Math.floor(score/50),ranks.length-1);
+  document.getElementById('profrank').textContent=ranks[rankIdx];
+  // Avatar
+  if(profile.avatar_url){document.getElementById('profavtxt').innerHTML=`<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;}
+  // Socials
+  const socials=[];
+  if(profile.social_ig)socials.push(`<a class="social-link" href="https://instagram.com/${profile.social_ig.replace('@','')}" target="_blank">📷 ${profile.social_ig}</a>`);
+  if(profile.social_fb)socials.push(`<a class="social-link" href="${profile.social_fb}" target="_blank">📘 Facebook</a>`);
+  if(profile.social_x)socials.push(`<a class="social-link" href="https://x.com/${profile.social_x.replace('@','')}" target="_blank">𝕏 ${profile.social_x}</a>`);
+  if(profile.social_yt)socials.push(`<a class="social-link" href="${profile.social_yt}" target="_blank">▶ YouTube</a>`);
+  document.getElementById('profsocials').innerHTML=socials.join('')||(socials.length?'':'<span style="font-size:10px;color:rgba(255,255,255,0.25);">No social links added</span>');
 }
 
-// ═══════════════════════════════════════════════
-// CAMERA
-// ═══════════════════════════════════════════════
-async function startCamera() {
-  try {
-    try { camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } }); }
-    catch { try { camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); } catch { camStream = await navigator.mediaDevices.getUserMedia({ video: true }); } }
-    const v = document.getElementById('cam-video'); v.srcObject = camStream; await v.play();
-  } catch (e) { showToast('Camera: ' + e.message, true); }
+async function changeAvatar(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=async(e)=>{
+    const file=e.target.files[0];if(!file)return;
+    const ext=file.name.split('.').pop();
+    const path=`avatars/${user.id}.${ext}`;
+    const{error:upErr}=await sb.storage.from('avatars').upload(path,file,{upsert:true});
+    if(upErr){showToast('Upload failed',true);return;}
+    const{data:{publicUrl}}=sb.storage.from('avatars').getPublicUrl(path);
+    await sb.from('profiles').update({avatar_url:publicUrl}).eq('id',user.id);
+    document.getElementById('profavtxt').innerHTML=`<img src="${publicUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    showToast('Avatar updated ✓');
+  };
+  inp.click();
 }
 
-async function toggleTorch() {
-  if (!camStream) return;
-  const track = camStream.getVideoTracks()[0];
-  try { torchOn = !torchOn; await track.applyConstraints({ advanced: [{ torch: torchOn }] }); document.getElementById('btn-torch').classList.toggle('on', torchOn); }
-  catch { showToast('Torch not supported', true); }
+function openEditProfile(){
+  if(!profile)return;
+  document.getElementById('epname').value=profile.username||'';
+  document.getElementById('epbio').value=profile.bio||'';
+  document.getElementById('epskill').value=profile.skill_level||'amateur';
+  document.getElementById('epig').value=profile.social_ig||'';
+  document.getElementById('epfb').value=profile.social_fb||'';
+  document.getElementById('epx').value=profile.social_x||'';
+  document.getElementById('epyt').value=profile.social_yt||'';
+  openModal('editprofmod');
 }
 
-// ═══════════════════════════════════════════════
+async function saveProfile(){
+  const name=document.getElementById('epname').value.trim();
+  if(!name){showToast('Display name required',true);return;}
+  if(!/^[a-zA-Z0-9]+$/.test(name)){showToast('Letters and numbers only',true);return;}
+  await sb.from('profiles').update({username:name,bio:document.getElementById('epbio').value.trim(),skill_level:document.getElementById('epskill').value,social_ig:document.getElementById('epig').value.trim(),social_fb:document.getElementById('epfb').value.trim(),social_x:document.getElementById('epx').value.trim(),social_yt:document.getElementById('epyt').value.trim()}).eq('id',user.id);
+  closeModal('editprofmod');await loadProfile();showToast('Profile updated ✓');
+}
+
 // TABS
-// ═══════════════════════════════════════════════
-function goTab(tab) {
-  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  document.getElementById('nav-' + tab).classList.add('active');
-  if (tab === 'garage') loadGarage();
-  if (tab === 'community') loadPosts();
-  if (tab === 'log') loadLog();
-  if (tab === 'profile') loadProfile();
+function goTab(tab){
+  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+tab).classList.add('on');
+  const nb=document.getElementById('nav-'+tab);if(nb)nb.classList.add('on');
+  if(tab==='garage')loadGarage();
+  if(tab==='community')loadPosts();
+  if(tab==='log')loadLog();
+  if(tab==='profile')loadProfile();
+  if(tab==='help')loadHelp();
 }
 
-// ═══════════════════════════════════════════════
-// SCAN STATE MACHINE
-// ═══════════════════════════════════════════════
-function setAppState(s) {
-  appState = s;
-  const hide = el => { if(el) el.style.display = 'none'; };
-  const show = (el, flex) => { if(el) el.style.display = flex ? 'flex' : 'block'; };
-  hide(document.getElementById('scan-ov'));
-  hide(document.getElementById('part-banner'));
-  hide(document.getElementById('ai-panel'));
-  hide(document.getElementById('qp'));
-  hide(document.getElementById('pp'));
-  hide(document.getElementById('sp'));
-  hide(document.getElementById('cp2'));
-  document.getElementById('btn-scan').classList.remove('scanning');
-  document.getElementById('ad-bar').classList.remove('hide');
-
-  if (s === 'idle') { document.getElementById('hud-st').textContent = '○ POINT AT PART'; }
-  else if (s === 'scanning') { show(document.getElementById('scan-ov')); document.getElementById('btn-scan').classList.add('scanning'); document.getElementById('hud-st').textContent = '● SCANNING...'; document.getElementById('ad-bar').classList.add('hide'); }
-  else if (s === 'question') { show(document.getElementById('part-banner')); show(document.getElementById('ai-panel')); show(document.getElementById('qp'), true); document.getElementById('ad-bar').classList.add('hide'); }
-  else if (s === 'prep') { show(document.getElementById('ai-panel')); show(document.getElementById('pp'), true); document.getElementById('ad-bar').classList.add('hide'); }
-  else if (s === 'stepping') { show(document.getElementById('ai-panel')); show(document.getElementById('sp'), true); document.getElementById('ad-bar').classList.add('hide'); }
-  else if (s === 'complete') { show(document.getElementById('ai-panel')); show(document.getElementById('cp2'), true); }
+// CAMERA
+async function startCam(){
+  try{
+    try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:'environment'}}});}
+    catch{try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});}catch{camStream=await navigator.mediaDevices.getUserMedia({video:true});}}
+    const v=document.getElementById('cvid');v.srcObject=camStream;await v.play();
+  }catch(e){showToast('Camera: '+e.message,true);}
 }
 
-function triggerScan() {
-  if (appState === 'stepping' || appState === 'prep' || appState === 'question') return;
-  if (appState === 'scanning') { if (scanInterval) clearInterval(scanInterval); setAppState('idle'); return; }
+async function toggleTorch(){
+  if(!camStream)return;const track=camStream.getVideoTracks()[0];
+  try{torchOn=!torchOn;await track.applyConstraints({advanced:[{torch:torchOn}]});document.getElementById('btntorch').classList.toggle('on',torchOn);}
+  catch{showToast('Torch not supported',true);}
+}
+
+// SCAN
+function setAS(s){
+  appState=s;
+  const H=(id)=>{const e=document.getElementById(id);if(e)e.style.display='none';};
+  const S=(id,flex)=>{const e=document.getElementById(id);if(e)e.style.display=flex?'flex':'block';};
+  H('sov');H('pbanner');H('aip');H('qp');H('prp');H('stp');H('comp');
+  document.getElementById('btnscan').classList.remove('sc');
+  document.getElementById('adbar').classList.remove('hide');
+  if(s==='idle'){document.getElementById('hst').textContent='○ POINT AT PART';}
+  else if(s==='scanning'){S('sov');document.getElementById('btnscan').classList.add('sc');document.getElementById('hst').textContent='● SCANNING...';document.getElementById('adbar').classList.add('hide');}
+  else if(s==='question'){S('pbanner');S('aip');S('qp',true);document.getElementById('adbar').classList.add('hide');}
+  else if(s==='prep'){S('aip');S('prp',true);document.getElementById('adbar').classList.add('hide');}
+  else if(s==='stepping'){S('aip');S('stp',true);document.getElementById('adbar').classList.add('hide');}
+  else if(s==='complete'){S('aip');S('comp',true);}
+}
+
+function triggerScan(){
+  if(appState==='stepping'||appState==='prep'||appState==='question')return;
+  if(appState==='scanning'){if(scanInt)clearInterval(scanInt);setAS('idle');return;}
   startScan();
 }
 
-function startScan() {
-  setAppState('scanning');
-  let elapsed = 0; const total = 3000; const tick = 50;
-  document.getElementById('scan-bar').style.width = '0%';
-  scanInterval = setInterval(() => {
-    elapsed += tick;
-    document.getElementById('scan-bar').style.width = (elapsed / total * 100) + '%';
-    if (elapsed >= total) { clearInterval(scanInterval); analyzePart(); }
-  }, tick);
+function startScan(){
+  setAS('scanning');let elapsed=0;const total=3000,tick=50;
+  document.getElementById('sbar').style.width='0%';
+  scanInt=setInterval(()=>{elapsed+=tick;document.getElementById('sbar').style.width=(elapsed/total*100)+'%';if(elapsed>=total){clearInterval(scanInt);analyzePart();}},tick);
 }
 
-async function analyzePart() {
-  document.getElementById('scan-main-txt').textContent = 'ANALYZING...';
-  const video = document.getElementById('cam-video'), canvas = document.getElementById('cam-canvas');
-  canvas.width = video.videoWidth || 640; canvas.height = video.videoHeight || 480;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  const b64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
-  const vCtx = activeCar ? `Vehicle: ${activeCar.make} ${activeCar.model} (${activeCar.year}), Engine: ${activeCar.engine || 'unknown'}, Fuel: ${activeCar.fuel}.` : 'No vehicle specified.';
+async function analyzePart(){
+  document.getElementById('smain').textContent='ANALYZING...';
+  const vid=document.getElementById('cvid'),cv=document.getElementById('ccv');
+  cv.width=vid.videoWidth||640;cv.height=vid.videoHeight||480;
+  cv.getContext('2d').drawImage(vid,0,0);
+  const b64=cv.toDataURL('image/jpeg',0.85).split(',')[1];
+  const vCtx=activeCar?`Vehicle: ${activeCar.make} ${activeCar.model} (${activeCar.year}), Engine: ${activeCar.engine||'unknown'}, Fuel: ${activeCar.fuel}.`:'No vehicle specified.';
 
-  const systemPrompt = `You are MECH-AI, an expert automotive mechanic AI assistant.
-${vCtx}
+  const sp=`You are MECH-AI, an expert automotive mechanic AI. ${vCtx}
 
 RULES YOU MUST ALWAYS FOLLOW:
-1. SAFETY FIRST: If anything looks dangerous (leaking fuel, damaged brakes, airbag components, high-voltage EV parts), immediately say "STOP — this is unsafe. Do not proceed without professional help or proper safety gear." Then explain why.
-2. Use the image provided. Describe what you see and reference specific parts you detect.
-3. Never hallucinate part numbers or specs. If you don't know an exact torque value, say "check your model's service manual" or give a safe general range.
-4. Keep answers short and spoken-friendly.
-5. Be encouraging but honest.
-6. End every step reply with: "Ready for the next step? Just tell me what you see or what you're trying to do."
+1. SAFETY FIRST: If anything looks dangerous (leaking fuel, damaged brakes, airbag components, high-voltage EV parts), immediately warn the user to stop and seek professional help.
+2. Describe what you see and reference specific parts detected.
+3. Never hallucinate part numbers or specs. If unsure of torque values, say "check your service manual".
+4. Be encouraging but honest. Short and spoken-friendly responses.
+5. End every step with: "Ready for the next step? Just tell me what you see or what you're trying to do."
 
-Respond ONLY with valid JSON, no extra text:
-{"part":"Front brake disc and caliper","condition":"Moderate wear, brake dust visible","question":"I can see your front brake assembly. Would you like to perform a brake pad replacement?","job":"Front Brake Pad Replacement","difficulty":"Medium","time":"45-60 min","tools":["17mm socket wrench","Torque wrench 20-200Nm","Car jack and axle stands","Brake piston wind-back tool","Wire brush","Brake cleaner spray"],"torque":["Wheel bolts: 120 Nm","Brake caliper bolts: 35 Nm"],"parts":["New brake pads (match to your vehicle)","Brake cleaner spray","Copper grease"],"steps":[{"instruction":"SAFETY: Engage handbrake, chock the opposite wheel, and wear gloves. Never work under a vehicle supported only by a jack.","torque":null},{"instruction":"Loosen wheel bolts slightly while the car is still on the ground — just break the resistance, do not remove yet.","torque":null},{"instruction":"Jack up the vehicle and place axle stands under the chassis sill. Lower the jack so the car rests on the stands.","torque":null},{"instruction":"Remove the wheel bolts fully and take the wheel off. Set it aside safely.","torque":null},{"instruction":"Locate the brake caliper — the metal clamp over the disc. You'll see two guide pin bolts on the back. Remove them with a 13mm spanner.","torque":null},{"instruction":"Slide the caliper off the disc. Hang it with a wire hook from the spring — never let it hang by the rubber brake hose.","torque":null},{"instruction":"Pull the old brake pads out of the carrier bracket. Note how they sit before removing.","torque":null},{"instruction":"Use the wind-back tool to push the piston back into the caliper. This makes room for the thicker new pads. Check brake fluid doesn't overflow.","torque":null},{"instruction":"Apply a thin layer of copper grease to the back of the new pads and the carrier contact points. Keep it away from the friction surface and disc.","torque":null},{"instruction":"Clip the new pads into the carrier bracket in the same position as the old ones.","torque":null},{"instruction":"Slide the caliper back over the new pads and refit the guide pin bolts.","torque":"Brake caliper bolts: 35 Nm"},{"instruction":"Refit the wheel and hand-tighten the bolts in a star pattern. Lower the car off the stands.","torque":null},{"instruction":"Torque the wheel bolts in a star pattern with your torque wrench.","torque":"Wheel bolts: 120 Nm"},{"instruction":"Sit in the car and pump the brake pedal firmly 10-15 times until it feels solid. Check brake fluid level. Test at very low speed before driving normally. Ready for the next step? Just tell me what you see or what you're trying to do.","torque":null}],"status":"ROUTINE"}
+Respond ONLY with valid JSON:
+{"part":"Front brake disc","condition":"Moderate wear","question":"I can see your front brake assembly. Would you like to do a brake pad replacement?","job":"Front Brake Pad Replacement","difficulty":"Medium","time":"45-60 min","tools":["17mm socket","Torque wrench","Car jack","Axle stands","Wind-back tool","Wire brush"],"torque":["Wheel bolts: 120 Nm","Caliper bolts: 35 Nm"],"parts":["New brake pads","Brake cleaner","Copper grease"],"steps":[{"instruction":"SAFETY: Engage handbrake, chock opposite wheel, wear gloves. Never work under a car on a jack only.","torque":null},{"instruction":"Loosen wheel bolts slightly while car is on the ground.","torque":null},{"instruction":"Jack up car, place axle stands. Lower car onto stands.","torque":null},{"instruction":"Remove wheel bolts and take off the wheel.","torque":null},{"instruction":"Find the brake caliper over the disc. Remove the two guide pin bolts with a 13mm spanner.","torque":null},{"instruction":"Slide caliper off. Hang it with wire — never by the brake hose.","torque":null},{"instruction":"Remove old brake pads from the carrier.","torque":null},{"instruction":"Push the caliper piston back with the wind-back tool.","torque":null},{"instruction":"Apply copper grease to back of new pads and carrier contact points only — not on the friction surface.","torque":null},{"instruction":"Clip new pads into carrier.","torque":null},{"instruction":"Refit caliper and torque guide pin bolts.","torque":"Caliper bolts: 35 Nm"},{"instruction":"Refit wheel, hand-tighten bolts in star pattern.","torque":null},{"instruction":"Lower car and torque wheel bolts in star pattern.","torque":"Wheel bolts: 120 Nm"},{"instruction":"Pump brake pedal 15 times until firm. Check fluid. Test at low speed. Ready for the next step? Just tell me what you see or what you're trying to do.","torque":null}],"status":"ROUTINE"}
 
-Make ALL content specific to the identified part and vehicle. If no vehicle part is visible, set part to "unknown".`;
+Make content specific to the visible part and vehicle. If no vehicle part visible, set part to "unknown".`;
 
-  try {
-    const res = await fetch(PROXY, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } },
-            { type: 'text', text: systemPrompt + '\n\nWhat vehicle part do you see in this image? Provide the full JSON response.' }
-          ]
-        }]
-      })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    const raw = (data.content || []).map(b => b.text || '').join('');
-    const clean = raw.replace(/```json|```/g, '').trim();
-    jobData = JSON.parse(clean);
-
-    if (jobData.part === 'unknown') { setAppState('idle'); showToast('Point camera at a vehicle part'); return; }
-    document.getElementById('part-name').textContent = jobData.part.toUpperCase();
-    document.getElementById('part-cond').textContent = jobData.condition || '';
-    document.getElementById('q-txt').textContent = jobData.question;
-    setAppState('question');
-    if (voiceOn) speak(jobData.question);
-
-    // Increment scan count
-    if (profile) await sb.from('profiles').update({ scans_count: (profile.scans_count || 0) + 1 }).eq('id', user.id);
-
-  } catch (e) {
-    setAppState('idle');
-    showToast('Analysis failed: ' + e.message.substring(0, 50), true);
+  try{
+    const res=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:[{type:'image_url',image_url:{url:`data:image/jpeg;base64,${b64}`}},{type:'text',text:sp}]}]})});
+    const data=await res.json();
+    if(data.error)throw new Error(data.error);
+    const raw=(data.content||[]).map(b=>b.text||'').join('');
+    jobData=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    if(jobData.part==='unknown'){setAS('idle');showToast('Point at a vehicle part');return;}
+    document.getElementById('pname').textContent=jobData.part.toUpperCase();
+    document.getElementById('pcond').textContent=jobData.condition||'';
+    document.getElementById('qtxt').textContent=jobData.question;
+    setAS('question');
+    if(voiceOn)speak(jobData.question);
+    if(profile)await sb.from('profiles').update({scans_count:(profile.scans_count||0)+1}).eq('id',user.id);
+  }catch(e){
+    setAS('idle');
+    showToast('Analysis failed: '+e.message.substring(0,50),true);
   }
 }
 
-function ansYes() {
-  if (!jobData) return;
-  document.getElementById('pp-diff').textContent = jobData.difficulty || '—';
-  document.getElementById('pp-time').textContent = jobData.time || '—';
-  document.getElementById('pp-tools').innerHTML = (jobData.tools || []).map(t => `• ${t}`).join('<br>');
-  document.getElementById('pp-parts').innerHTML = (jobData.parts || []).map(p => `• ${p}`).join('<br>');
-  if (jobData.torque && jobData.torque.length) { document.getElementById('pp-torq-sec').style.display = 'block'; document.getElementById('pp-torq').innerHTML = (jobData.torque || []).map(t => `<span class="torq">⚡ ${t}</span>`).join('<br>'); }
-  else document.getElementById('pp-torq-sec').style.display = 'none';
-  setAppState('prep');
-  if (voiceOn) speak(`For this job you will need: ${(jobData.tools || []).join(', ')}. Confirm when you have everything ready.`);
+function ansYes(){
+  if(!jobData)return;
+  document.getElementById('prpdiff').textContent=jobData.difficulty||'—';
+  document.getElementById('prptime').textContent=jobData.time||'—';
+  document.getElementById('prptools').innerHTML=(jobData.tools||[]).map(t=>`• ${t}`).join('<br>');
+  document.getElementById('prpparts').innerHTML=(jobData.parts||[]).map(p=>`• ${p}`).join('<br>');
+  if(jobData.torque&&jobData.torque.length){document.getElementById('prptorqsec').style.display='block';document.getElementById('prptorq').innerHTML=(jobData.torque||[]).map(t=>`<span class="torq">⚡ ${t}</span>`).join('<br>');}
+  else document.getElementById('prptorqsec').style.display='none';
+  setAS('prep');
+  if(voiceOn)speak('For this job you need: '+(jobData.tools||[]).join(', ')+'. Confirm when ready.');
 }
 
-function ansNo() { setAppState('idle'); if (voiceOn) speak('No problem. Point the camera at another part whenever you are ready.'); }
+function ansNo(){setAS('idle');if(voiceOn)speak('No problem. Point the camera at another part.');}
 
-function startJob() {
-  steps = jobData.steps || []; currentStep = 0;
-  setAppState('stepping'); renderStep();
-  if (voiceOn) speak('Job started. ' + (steps[0] ? steps[0].instruction : ''));
+function startJob(){steps=jobData.steps||[];curStep=0;setAS('stepping');renderStep();if(voiceOn)speak(steps[0]?steps[0].instruction:'');}
+
+function renderStep(){
+  if(!steps.length)return;
+  const s=steps[curStep],total=steps.length;
+  document.getElementById('stpcnt').textContent=`STEP ${curStep+1}/${total}`;
+  document.getElementById('stpp').style.width=((curStep+1)/total*100)+'%';
+  document.getElementById('stptxt').textContent=s.instruction;
+  if(s.torque){document.getElementById('stptorq').style.display='block';document.getElementById('stptorq').textContent='⚡ '+s.torque;}
+  else document.getElementById('stptorq').style.display='none';
+  const last=curStep===steps.length-1;
+  document.getElementById('stpnext').style.display=last?'none':'block';
+  document.getElementById('stpdone').style.display=last?'block':'none';
+  document.getElementById('stpprev').disabled=curStep===0;
 }
 
-function renderStep() {
-  if (!steps.length) return;
-  const s = steps[currentStep], total = steps.length;
-  document.getElementById('sp-cnt').textContent = `STEP ${currentStep + 1}/${total}`;
-  document.getElementById('sp-p').style.width = ((currentStep + 1) / total * 100) + '%';
-  document.getElementById('sp-txt').textContent = s.instruction;
-  if (s.torque) { document.getElementById('sp-torq').style.display = 'block'; document.getElementById('sp-torq').textContent = '⚡ ' + s.torque; }
-  else document.getElementById('sp-torq').style.display = 'none';
-  const isLast = currentStep === steps.length - 1;
-  document.getElementById('sp-next').style.display = isLast ? 'none' : 'block';
-  document.getElementById('sp-done').style.display = isLast ? 'block' : 'none';
-  document.getElementById('sp-prev').disabled = currentStep === 0;
+function nextStep(){if(curStep<steps.length-1){curStep++;renderStep();if(voiceOn)speak(steps[curStep].instruction);}}
+function prevStep(){if(curStep>0){curStep--;renderStep();if(voiceOn)speak(steps[curStep].instruction);}}
+function completeJob(){setAS('complete');if(voiceOn)speak('Job complete! Well done.');}
+
+async function saveToLog(){
+  if(!activeCar||!jobData){showToast('Select an active vehicle first',true);resetScan();return;}
+  await sb.from('car_logs').insert({user_id:user.id,garage_id:activeCar.id,type:'repair',part:jobData.part||jobData.job,description:jobData.job,km_at_time:activeCar.km||0,parts_used:(jobData.parts||[]).join(', ')});
+  showToast('Saved to car log ✓');resetScan();
 }
 
-function nextStep() { if (currentStep < steps.length - 1) { currentStep++; renderStep(); if (voiceOn) speak(steps[currentStep].instruction); } }
-function prevStep() { if (currentStep > 0) { currentStep--; renderStep(); if (voiceOn) speak(steps[currentStep].instruction); } }
-function completeJob() { setAppState('complete'); if (voiceOn) speak('Job complete! Well done. Would you like to save this to your car log?'); }
+function resetScan(){jobData=null;curStep=0;steps=[];setAS('idle');}
 
-async function saveToLog() {
-  if (!activeCar || !jobData) { showToast('Select an active vehicle first'); resetScan(); return; }
-  await sb.from('car_logs').insert({ user_id: user.id, garage_id: activeCar.id, type: 'repair', part: jobData.part || jobData.job, description: jobData.job, km_at_time: activeCar.km || 0, parts_used: (jobData.parts || []).join(', ') });
-  showToast('Saved to car log ✓');
-  resetScan();
-}
-
-function resetScan() { jobData = null; currentStep = 0; steps = []; setAppState('idle'); }
-
-// ═══════════════════════════════════════════════
 // GARAGE
-// ═══════════════════════════════════════════════
-async function loadGarage() {
-  if (!user) return;
-  const { data } = await sb.from('garage').select('*').eq('user_id', user.id).order('created_at');
-  garage = data || [];
-  renderGarage();
-  activeCar = garage.find(c => c.is_active) || garage[0] || null;
-  updateActiveCarChip();
-  document.getElementById('prof-cars').textContent = garage.length;
-  // Populate post car selector
-  const sel = document.getElementById('pm-car');
-  sel.innerHTML = '<option value="">Select a vehicle...</option>';
-  garage.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = `${c.make} ${c.model} (${c.year})`; sel.appendChild(o); });
+async function loadGarage(){
+  if(!user)return;
+  const{data}=await sb.from('garage').select('*').eq('user_id',user.id).order('created_at');
+  garage=data||[];renderGarage();
+  activeCar=garage.find(c=>c.is_active)||garage[0]||null;
+  updChip();
+  document.getElementById('profcars').textContent=garage.length;
+  // populate car selectors
+  ['pmcar','hmcar'].forEach(selId=>{
+    const sel=document.getElementById(selId);if(!sel)return;
+    sel.innerHTML='<option value="">Select vehicle...</option>';
+    garage.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.make} ${c.model} (${c.year})`;sel.appendChild(o);});
+  });
 }
 
-function renderGarage() {
-  const list = document.getElementById('car-list');
-  if (!garage.length) { list.innerHTML = '<div class="empty-state">🚗<br><br>NO VEHICLES YET<br>TAP + TO ADD YOUR FIRST CAR</div>'; return; }
-  list.innerHTML = garage.map(car => `
-    <div class="car-card ${car.is_active ? 'active-car' : ''}">
-      ${car.is_active ? '<div class="car-card-badge">ACTIVE</div>' : ''}
-      <div class="car-card-img">${car.photo_url ? `<img src="${car.photo_url}" alt="">` : '🚗'}</div>
-      <div class="car-card-body">
-        <div class="car-card-title">${car.make} ${car.model}</div>
-        <div class="car-card-sub">${car.year} · ${car.engine || ''} · ${car.fuel} · ${car.km ? car.km.toLocaleString() + ' km' : ''}</div>
-      </div>
-      <div class="car-card-actions">
-        <button class="car-action set" onclick="setActiveCar('${car.id}')">SET ACTIVE</button>
-        <button class="car-action" onclick="viewCarLog('${car.id}')">VIEW LOG</button>
-        <button class="car-action" onclick="editCar('${car.id}')">EDIT</button>
-        <button class="car-action del" onclick="deleteCar('${car.id}')">DELETE</button>
+function renderGarage(){
+  const list=document.getElementById('carlist');
+  if(!garage.length){list.innerHTML='<div class="empty">🚗<br><br>NO VEHICLES YET<br>TAP + TO ADD YOUR FIRST CAR</div>';return;}
+  list.innerHTML=garage.map(car=>`
+    <div class="ccard ${car.is_active?'acar':''}">
+      ${car.is_active?'<div class="ccbadge">ACTIVE</div>':''}
+      <div class="ccimg">${car.photo_url?`<img src="${car.photo_url}" alt="">`:'🚗'}</div>
+      <div class="ccbody"><div class="cctitle">${car.make} ${car.model}</div><div class="ccsub">${car.year} · ${car.engine||''} · ${car.fuel}${car.km?' · '+car.km.toLocaleString()+' km':''}</div></div>
+      <div class="ccacts">
+        <button class="cca set" onclick="setActCar('${car.id}')">SET ACTIVE</button>
+        <button class="cca" onclick="viewCarLog('${car.id}')">LOG</button>
+        <button class="cca" onclick="editCar('${car.id}')">EDIT</button>
+        <button class="cca del" onclick="delCar('${car.id}')">DELETE</button>
       </div>
     </div>`).join('');
 }
 
-function updateActiveCarChip() {
-  const chip = document.getElementById('acc-inner');
-  chip.textContent = activeCar ? `${activeCar.make} ${activeCar.model} ${activeCar.year} · ${activeCar.engine || ''} · ${activeCar.fuel}` : '── SET ACTIVE VEHICLE ──';
+function updChip(){document.getElementById('acci').textContent=activeCar?`${activeCar.make} ${activeCar.model} ${activeCar.year} · ${activeCar.engine||''} · ${activeCar.fuel}`:'── SET ACTIVE VEHICLE ──';}
+
+function openCarModal(){editCarId=null;document.getElementById('carmtitle').textContent='ADD VEHICLE';['cmmake','cmmodel','cmyear','cmengine','cmkm','cmextra'].forEach(id=>document.getElementById(id).value='');openModal('carmod');}
+
+function editCar(id){
+  editCarId=id;document.getElementById('carmtitle').textContent='EDIT VEHICLE';
+  const car=garage.find(c=>c.id===id);if(!car)return;
+  document.getElementById('cmmake').value=car.make;document.getElementById('cmmodel').value=car.model;document.getElementById('cmyear').value=car.year;document.getElementById('cmtype').value=car.type||'car';document.getElementById('cmengine').value=car.engine||'';document.getElementById('cmfuel').value=car.fuel;document.getElementById('cmkm').value=car.km||'';document.getElementById('cmextra').value=car.extra||'';
+  openModal('carmod');
 }
 
-function openCarModal(carId) {
-  editCarId = carId || null;
-  document.getElementById('car-modal-title').textContent = editCarId ? 'EDIT VEHICLE' : 'ADD VEHICLE';
-  if (editCarId) {
-    const car = garage.find(c => c.id === editCarId);
-    if (car) { document.getElementById('cm-make').value = car.make; document.getElementById('cm-model').value = car.model; document.getElementById('cm-year').value = car.year; document.getElementById('cm-type').value = car.type || 'car'; document.getElementById('cm-engine').value = car.engine || ''; document.getElementById('cm-fuel').value = car.fuel; document.getElementById('cm-km').value = car.km || ''; document.getElementById('cm-extra').value = car.extra || ''; }
-  } else { ['cm-make','cm-model','cm-year','cm-engine','cm-km','cm-extra'].forEach(id => document.getElementById(id).value = ''); }
-  openModal('car-modal');
+async function saveCar(){
+  const make=document.getElementById('cmmake').value.trim(),model=document.getElementById('cmmodel').value.trim(),year=document.getElementById('cmyear').value;
+  if(!make||!model||!year){showToast('Fill in Make, Model and Year',true);return;}
+  const d={user_id:user.id,make,model,year:parseInt(year),type:document.getElementById('cmtype').value,engine:document.getElementById('cmengine').value.trim(),fuel:document.getElementById('cmfuel').value,km:parseInt(document.getElementById('cmkm').value)||0,extra:document.getElementById('cmextra').value.trim()};
+  if(editCarId){await sb.from('garage').update(d).eq('id',editCarId);}
+  else{await sb.from('garage').insert(d);}
+  closeModal('carmod');await loadGarage();showToast(editCarId?'Vehicle updated ✓':'Vehicle added ✓');
 }
 
-function editCar(id) { openCarModal(id); }
+async function delCar(id){if(!confirm('Delete this vehicle?'))return;await sb.from('garage').delete().eq('id',id);await loadGarage();showToast('Vehicle removed');}
+async function setActCar(id){await sb.from('garage').update({is_active:false}).eq('user_id',user.id);await sb.from('garage').update({is_active:true}).eq('id',id);await loadGarage();showToast('Active vehicle set ✓');}
+function viewCarLog(id){logCarId=id;goTab('log');}
 
-async function saveCar() {
-  const make = document.getElementById('cm-make').value.trim(), model = document.getElementById('cm-model').value.trim(), year = document.getElementById('cm-year').value;
-  if (!make || !model || !year) { showToast('Fill in Make, Model and Year', true); return; }
-  const carData = { user_id: user.id, make, model, year: parseInt(year), type: document.getElementById('cm-type').value, engine: document.getElementById('cm-engine').value.trim(), fuel: document.getElementById('cm-fuel').value, km: parseInt(document.getElementById('cm-km').value) || 0, extra: document.getElementById('cm-extra').value.trim() };
-  if (editCarId) { await sb.from('garage').update(carData).eq('id', editCarId); }
-  else { await sb.from('garage').insert(carData); }
-  closeModal('car-modal'); await loadGarage(); showToast(editCarId ? 'Vehicle updated ✓' : 'Vehicle added ✓');
+// LOG
+async function loadLog(){
+  if(!user)return;
+  const target=logCarId?garage.find(c=>c.id===logCarId):activeCar;
+  if(!target){document.getElementById('logcarsel').textContent='SELECT A VEHICLE FROM GARAGE';document.getElementById('logfilts').style.display='none';document.getElementById('lstats').style.display='none';return;}
+  document.getElementById('logcarsel').textContent=`${target.make} ${target.model} ${target.year}`;
+  document.getElementById('logfilts').style.display='flex';document.getElementById('lstats').style.display='grid';
+  let q=sb.from('car_logs').select('*').eq('garage_id',target.id).order('created_at',{ascending:false});
+  if(logFilt!=='all')q=q.eq('type',logFilt);
+  const{data}=await q;const entries=data||[];
+  document.getElementById('lstot').textContent=entries.length;
+  document.getElementById('lsrep').textContent=entries.filter(e=>e.type==='repair').length;
+  document.getElementById('lsmai').textContent=entries.filter(e=>e.type==='maintenance').length;
+  const list=document.getElementById('llist');
+  if(!entries.length){list.innerHTML='<div class="empty">📋<br><br>NO LOG ENTRIES YET</div>';return;}
+  list.innerHTML=entries.map(e=>`<div class="lentry"><div class="lehdr"><span class="letyp ${e.type==='repair'?'lrep':'lmai'}">${e.type.toUpperCase()}</span><span class="ledt">${new Date(e.created_at).toLocaleDateString()}</span></div><div class="lebody"><div class="lepart">${e.part}</div><div class="ledesc">${e.description||''}</div>${e.parts_used?`<div class="ledesc" style="margin-top:3px;">Parts: ${e.parts_used}</div>`:''}<div class="lekm">${e.km_at_time?e.km_at_time.toLocaleString()+' km':''}</div></div></div>`).join('');
 }
 
-async function deleteCar(id) {
-  if (!confirm('Delete this vehicle?')) return;
-  await sb.from('garage').delete().eq('id', id);
-  await loadGarage(); showToast('Vehicle removed');
+function filterLog(f,btn){logFilt=f;document.querySelectorAll('#logfilts .filt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');loadLog();}
+function openLogModal(){if(!activeCar){showToast('Set an active vehicle first',true);return;}['lmpart','lmdesc','lmkm','lmparts'].forEach(id=>document.getElementById(id).value='');openModal('logmod');}
+async function saveLogEntry(){
+  const part=document.getElementById('lmpart').value.trim();if(!part||!activeCar)return;
+  await sb.from('car_logs').insert({user_id:user.id,garage_id:activeCar.id,type:document.getElementById('lmtype').value,part,description:document.getElementById('lmdesc').value.trim(),km_at_time:parseInt(document.getElementById('lmkm').value)||0,parts_used:document.getElementById('lmparts').value.trim()});
+  closeModal('logmod');loadLog();showToast('Log entry saved ✓');
 }
 
-async function setActiveCar(id) {
-  await sb.from('garage').update({ is_active: false }).eq('user_id', user.id);
-  await sb.from('garage').update({ is_active: true }).eq('id', id);
-  await loadGarage(); showToast('Active vehicle set ✓');
-}
-
-function viewCarLog(id) { logCarId = id; goTab('log'); }
-
-// ═══════════════════════════════════════════════
-// CAR LOG
-// ═══════════════════════════════════════════════
-async function loadLog() {
-  if (!user) return;
-  const targetCar = logCarId ? garage.find(c => c.id === logCarId) : activeCar;
-  if (!targetCar) { document.getElementById('log-car-selector').textContent = 'SELECT A VEHICLE FROM GARAGE TO VIEW LOG'; document.getElementById('log-filters').style.display = 'none'; document.getElementById('log-stats').style.display = 'none'; return; }
-  document.getElementById('log-car-selector').textContent = `${targetCar.make} ${targetCar.model} ${targetCar.year}`;
-  document.getElementById('log-filters').style.display = 'flex';
-  document.getElementById('log-stats').style.display = 'grid';
-  let query = sb.from('car_logs').select('*').eq('garage_id', targetCar.id).order('created_at', { ascending: false });
-  if (logFilter !== 'all') query = query.eq('type', logFilter);
-  const { data } = await query;
-  const entries = data || [];
-  const repairs = entries.filter(e => e.type === 'repair').length;
-  const maint = entries.filter(e => e.type === 'maintenance').length;
-  document.getElementById('ls-total').textContent = entries.length;
-  document.getElementById('ls-repairs').textContent = repairs;
-  document.getElementById('ls-maint').textContent = maint;
-  const list = document.getElementById('log-list');
-  if (!entries.length) { list.innerHTML = '<div class="empty-state">📋<br><br>NO LOG ENTRIES YET</div>'; return; }
-  list.innerHTML = entries.map(e => `
-    <div class="log-entry">
-      <div class="log-entry-hdr"><span class="log-entry-type ${e.type === 'repair' ? 'log-type-repair' : 'log-type-maint'}">${e.type.toUpperCase()}</span><span class="log-entry-date">${new Date(e.created_at).toLocaleDateString()}</span></div>
-      <div class="log-entry-body"><div class="log-entry-part">${e.part}</div><div class="log-entry-desc">${e.description || ''}</div>${e.parts_used ? `<div class="log-entry-desc" style="margin-top:4px;">Parts: ${e.parts_used}</div>` : ''}<div class="log-entry-km">${e.km_at_time ? e.km_at_time.toLocaleString() + ' km' : ''}</div></div>
-    </div>`).join('');
-}
-
-function filterLog(f, btn) { logFilter = f; document.querySelectorAll('.log-filter').forEach(b => b.classList.remove('active')); btn.classList.add('active'); loadLog(); }
-
-function openLogModal() { if (!activeCar) { showToast('Set an active vehicle first', true); return; } ['lm-part','lm-desc','lm-km','lm-parts'].forEach(id => document.getElementById(id).value = ''); openModal('log-modal'); }
-
-async function saveLogEntry() {
-  const part = document.getElementById('lm-part').value.trim();
-  if (!part || !activeCar) return;
-  await sb.from('car_logs').insert({ user_id: user.id, garage_id: activeCar.id, type: document.getElementById('lm-type').value, part, description: document.getElementById('lm-desc').value.trim(), km_at_time: parseInt(document.getElementById('lm-km').value) || 0, parts_used: document.getElementById('lm-parts').value.trim() });
-  closeModal('log-modal'); loadLog(); showToast('Log entry saved ✓');
-}
-
-// ═══════════════════════════════════════════════
 // COMMUNITY
-// ═══════════════════════════════════════════════
-async function loadPosts() {
-  let query = sb.from('posts').select('*, profiles(username)').order('created_at', { ascending: false });
-  if (commFilter !== 'all' && commFilter !== 'saved') query = query.eq('type', commFilter);
-  const { data } = await query;
-  let posts = data || [];
-  if (commFilter === 'saved' && user) {
-    const { data: saves } = await sb.from('post_saves').select('post_id').eq('user_id', user.id);
-    const savedIds = (saves || []).map(s => s.post_id);
-    const { data: savedPosts } = await sb.from('posts').select('*, profiles(username)').in('id', savedIds);
-    posts = savedPosts || [];
+async function loadPosts(){
+  let posts=[];
+  if(commFilt==='saved'&&user){
+    const{data:saves}=await sb.from('post_saves').select('post_id').eq('user_id',user.id);
+    const ids=(saves||[]).map(s=>s.post_id);
+    if(ids.length){const{data}=await sb.from('posts').select('*,profiles(username,skill_level)').in('id',ids).order('created_at',{ascending:false});posts=data||[];}
+  }else{
+    let q=sb.from('posts').select('*,profiles(username,skill_level)').order('created_at',{ascending:false});
+    if(commFilt!=='all')q=q.eq('type',commFilt);
+    const{data}=await q;posts=data||[];
   }
-  const list = document.getElementById('post-list');
-  if (!posts.length) { list.innerHTML = '<div class="empty-state">💬<br><br>NO POSTS YET<br>BE THE FIRST TO SHARE!</div>'; return; }
-  list.innerHTML = posts.map(p => `
-    <div class="post-card" onclick="openPost('${p.id}')">
-      <div class="post-card-img">${p.photo_url ? `<img src="${p.photo_url}" alt="">` : '🔧'}</div>
-      <div class="post-card-body">
-        <div class="post-card-meta"><span class="post-type-badge ptb-${p.type}">${p.type.toUpperCase()}</span><span class="post-car">${p.car_label || ''}</span></div>
-        <div class="post-title">${p.title}</div>
-        <div class="post-preview">${p.body.substring(0, 120)}${p.body.length > 120 ? '...' : ''}</div>
-        <div class="post-footer">
-          <button class="post-action" onclick="event.stopPropagation();likePost('${p.id}',this)">👍 ${p.likes_count || 0}</button>
-          <button class="post-action" onclick="event.stopPropagation();savePost2('${p.id}',this)">🔖 ${p.saves_count || 0}</button>
-          <span class="post-action">💬 ${p.comments_count || 0}</span>
-          <span class="post-author">@${p.profiles?.username || 'user'}</span>
+  const list=document.getElementById('plist');
+  if(!posts.length){list.innerHTML='<div class="empty">💬<br><br>NO POSTS YET<br>BE THE FIRST!</div>';return;}
+  const typeCls={repair:'ptr',maintenance:'ptm',question:'ptq',tip:'ptt'};
+  list.innerHTML=posts.map(p=>`
+    <div class="pcard" onclick="openPost('${p.id}')">
+      <div class="pcimg">${p.photo_url?`<img src="${p.photo_url}" alt="">`:'🔧'}</div>
+      <div class="pcbody">
+        <div class="pcmeta"><span class="ptb ${typeCls[p.type]||'ptr'}">${p.type.toUpperCase()}</span><span class="pcar">${p.car_label||''}</span></div>
+        <div class="ptitle">${p.title}</div>
+        <div class="pprev">${p.body.substring(0,110)}${p.body.length>110?'...':''}</div>
+        <div class="pfoot">
+          <button class="pact" onclick="event.stopPropagation();likePost('${p.id}',this)">👍 ${p.likes_count||0}</button>
+          <button class="pact" onclick="event.stopPropagation();savePost2('${p.id}',this)">🔖 ${p.saves_count||0}</button>
+          <span class="pact">💬 ${p.comments_count||0}</span>
+          <span class="pauthor">@${p.profiles?.username||'user'}</span>
         </div>
       </div>
     </div>`).join('');
 }
 
-function filterComm(f, btn) { commFilter = f; document.querySelectorAll('.comm-filter').forEach(b => b.classList.remove('active')); btn.classList.add('active'); loadPosts(); }
+function filtComm(f,btn){commFilt=f;document.querySelectorAll('.cfilt .filt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');loadPosts();}
 
-async function openPost(id) {
-  const { data: post } = await sb.from('posts').select('*, profiles(username)').eq('id', id).single();
-  if (!post) return;
-  currentPost = post;
-  document.getElementById('pd-title').textContent = post.title;
-  if (post.photo_url) { document.getElementById('pd-img').src = post.photo_url; document.getElementById('pd-img').style.display = 'block'; } else document.getElementById('pd-img').style.display = 'none';
-  document.getElementById('pd-meta').innerHTML = `<span class="post-type-badge ptb-${post.type}">${post.type.toUpperCase()}</span><span class="post-car" style="font-size:10px;color:rgba(255,255,255,0.35);">${post.car_label || ''}</span>`;
-  document.getElementById('pd-content').textContent = post.body;
-  document.getElementById('post-detail').style.display = 'flex';
-  loadComments(id);
+async function openPost(id){
+  const{data:post}=await sb.from('posts').select('*,profiles(username,skill_level)').eq('id',id).single();
+  if(!post)return;curPost=post;
+  document.getElementById('pdtitle').textContent=post.title;
+  if(post.photo_url){document.getElementById('pdimg').src=post.photo_url;document.getElementById('pdimg').style.display='block';}
+  else document.getElementById('pdimg').style.display='none';
+  const typeCls={repair:'ptr',maintenance:'ptm',question:'ptq',tip:'ptt'};
+  document.getElementById('pdmeta').innerHTML=`<span class="ptb ${typeCls[post.type]||'ptr'}">${post.type.toUpperCase()}</span><span class="pcar" style="font-size:9px;color:rgba(255,255,255,0.3);">${post.car_label||''}</span>`;
+  document.getElementById('pdcontent').textContent=post.body;
+  // Show edit/delete if owner
+  const isOwner=user&&post.user_id===user.id;
+  document.getElementById('pdmod').style.display='flex';
+  loadCmts(id);
 }
 
-function closePostDetail() { document.getElementById('post-detail').style.display = 'none'; currentPost = null; }
+function closePD(){document.getElementById('pdmod').style.display='none';curPost=null;}
 
-async function loadComments(postId) {
-  const { data } = await sb.from('comments').select('*, profiles(username)').eq('post_id', postId).order('created_at');
-  const list = document.getElementById('pd-comments');
-  if (!data || !data.length) { list.innerHTML = '<div style="font-size:11px;color:rgba(255,255,255,0.3);padding:10px 0;">No comments yet. Be the first!</div>'; return; }
-  const isOwner = currentPost && user && currentPost.user_id === user.id;
-  list.innerHTML = data.map(c => `
-    <div class="comment ${c.is_highlighted ? 'highlighted' : ''}">
-      <div class="comment-hdr"><span class="comment-user">@${c.profiles?.username || 'user'}</span>${c.is_highlighted ? '<span class="comment-hl">✓ HELPFUL</span>' : (isOwner ? `<button class="comment-hl-btn" onclick="highlightComment('${c.id}')">MARK HELPFUL</button>` : '')}</div>
-      <div class="comment-body">${c.body}</div>
-    </div>`).join('');
+async function loadCmts(postId){
+  const{data}=await sb.from('comments').select('*,profiles(username)').eq('post_id',postId).order('created_at');
+  const list=document.getElementById('pdcomments');
+  if(!data||!data.length){list.innerHTML='<div style="font-size:11px;color:rgba(255,255,255,0.28);padding:8px 0;">No comments yet.</div>';return;}
+  const isOwner=curPost&&user&&curPost.user_id===user.id;
+  // Count highlights already done
+  const hlCount=(data||[]).filter(c=>c.is_highlighted).length;
+  list.innerHTML=await Promise.all(data.map(async c=>{
+    // Load replies
+    const{data:replies}=await sb.from('comments').select('*,profiles(username)').eq('parent_id',c.id).order('created_at');
+    const repliesHtml=(replies||[]).map(r=>`<div class="reply"><div class="reply-user">@${r.profiles?.username||'user'}</div><div class="reply-body">${r.body}</div></div>`).join('');
+    const canHL=isOwner&&!c.is_highlighted&&hlCount<2;
+    const isMine=user&&c.user_id===user.id;
+    return`<div class="cmt ${c.is_highlighted?'hl':''}" id="cmt-${c.id}">
+      <div class="cmthdr"><span class="cmtuser">@${c.profiles?.username||'user'}</span>${c.is_highlighted?'<span class="cmthl">✓ HELPFUL</span>':''}</div>
+      <div class="cmtbody">${c.body}</div>
+      <div class="cmtacts">
+        <button class="cmtact" onclick="replyToCmt('${c.id}')">↩ REPLY</button>
+        ${canHL?`<button class="cmtact hlbtn" onclick="hlCmt('${c.id}')">MARK HELPFUL</button>`:''}
+        ${isMine?`<button class="cmtact" onclick="delCmt('${c.id}')">DELETE</button>`:''}
+      </div>
+      ${repliesHtml?`<div class="cmtreplies">${repliesHtml}</div>`:''}
+      <div class="reply-inp-row" id="rinp-${c.id}" style="display:none;"><input class="reply-inp" id="rt-${c.id}" placeholder="Write a reply..."><button class="reply-send" onclick="sendReply('${c.id}')">↩</button></div>
+    </div>`;
+  })).then(arr=>arr.join(''));
 }
 
-async function sendComment() {
-  const inp = document.getElementById('pd-comment-inp'), body = inp.value.trim();
-  if (!body || !currentPost) return;
-  await sb.from('comments').insert({ post_id: currentPost.id, user_id: user.id, body });
-  await sb.from('posts').update({ comments_count: (currentPost.comments_count || 0) + 1 }).eq('id', currentPost.id);
-  inp.value = ''; loadComments(currentPost.id); showToast('Comment posted ✓');
+function replyToCmt(id){const row=document.getElementById('rinp-'+id);row.style.display=row.style.display==='none'?'flex':'none';}
+
+async function sendReply(parentId){
+  const inp=document.getElementById('rt-'+parentId),body=inp.value.trim();if(!body)return;
+  await sb.from('comments').insert({post_id:curPost.id,user_id:user.id,body,parent_id:parentId});
+  inp.value='';document.getElementById('rinp-'+parentId).style.display='none';
+  loadCmts(curPost.id);showToast('Reply posted ✓');
 }
 
-async function highlightComment(commentId) {
-  await sb.from('comments').update({ is_highlighted: true }).eq('id', commentId);
-  loadComments(currentPost.id); showToast('Marked as helpful ✓');
+async function sendCmt(){
+  const inp=document.getElementById('pdcinp'),body=inp.value.trim();if(!body||!curPost)return;
+  await sb.from('comments').insert({post_id:curPost.id,user_id:user.id,body,parent_id:null});
+  await sb.from('posts').update({comments_count:(curPost.comments_count||0)+1}).eq('id',curPost.id);
+  inp.value='';loadCmts(curPost.id);showToast('Comment posted ✓');
 }
 
-async function likePost(id, btn) {
-  if (!user) return;
-  const { data: existing } = await sb.from('post_likes').select('id').eq('post_id', id).eq('user_id', user.id).single();
-  if (existing) { await sb.from('post_likes').delete().eq('id', existing.id); await sb.from('posts').update({ likes_count: Math.max(0, (parseInt(btn.textContent.split(' ')[1]) || 1) - 1) }).eq('id', id); btn.classList.remove('liked'); }
-  else { await sb.from('post_likes').insert({ post_id: id, user_id: user.id }); await sb.from('posts').update({ likes_count: (parseInt(btn.textContent.split(' ')[1]) || 0) + 1 }).eq('id', id); btn.classList.add('liked'); }
+async function hlCmt(id){
+  // Max 2 highlights
+  const{data}=await sb.from('comments').select('id').eq('post_id',curPost.id).eq('is_highlighted',true);
+  if((data||[]).length>=2){showToast('Max 2 helpful marks per post',true);return;}
+  await sb.from('comments').update({is_highlighted:true}).eq('id',id);
+  loadCmts(curPost.id);showToast('Marked as helpful ✓');
+}
+
+async function delCmt(id){await sb.from('comments').delete().eq('id',id);loadCmts(curPost.id);showToast('Comment deleted');}
+
+async function likePost(id,btn){
+  if(!user)return;
+  const{data:ex}=await sb.from('post_likes').select('id').eq('post_id',id).eq('user_id',user.id).maybeSingle();
+  const cur=parseInt(btn.textContent.split(' ')[1])||0;
+  if(ex){await sb.from('post_likes').delete().eq('id',ex.id);await sb.from('posts').update({likes_count:Math.max(0,cur-1)}).eq('id',id);btn.classList.remove('liked');}
+  else{await sb.from('post_likes').insert({post_id:id,user_id:user.id});await sb.from('posts').update({likes_count:cur+1}).eq('id',id);btn.classList.add('liked');}
   loadPosts();
 }
 
-async function savePost2(id, btn) {
-  if (!user) return;
-  const { data: existing } = await sb.from('post_saves').select('id').eq('post_id', id).eq('user_id', user.id).single();
-  if (existing) { await sb.from('post_saves').delete().eq('id', existing.id); btn.classList.remove('saved'); showToast('Removed from saved'); }
-  else { await sb.from('post_saves').insert({ post_id: id, user_id: user.id }); btn.classList.add('saved'); showToast('Saved ✓'); }
+async function savePost2(id,btn){
+  if(!user)return;
+  const{data:ex}=await sb.from('post_saves').select('id').eq('post_id',id).eq('user_id',user.id).maybeSingle();
+  if(ex){await sb.from('post_saves').delete().eq('id',ex.id);btn.classList.remove('saved');showToast('Removed from saved');}
+  else{await sb.from('post_saves').insert({post_id:id,user_id:user.id});btn.classList.add('saved');showToast('Saved ✓');}
 }
 
-function openPostModal() {
-  if (!user) return;
-  ['pm-part','pm-title'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('pm-body').value = '';
-  openModal('post-modal');
+function openPostModal(){
+  if(!user)return;
+  ['pmpart','pmtitle'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pmbody').value='';
+  document.getElementById('pmphoto').value='';
+  openModal('postmod');
 }
 
-async function savePost() {
-  const title = document.getElementById('pm-title').value.trim(), body = document.getElementById('pm-body').value.trim();
-  if (!title || !body) { showToast('Fill in title and description', true); return; }
-  const carId = document.getElementById('pm-car').value;
-  const car = garage.find(c => c.id === carId);
-  await sb.from('posts').insert({ user_id: user.id, garage_id: carId || null, car_label: car ? `${car.make} ${car.model} ${car.year}` : '', type: document.getElementById('pm-type').value, part: document.getElementById('pm-part').value.trim(), title, body });
-  if (profile) await sb.from('profiles').update({ posts_count: (profile.posts_count || 0) + 1 }).eq('id', user.id);
-  closeModal('post-modal'); loadPosts(); showToast('Post published ✓');
+async function savePost(){
+  const title=document.getElementById('pmtitle').value.trim(),body=document.getElementById('pmbody').value.trim();
+  if(!title||!body){showToast('Fill in title and description',true);return;}
+  const carId=document.getElementById('pmcar').value,car=garage.find(c=>c.id===carId);
+  let photoUrl=null;
+  const photoFile=document.getElementById('pmphoto').files[0];
+  if(photoFile){
+    const ext=photoFile.name.split('.').pop(),path=`posts/${user.id}-${Date.now()}.${ext}`;
+    const{error:upErr}=await sb.storage.from('posts').upload(path,photoFile);
+    if(!upErr){const{data:{publicUrl}}=sb.storage.from('posts').getPublicUrl(path);photoUrl=publicUrl;}
+  }
+  await sb.from('posts').insert({user_id:user.id,garage_id:carId||null,car_label:car?`${car.make} ${car.model} ${car.year}`:'',type:document.getElementById('pmtype').value,part:document.getElementById('pmpart').value.trim(),title,body,photo_url:photoUrl});
+  if(profile)await sb.from('profiles').update({posts_count:(profile.posts_count||0)+1}).eq('id',user.id);
+  closeModal('postmod');loadPosts();showToast('Post published ✓');
 }
 
-// ═══════════════════════════════════════════════
+// HELP
+async function loadHelp(){
+  const{data}=await sb.from('help_requests').select('*,profiles(username)').order('created_at',{ascending:false}).limit(30);
+  const list=document.getElementById('hreqlist');
+  const reqs=data||[];
+  if(!reqs.length){list.innerHTML='<div class="empty">🤝<br><br>NO HELP REQUESTS YET<br>TAP + TO POST ONE</div>';return;}
+  const urgColor={low:'rgba(0,200,255,0.4)',medium:'rgba(255,170,0,0.7)',high:'rgba(255,60,60,0.8)'};
+  list.innerHTML=reqs.map(r=>`
+    <div class="hreq">
+      <div class="hreq-hdr"><span class="hreq-city">📍 ${r.city||'Unknown area'}</span><span class="hreq-dist" style="color:${urgColor[r.urgency]||'rgba(255,255,255,0.3)'};">${r.urgency?.toUpperCase()||''}</span></div>
+      <div class="hreq-body"><div class="hreq-title">${r.title}</div><div class="hreq-sub">${r.description||''}</div></div>
+      <div class="hreq-foot"><span class="hreq-user">@${r.profiles?.username||'user'}</span><button class="hreq-btn" onclick="offerHelp('${r.id}','${r.profiles?.username||''}')">OFFER HELP</button></div>
+    </div>`).join('');
+}
+
+function openHelpModal(){
+  ['hmtitle','hmbody','hmcity'].forEach(id=>document.getElementById(id).value='');
+  openModal('helpmod');
+}
+
+async function saveHelpReq(){
+  const title=document.getElementById('hmtitle').value.trim();if(!title){showToast('Add a title',true);return;}
+  await sb.from('help_requests').insert({user_id:user.id,title,description:document.getElementById('hmbody').value.trim(),city:document.getElementById('hmcity').value.trim(),garage_id:document.getElementById('hmcar').value||null,urgency:document.getElementById('hmurg').value});
+  closeModal('helpmod');loadHelp();showToast('Help request posted ✓');
+}
+
+async function offerHelp(reqId,username){
+  // Increment user's helps count
+  if(profile)await sb.from('profiles').update({helps_count:(profile.helps_count||0)+1}).eq('id',user.id);
+  showToast(`Offering help to @${username} ✓`);
+  await loadProfile();
+}
+
 // VOICE
-// ═══════════════════════════════════════════════
-function toggleVoiceSetting() { voiceOn = !voiceOn; document.getElementById('voice-toggle').classList.toggle('on', voiceOn); if (!voiceOn) speechSynthesis.cancel(); }
-function speak(txt) { if (!voiceOn) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(txt.replace(/[•⚡⚠️✓✕]/gu, '')); u.rate = 0.92; u.pitch = 0.82; u.lang = 'en-GB'; speechSynthesis.speak(u); }
+function toggleVoiceSett(){voiceOn=!voiceOn;document.getElementById('vogtog').classList.toggle('on',voiceOn);if(!voiceOn)speechSynthesis.cancel();}
+function speak(txt){if(!voiceOn)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt.replace(/[•⚡⚠️✓✕]/gu,''));u.rate=0.92;u.pitch=0.82;u.lang='en-GB';speechSynthesis.speak(u);}
 
-function toggleVoiceListen() {
-  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) { showToast('Voice needs Chrome', true); return; }
-  vListening ? stopVL() : startVL();
+function toggleVL(){
+  if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){showToast('Voice needs Chrome',true);return;}
+  vListening?stopVL():startVL();
+}
+function startVL(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  rec=new SR();rec.continuous=true;rec.lang='en-GB';
+  rec.onresult=e=>{handleVC(e.results[e.results.length-1][0].transcript.toLowerCase().trim());};
+  rec.onerror=()=>stopVL();rec.onend=()=>{if(vListening)rec.start();};rec.start();
+  vListening=true;document.getElementById('btnvoice').classList.add('on');document.getElementById('vbar').style.display='flex';
+}
+function stopVL(){if(rec)rec.stop();vListening=false;document.getElementById('btnvoice').classList.remove('on');document.getElementById('vbar').style.display='none';}
+function handleVC(tr){
+  if(/scan|analyze/.test(tr)&&appState==='idle'){triggerScan();return;}
+  if(/yes|yeah/.test(tr)&&appState==='question'){ansYes();return;}
+  if(/no|nope/.test(tr)&&appState==='question'){ansNo();return;}
+  if(/next|continue/.test(tr)&&appState==='stepping'){nextStep();return;}
+  if(/back|previous/.test(tr)&&appState==='stepping'){prevStep();return;}
+  if(/repeat|again/.test(tr)&&appState==='stepping'){if(steps[curStep])speak(steps[curStep].instruction);return;}
+  if(/ready|start|go/.test(tr)&&appState==='prep'){startJob();return;}
+  if(/done|complete|finish/.test(tr)&&appState==='stepping'){completeJob();return;}
 }
 
-function startVL() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  rec = new SR(); rec.continuous = true; rec.lang = 'en-GB';
-  rec.onresult = e => { const tr = e.results[e.results.length - 1][0].transcript.toLowerCase().trim(); handleVC(tr); };
-  rec.onerror = () => stopVL();
-  rec.onend = () => { if (vListening) rec.start(); };
-  rec.start(); vListening = true;
-  document.getElementById('btn-voice').classList.add('on');
-  document.getElementById('vbar').style.display = 'flex';
-}
-
-function stopVL() { if (rec) rec.stop(); vListening = false; document.getElementById('btn-voice').classList.remove('on'); document.getElementById('vbar').style.display = 'none'; }
-
-function handleVC(tr) {
-  if (/scan|analyze/.test(tr) && appState === 'idle') { triggerScan(); return; }
-  if (/yes|yeah/.test(tr) && appState === 'question') { ansYes(); return; }
-  if (/no|nope/.test(tr) && appState === 'question') { ansNo(); return; }
-  if (/next|continue|forward/.test(tr) && appState === 'stepping') { nextStep(); return; }
-  if (/back|previous/.test(tr) && appState === 'stepping') { prevStep(); return; }
-  if (/repeat|again/.test(tr) && appState === 'stepping') { if (steps[currentStep]) speak(steps[currentStep].instruction); return; }
-  if (/ready|start|go/.test(tr) && appState === 'prep') { startJob(); return; }
-  if (/done|complete|finish/.test(tr) && appState === 'stepping') { completeJob(); return; }
-}
-
-// ═══════════════════════════════════════════════
 // MODALS
-// ═══════════════════════════════════════════════
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function openTermsModal() { document.getElementById('terms-modal').style.display = 'flex'; }
-function closeTerModal() { document.getElementById('terms-modal').style.display = 'none'; }
-function openSettings() { openModal('settings-modal'); }
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function openTmod(){document.getElementById('tmod').style.display='flex';}
+function closeTmod(){document.getElementById('tmod').style.display='none';}
+function openSettings(){openModal('settmod');}
 
-// ═══════════════════════════════════════════════
 // ADS
-// ═══════════════════════════════════════════════
-const ADS = [{ n: 'AUTODOC', t: 'Quality parts delivered fast', u: 'https://www.autodoc.co.uk' }, { n: 'WINPARTS', t: 'Trusted by mechanics worldwide', u: 'https://www.winparts.eu' }, { n: 'EURO CAR PARTS', t: 'Find parts for your vehicle', u: 'https://www.eurocarparts.com' }, { n: 'OSCARO', t: 'The mechanic\'s choice', u: 'https://www.oscaro.com' }];
-function rotAds() { function show() { const a = ADS[adI % ADS.length]; document.getElementById('adn').textContent = a.n; document.getElementById('adt').textContent = a.t; document.getElementById('adb').onclick = () => window.open(a.u, '_blank'); adI++; } show(); setInterval(show, 12000); }
+const ADS=[{n:'AUTODOC',t:'Quality parts delivered fast',u:'https://www.autodoc.co.uk'},{n:'WINPARTS',t:'Trusted by mechanics worldwide',u:'https://www.winparts.eu'},{n:'EURO CAR PARTS',t:'Find parts for your vehicle',u:'https://www.eurocarparts.com'},{n:'OSCARO',t:'The mechanic\'s choice',u:'https://www.oscaro.com'}];
+function rotAds(){function show(){const a=ADS[adI%ADS.length];document.getElementById('adn').textContent=a.n;document.getElementById('adt').textContent=a.t;document.getElementById('adb').onclick=()=>window.open(a.u,'_blank');adI++;}show();setInterval(show,12000);}
 
-// ═══════════════════════════════════════════════
 // TOAST
-// ═══════════════════════════════════════════════
-let toastTimer;
-function showToast(msg, err) {
-  const t = document.getElementById('toast'); t.textContent = msg; t.className = 'show' + (err ? ' err' : '');
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = ''; }, 3000);
-}
+let ttimer;
+function showToast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.className='show'+(err?' err':'');clearTimeout(ttimer);ttimer=setTimeout(()=>{t.className='';},3000);}
 </script>
 </body>
 </html>
